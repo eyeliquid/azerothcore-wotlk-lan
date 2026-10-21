@@ -48,11 +48,6 @@ typedef std::unordered_map<uint32, GameObjectQuestItemList> GameObjectQuestItemM
 
 union GameObjectValue
 {
-    //6 GAMEOBJECT_TYPE_TRAP
-    struct
-    {
-        uint8 TargetSearcherCheckType; // SpellTargetCheckTypes
-    } Trap;
     //11 GAMEOBJECT_TYPE_TRANSPORT
     struct
     {

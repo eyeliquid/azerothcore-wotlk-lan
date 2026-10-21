@@ -343,13 +343,7 @@ public:
     {
         handler->PSendSysMessage(LANG_MOTD_CURRENT);
         for (uint32 i = 0; i < TOTAL_LOCALES; ++i)
-        {
-            if (!IsLocaleRegistered(LocaleConstant(i)))
-                continue;
-
             handler->PSendSysMessage(LANG_GENERIC_TWO_CURLIES_WITH_COLON, GetNameByLocaleConstant(LocaleConstant(i)), sMotdMgr->GetMotd(LocaleConstant(i)));
-        }
-
         return true;
     }
 

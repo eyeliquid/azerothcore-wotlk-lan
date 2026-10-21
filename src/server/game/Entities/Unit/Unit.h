@@ -906,9 +906,7 @@ public:
     [[nodiscard]] bool isAttackingPlayer() const;
     [[nodiscard]] Unit* GetVictim() const { return m_attacking; }
 
-    // keepPvPForOthers (only with mutualPvP): our pvp refs are only suppressed on our side, so the units fighting us
-    // leave combat when their pvp timer runs out (used on death)
-    void CombatStop(bool includingCast = false, bool mutualPvP = true, bool keepPvPForOthers = false);
+    void CombatStop(bool includingCast = false, bool mutualPvP = true);
     void CombatStopWithPets(bool includingCast = false);
     void StopAttackFaction(uint32 faction_id);
     void StopAttackingInvalidTarget();
@@ -948,7 +946,7 @@ public:
 
     [[nodiscard]] bool IsPetInCombat() const { return HasUnitFlag(UNIT_FLAG_PET_IN_COMBAT); }
     void SetInCombatWith(Unit* enemy, bool addSecondUnitSuppressed = false) { if (enemy) m_combatManager.SetInCombatWith(enemy, addSecondUnitSuppressed); }
-    void ClearInCombat(bool keepPvPForOthers = false);
+    void ClearInCombat();
     void ClearInPetCombat();
     [[nodiscard]] uint32 GetCombatTimer() const { return m_CombatTimer; }
     void SetCombatTimer(uint32 timer) { m_CombatTimer = timer; }

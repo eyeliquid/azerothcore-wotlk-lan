@@ -295,9 +295,6 @@ bool AccountMgr::CheckPassword(uint32 accountId, std::string password)
     if (!GetName(accountId, username))
         return false;
 
-    if (utf8length(password) > MAX_PASS_STR)
-        return false;
-
     Utf8ToUpperOnlyLatin(username);
     Utf8ToUpperOnlyLatin(password);
 

@@ -213,14 +213,14 @@ bool ToCloud9Sidecar::IsMapAssigned(uint32 mapId)
     return _assignedMapsByID[mapId];
 }
 
-uint64 ToCloud9Sidecar::GenerateCharacterGuid(uint16 realmId)
+uint32 ToCloud9Sidecar::GenerateCharacterGuid(uint16 realmId)
 {
-    return TC9GetNextAvailableCharacterGuid(realmId);
+    return uint32(TC9GetNextAvailableCharacterGuid(realmId));
 }
 
-uint64 ToCloud9Sidecar::GenerateItemGuid(uint16 realmId)
+uint32 ToCloud9Sidecar::GenerateItemGuid(uint16 realmId)
 {
-    return TC9GetNextAvailableItemGuid(realmId);
+    return uint32(TC9GetNextAvailableItemGuid(realmId));
 }
 
 uint32 ToCloud9Sidecar::GenerateInstanceGuid(uint16 realmId)

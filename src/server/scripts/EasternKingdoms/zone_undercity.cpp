@@ -1923,8 +1923,7 @@ public:
                                             {
                                                 player->RemoveAura(SPELL_WRYNN_BUFF);
                                                 player->RemoveAura(SPELL_JAINA_BUFF);
-                                                if (player->GetQuestStatus(QUEST_BATTLE_A) == QUEST_STATUS_INCOMPLETE)
-                                                    player->CompleteQuest(QUEST_BATTLE_A);
+                                                player->CompleteQuest(QUEST_BATTLE_A);
                                                 player->NearTeleportTo(-8445.213867f, 337.384277f, 121.746056f, 5.401534f, false);
                                             }
                                         }
@@ -3791,11 +3790,8 @@ public:
                                             {
                                                 player->RemoveAura(SPELL_SYLVANAS_BUFF);
                                                 player->RemoveAura(SPELL_THRALL_BUFF);
-                                                if (player->GetQuestStatus(QUEST_BATTLE_H) == QUEST_STATUS_INCOMPLETE)
-                                                {
-                                                    player->CompleteQuest(QUEST_BATTLE_H);
-                                                    player->CastSpell(player, SPELL_PHASING_HORDE);
-                                                }
+                                                player->CompleteQuest(QUEST_BATTLE_H);
+                                                player->CastSpell(player, SPELL_PHASING_HORDE);
                                             }
                                         }
                                     }

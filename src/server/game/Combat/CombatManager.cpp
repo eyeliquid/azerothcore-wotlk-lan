@@ -216,9 +216,6 @@ bool CombatManager::SetInCombatWith(Unit* who, bool addSecondUnitSuppressed)
     // Are we already in combat? If yes, refresh pvp combat
     if (PvPCombatReference* existingPvpRef = Acore::Containers::MapGetValuePtr(_pvpRefs, who->GetGUID()))
     {
-        // a ref kept alive past a death runs out on its own - don't extend it or pull the corpse back into combat
-        if (!_owner->IsAlive() || !who->IsAlive())
-            return true;
         existingPvpRef->RefreshTimer();
         existingPvpRef->Refresh();
         return true;
@@ -333,12 +330,6 @@ void CombatManager::SuppressPvPCombat()
     if (UpdateOwnerCombatState())
         if (UnitAI* ownerAI = _owner->GetAI())
             ownerAI->JustExitedCombat();
-}
-
-void CombatManager::RestartPvPCombatTimers()
-{
-    for (auto const& pair : _pvpRefs)
-        pair.second->RefreshTimer();
 }
 
 void CombatManager::EndAllPvECombat()

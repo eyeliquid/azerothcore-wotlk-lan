@@ -110,7 +110,7 @@ public:
                 locale = 0;
                 for (; locale < TOTAL_LOCALES; ++locale)
                 {
-                    if (locale == handler->GetSessionDbcLocale() || !IsLocaleRegistered(LocaleConstant(locale)))
+                    if (locale == handler->GetSessionDbcLocale())
                     {
                         continue;
                     }
@@ -355,7 +355,7 @@ public:
 
                 for (; locale < TOTAL_LOCALES; ++locale)
                 {
-                    if (locale == handler->GetSessionDbcLocale() || !IsLocaleRegistered(LocaleConstant(locale)))
+                    if (locale == handler->GetSessionDbcLocale())
                     {
                         continue;
                     }
@@ -595,7 +595,7 @@ public:
                     locale = 0;
                     for (; locale < TOTAL_LOCALES; ++locale)
                     {
-                        if (locale == handler->GetSessionDbcLocale() || !IsLocaleRegistered(LocaleConstant(locale)))
+                        if (locale == handler->GetSessionDbcLocale())
                         {
                             continue;
                         }
@@ -928,7 +928,7 @@ public:
                 locale = 0;
                 for (; locale < TOTAL_LOCALES; ++locale)
                 {
-                    if (locale == handler->GetSessionDbcLocale() || !IsLocaleRegistered(LocaleConstant(locale)))
+                    if (locale == handler->GetSessionDbcLocale())
                     {
                         continue;
                     }
@@ -1035,7 +1035,7 @@ public:
                     locale = 0;
                     for (; locale < TOTAL_LOCALES; ++locale)
                     {
-                        if (locale == handler->GetSessionDbcLocale() || !IsLocaleRegistered(LocaleConstant(locale)))
+                        if (locale == handler->GetSessionDbcLocale())
                         {
                             continue;
                         }
@@ -1296,7 +1296,7 @@ public:
 
                 for (; locale < TOTAL_LOCALES; ++locale)
                 {
-                    if (locale == handler->GetSessionDbcLocale() || !IsLocaleRegistered(LocaleConstant(locale)))
+                    if (locale == handler->GetSessionDbcLocale())
                     {
                         continue;
                     }
@@ -1452,7 +1452,7 @@ public:
                 locale = 0;
                 for (; locale < TOTAL_LOCALES; ++locale)
                 {
-                    if (locale == handler->GetSessionDbcLocale() || !IsLocaleRegistered(LocaleConstant(locale)))
+                    if (locale == handler->GetSessionDbcLocale())
                     {
                         continue;
                     }

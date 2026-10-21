@@ -82,50 +82,17 @@ public:
         ObjectGuid GO_WebDoorGUID;
         ObjectGuid GO_FloorGUID;
 
-        uint32 GetBarrettEntry() const
-        {
-            switch (InstanceProgress)
-            {
-                case INSTANCE_PROGRESS_INITIAL:
-                case INSTANCE_PROGRESS_INTRO_DONE:
-                    return instance->IsHeroic() ? NPC_BARRETT_BEASTS_HC : NPC_BARRETT_BEASTS;
-                case INSTANCE_PROGRESS_BEASTS_DEAD:
-                case INSTANCE_PROGRESS_JARAXXUS_INTRO_DONE:
-                    return NPC_BARRETT_JARAXXUS;
-                case INSTANCE_PROGRESS_JARAXXUS_DEAD:
-                    return NPC_BARRETT_FACTION_CHAMPIONS;
-                case INSTANCE_PROGRESS_FACTION_CHAMPIONS_DEAD:
-                    return NPC_BARRETT_VALKYR;
-                case INSTANCE_PROGRESS_VALKYR_DEAD:
-                    return NPC_BARRETT_LICH_KING;
-                default:
-                    return 0;
-            }
-        }
-
-        // Each stage has its own Barrett, who leaves once the stage is started from his gossip
-        void SummonBarrett()
-        {
-            uint32 entry = (instance->IsHeroic() && !AttemptsLeft) ? 0 : GetBarrettEntry();
-            if (Creature* barrett = instance->GetCreature(NPC_BarrettGUID))
-            {
-                if (barrett->GetEntry() == entry && barrett->HasNpcFlag(UNIT_NPC_FLAG_GOSSIP))
-                    return;
-
-                barrett->DespawnOrUnsummon();
-            }
-
-            if (entry)
-                instance->SummonCreature(entry, Locs[LOC_BARRETT]);
-        }
-
         void SpawnAnubArak()
         {
             if (InstanceProgress == INSTANCE_PROGRESS_ANUB_ARAK)
             {
-                if (AttemptsLeft && !instance->GetCreature(NPC_AnubarakGUID))
-                    if (Creature* tirion = instance->GetCreature(NPC_TirionGUID))
-                        tirion->SummonCreature(NPC_ANUBARAK, Locs[LOC_ANUB].GetPositionX(), Locs[LOC_ANUB].GetPositionY(), Locs[LOC_ANUB].GetPositionZ(), Locs[LOC_ANUB].GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 630000000);
+                if (Creature* barrett = instance->GetCreature(NPC_BarrettGUID))
+                {
+                    barrett->SetVisible(false);
+                    if (AttemptsLeft)
+                        if (!ObjectAccessor::GetCreature(*barrett, NPC_AnubarakGUID))
+                            barrett->SummonCreature(NPC_ANUBARAK, Locs[LOC_ANUB].GetPositionX(), Locs[LOC_ANUB].GetPositionY(), Locs[LOC_ANUB].GetPositionZ(), Locs[LOC_ANUB].GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 630000000);
+                }
 
                 // move corpses
                 const ObjectGuid npcs[4] = { NPC_IcehowlGUID, NPC_JaraxxusGUID, NPC_LightbaneGUID, NPC_DarkbaneGUID };
@@ -258,12 +225,7 @@ public:
         {
             switch (creature->GetEntry())
             {
-                case NPC_BARRETT_BEASTS:
-                case NPC_BARRETT_BEASTS_HC:
-                case NPC_BARRETT_JARAXXUS:
-                case NPC_BARRETT_FACTION_CHAMPIONS:
-                case NPC_BARRETT_VALKYR:
-                case NPC_BARRETT_LICH_KING:
+                case NPC_BARRENT:
                     NPC_BarrettGUID = creature->GetGUID();
                     break;
                 case NPC_TIRION:
@@ -368,9 +330,6 @@ public:
                             break;
                         case INSTANCE_PROGRESS_BEASTS_DEAD:
                             events.RescheduleEvent(EVENT_SCENE_101, 0ms);
-                            break;
-                        case INSTANCE_PROGRESS_JARAXXUS_INTRO_DONE:
-                            events.RescheduleEvent(EVENT_JARAXXUS_ATTACK, 0ms);
                             break;
                         case INSTANCE_PROGRESS_JARAXXUS_DEAD:
                             events.RescheduleEvent(EVENT_SCENE_201, 0ms);
@@ -846,12 +805,8 @@ public:
                     {
                         if (Creature* c = instance->GetCreature(NPC_TirionGUID))
                             c->AI()->Talk(SAY_STAGE_0_06);
-                        events.RescheduleEvent(EVENT_SUMMON_BARRETT, 5200ms);
-                        break;
-                    }
-                case EVENT_SUMMON_BARRETT:
-                    {
-                        SummonBarrett();
+                        if (Creature* c = instance->GetCreature(NPC_BarrettGUID))
+                            c->SetNpcFlag(UNIT_NPC_FLAG_GOSSIP);
                         break;
                     }
                 case EVENT_SCENE_101:
@@ -1025,7 +980,8 @@ public:
                     {
                         if (Creature* c = instance->GetCreature(NPC_TirionGUID))
                             c->AI()->Talk(SAY_STAGE_1_11);
-                        events.RescheduleEvent(EVENT_SUMMON_BARRETT, 16s);
+                        if (Creature* c = instance->GetCreature(NPC_BarrettGUID))
+                            c->SetNpcFlag(UNIT_NPC_FLAG_GOSSIP);
                         break;
                     }
                 case EVENT_SCENE_201:
@@ -1191,7 +1147,8 @@ public:
                     {
                         if (Creature* c = instance->GetCreature(NPC_TirionGUID))
                             c->AI()->Talk(SAY_STAGE_2_06);
-                        SummonBarrett();
+                        if (Creature* c = instance->GetCreature(NPC_BarrettGUID))
+                            c->SetNpcFlag(UNIT_NPC_FLAG_GOSSIP);
                         break;
                     }
                 case EVENT_SCENE_301:
@@ -1265,15 +1222,12 @@ public:
                     {
                         if (Creature* c = instance->GetCreature(GetTeamIdInInstance() == TEAM_ALLIANCE ? NPC_VarianGUID : NPC_GarroshGUID))
                             c->AI()->Talk((GetTeamIdInInstance() == TEAM_ALLIANCE ? SAY_STAGE_3_03a : SAY_STAGE_3_03h));
-                        SummonBarrett();
 
                         events.RescheduleEvent(EVENT_SCENE_401, 60s);
                         break;
                     }
                 case EVENT_SCENE_401:
                     {
-                        if (Creature* c = instance->GetCreature(NPC_BarrettGUID))
-                            c->AI()->DoAction(ACTION_BARRETT_LEAVE);
                         if (Creature* c = instance->GetCreature(NPC_TirionGUID))
                             c->AI()->Talk(SAY_STAGE_4_01);
 
@@ -1513,7 +1467,13 @@ public:
 
             switch (InstanceProgress)
             {
+                case INSTANCE_PROGRESS_INITIAL:
+                    if (Creature* c = instance->GetCreature(NPC_BarrettGUID))
+                        c->SetNpcFlag(UNIT_NPC_FLAG_GOSSIP);
+                    break;
                 case INSTANCE_PROGRESS_INTRO_DONE:
+                    if (Creature* c = instance->GetCreature(NPC_BarrettGUID))
+                        c->SetNpcFlag(UNIT_NPC_FLAG_GOSSIP);
                     if (Creature* c = instance->GetCreature(NPC_GormokGUID))
                     {
                         c->AI()->DoAction(-1); // despawn summons
@@ -1533,6 +1493,8 @@ public:
                     SetSnoboldCarriers(false);
                     break;
                 case INSTANCE_PROGRESS_BEASTS_DEAD:
+                    if (Creature* c = instance->GetCreature(NPC_BarrettGUID))
+                        c->SetNpcFlag(UNIT_NPC_FLAG_GOSSIP);
                     if (Creature* c = instance->GetCreature(NPC_FizzlebangGUID))
                         c->DespawnOrUnsummon();
                     NPC_FizzlebangGUID.Clear();
@@ -1549,20 +1511,29 @@ public:
                 case INSTANCE_PROGRESS_JARAXXUS_INTRO_DONE:
                     if (Creature* c = instance->GetCreature(NPC_JaraxxusGUID))
                         c->DespawnOrUnsummon();
-                    // Stays chained and unattackable until Barrett's gossip starts the retry
-                    if (Creature* c = instance->GetCreature(NPC_TirionGUID))
+                    if (Creature* c = instance->GetCreature(NPC_BarrettGUID))
+                    {
+                        c->RemoveNpcFlag(UNIT_NPC_FLAG_GOSSIP);
                         if (Creature* jaraxxus = c->SummonCreature(NPC_JARAXXUS, Locs[LOC_CENTER].GetPositionX(), Locs[LOC_CENTER].GetPositionY(), Locs[LOC_CENTER].GetPositionZ(), Locs[LOC_CENTER].GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 630000000))
+                        {
                             jaraxxus->CastSpell(jaraxxus, SPELL_JARAXXUS_CHAINS, true);
-                    // His Reset() has just set the state back to NOT_STARTED
-                    SetBossState(BOSS_JARAXXUS, FAIL);
+                            jaraxxus->SetReactState(REACT_AGGRESSIVE);
+                            jaraxxus->RemoveUnitFlag(UNIT_FLAG_NON_ATTACKABLE);
+                            jaraxxus->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+                        }
+                    }
                     break;
                 case INSTANCE_PROGRESS_JARAXXUS_DEAD:
+                    if (Creature* c = instance->GetCreature(NPC_BarrettGUID))
+                        c->SetNpcFlag(UNIT_NPC_FLAG_GOSSIP);
                     for (ObjectGuid const& guid : NPC_ChampionGUIDs)
                         if (Creature* c = instance->GetCreature(guid))
                             c->DespawnOrUnsummon();
                     NPC_ChampionGUIDs.clear();
                     break;
                 case INSTANCE_PROGRESS_FACTION_CHAMPIONS_DEAD:
+                    if (Creature* c = instance->GetCreature(NPC_BarrettGUID))
+                        c->SetNpcFlag(UNIT_NPC_FLAG_GOSSIP);
                     if (Creature* c = instance->GetCreature(NPC_DarkbaneGUID))
                     {
                         c->AI()->DoAction(-1);
@@ -1580,9 +1551,22 @@ public:
                 case INSTANCE_PROGRESS_ANUB_ARAK:
                     /*if (GameObject* floor = instance->GetGameObject(GO_FloorGUID))
                         floor->SetDestructibleState(GO_DESTRUCTIBLE_REBUILDING, nullptr, true);*/
-                    if (Creature* c = instance->GetCreature(NPC_TirionGUID))
+                    if (Creature* c = instance->GetCreature(NPC_BarrettGUID))
+                    {
+                        if (InstanceProgress == INSTANCE_PROGRESS_ANUB_ARAK)
+                        {
+                            c->SetVisible(false);
+                            c->RemoveNpcFlag(UNIT_NPC_FLAG_GOSSIP);
+                        }
+                        else
+                        {
+                            c->SetNpcFlag(UNIT_NPC_FLAG_GOSSIP);
+                            c->SetVisible(true);
+                            c->SetFacingTo(c->GetOrientation());
+                        }
                         if (Creature* t = c->FindNearestCreature(NPC_WORLD_TRIGGER, 500.0f, true))
                             t->DespawnOrUnsummon();
+                    }
                     if (Creature* c = instance->GetCreature(NPC_LichKingGUID))
                         c->DespawnOrUnsummon();
                     NPC_LichKingGUID.Clear();
@@ -1598,6 +1582,11 @@ public:
                 case INSTANCE_PROGRESS_DONE:
                     if (GameObject* floor = instance->GetGameObject(GO_FloorGUID))
                         floor->SetDestructibleState(GO_DESTRUCTIBLE_REBUILDING, nullptr, true);
+                    if (Creature* c = instance->GetCreature(NPC_BarrettGUID))
+                    {
+                        c->SetVisible(false);
+                        c->RemoveNpcFlag(UNIT_NPC_FLAG_GOSSIP);
+                    }
                     break;
             }
 
@@ -1610,15 +1599,17 @@ public:
                         plr->SendUpdateWorldState(WORLD_STATE_TRIAL_OF_THE_CRUSADER_UI_COUNT, AttemptsLeft);
             }
 
+            if (instance->IsHeroic() && AttemptsLeft == 0 )
+                if (Creature* c = instance->GetCreature(NPC_BarrettGUID))
+                    c->RemoveNpcFlag(UNIT_NPC_FLAG_GOSSIP);
+
             HandleGameObject(GO_MainGateGUID, false);
             HandleGameObject(GO_EnterGateGUID, true);
             HandleGameObject(GO_WebDoorGUID, true);
             Counter = 0;
-            // Barrett's gossip shows the retry text and options for encounters left at FAIL
             for (uint32 bossId = 0; bossId < MAX_ENCOUNTERS; ++bossId)
                 if (GetBossState(bossId) == IN_PROGRESS)
-                    SetBossState(bossId, FAIL);
-            SummonBarrett();
+                    SetBossState(bossId, NOT_STARTED);
             events.Reset();
             events.RescheduleEvent(EVENT_CHECK_PLAYERS, 5s);
         }
@@ -1657,7 +1648,7 @@ public:
             {
                 case ACHIEV_CRITERIA_UPPER_BACK_PAIN_10_N:
                 case ACHIEV_CRITERIA_UPPER_BACK_PAIN_10_H:
-                    if (Creature* c = instance->GetCreature(NPC_TirionGUID))
+                    if (Creature* c = instance->GetCreature(NPC_BarrettGUID))
                     {
                         std::list<Creature*> L;
                         uint8 count = 0;
@@ -1670,7 +1661,7 @@ public:
                     break;
                 case ACHIEV_CRITERIA_UPPER_BACK_PAIN_25_N:
                 case ACHIEV_CRITERIA_UPPER_BACK_PAIN_25_H:
-                    if (Creature* c = instance->GetCreature(NPC_TirionGUID))
+                    if (Creature* c = instance->GetCreature(NPC_BarrettGUID))
                     {
                         std::list<Creature*> L;
                         uint8 count = 0;
@@ -1685,7 +1676,7 @@ public:
                 case ACHIEV_CRITERIA_THREE_SIXTY_PAIN_SPIKE_10_H:
                 case ACHIEV_CRITERIA_THREE_SIXTY_PAIN_SPIKE_25_N:
                 case ACHIEV_CRITERIA_THREE_SIXTY_PAIN_SPIKE_25_H:
-                    if (Creature* c = instance->GetCreature(NPC_TirionGUID))
+                    if (Creature* c = instance->GetCreature(NPC_BarrettGUID))
                     {
                         std::list<Creature*> L;
                         uint8 count = 0;
