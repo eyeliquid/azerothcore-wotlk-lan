@@ -11,6 +11,9 @@
 !/modules/CMakeLists.txt
 !/modules/*.h
 !/modules/*.cmake
+!/modules/mod-playerbots
+!/modules/mod-autobalance
+!/modules/mod-lan
 /build*/
 /var/*
 !/var/build/.gitkeep
