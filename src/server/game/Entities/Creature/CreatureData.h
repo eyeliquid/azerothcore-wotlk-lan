@@ -450,9 +450,11 @@ struct VendorItem
     uint32  maxcount;                                       // 0 for infinity item amount
     uint32 incrtime;                                        // time for restore items amount if maxcount != 0
     uint32 ExtendedCost;
+    int32 PriceOverride = -1;                               // copper per item, overrides BuyPrice when >= 0 (set by scripts)
 
     //helpers
     bool IsGoldRequired(ItemTemplate const* pProto) const { return pProto->HasFlag2(ITEM_FLAG2_DONT_IGNORE_BUY_PRICE) || !ExtendedCost; }
+    [[nodiscard]] bool HasPriceOverride() const { return PriceOverride >= 0; }
 };
 typedef std::vector<VendorItem*> VendorItemList;
 

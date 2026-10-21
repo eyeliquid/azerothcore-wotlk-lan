@@ -935,6 +935,8 @@ void WorldSession::SendListInventory(ObjectGuid vendorGuid, uint32 vendorEntry)
 
                 // reputation discount
                 int32 price = item->IsGoldRequired(itemTemplate) ? uint32(std::floor(itemTemplate->BuyPrice * discountMod)) : 0;
+                if (item->HasPriceOverride())
+                    price = item->PriceOverride;
 
                 data << uint32(slot + 1);       // client expects counting to start at 1
                 data << uint32(item->item);
