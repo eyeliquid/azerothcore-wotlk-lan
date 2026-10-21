@@ -244,6 +244,9 @@ bool PlayerbotAIConfig::Initialize()
     RandomBotAutologin = sConfigMgr->GetOption<bool>("Playerbots.RandomBotAutologin", true);
     MinRandomBots = sConfigMgr->GetOption<int32>("Playerbots.MinRandomBots", 500);
     MaxRandomBots = sConfigMgr->GetOption<int32>("Playerbots.MaxRandomBots", 500);
+    // LAN: Lan.RandomBots (mod-lan, default 100) sets the random bot count; -1 keeps the two values above.
+    if (int32 lanRandomBots = sConfigMgr->GetOption<int32>("Lan.RandomBots", 100, false); lanRandomBots >= 0)
+        MinRandomBots = MaxRandomBots = lanRandomBots;
     RandomBotUpdateInterval = sConfigMgr->GetOption<int32>("Playerbots.RandomBotUpdateInterval", 20);
     RandomBotCountChangeMinInterval =
         sConfigMgr->GetOption<int32>("Playerbots.RandomBotCountChangeMinInterval", 30 * MINUTE);

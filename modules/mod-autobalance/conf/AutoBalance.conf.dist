@@ -31,19 +31,20 @@ AutoBalance.Enable.Global=1
 #        Enable/Disable all features for each instance size and difficulty.
 #        If an instance size is set to 0 here, none of the other settings for that instance size will take effect.
 #        Default:     1 (1 = ON, 0 = OFF)
+#        LAN: dungeons (5M) and other non-raid sizes are off so only raids scale to the player count.
 #
-AutoBalance.Enable.5M=1
+AutoBalance.Enable.5M=0
 AutoBalance.Enable.10M=1
 AutoBalance.Enable.15M=1
 AutoBalance.Enable.20M=1
 AutoBalance.Enable.25M=1
 AutoBalance.Enable.40M=1
-AutoBalance.Enable.OtherNormal=1
+AutoBalance.Enable.OtherNormal=0
 
-AutoBalance.Enable.5MHeroic=1
+AutoBalance.Enable.5MHeroic=0
 AutoBalance.Enable.10MHeroic=1
 AutoBalance.Enable.25MHeroic=1
-AutoBalance.Enable.OtherHeroic=1
+AutoBalance.Enable.OtherHeroic=0
 
 #
 #     AutoBalance.Disable.PerInstance
@@ -716,7 +717,8 @@ AutoBalance.DisabledID=""
 #        0 = Disabled
 #        1 = Enabled (only in dungeons/raids)
 #        Default:     1
-AutoBalance.LevelScaling=1
+# LAN: off, raids only scale to the number of players.
+AutoBalance.LevelScaling=0
 
 #
 #     AutoBalance.LevelScaling.Method
