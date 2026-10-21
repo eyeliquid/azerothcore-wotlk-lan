@@ -1,0 +1,147 @@
+/*
+ * mod-lan: LAN party features for AzerothCore + mod-playerbots.
+ * Released under GNU AGPL v3 license: https://github.com/azerothcore/azerothcore-wotlk/blob/master/LICENSE-AGPL3
+ */
+
+#ifndef MOD_LAN_COMMON_H
+#define MOD_LAN_COMMON_H
+
+#include "Define.h"
+#include "ObjectGuid.h"
+#include "SharedDefines.h"
+
+#include <array>
+#include <string>
+#include <unordered_set>
+#include <vector>
+
+class Creature;
+class Player;
+
+enum LanRole : uint8
+{
+    LAN_ROLE_TANK,
+    LAN_ROLE_HEALER,
+    LAN_ROLE_DPS,
+    LAN_ROLE_MAX
+};
+
+enum LanStatType : uint8
+{
+    LAN_STAT_CASTER,
+    LAN_STAT_HEALER,
+    LAN_STAT_AGILITY,
+    LAN_STAT_STRENGTH,
+    LAN_STAT_TANK
+};
+
+#include "LanGearData.h"
+#include "LanTeleData.h"
+
+// Creature templates shipped in data/sql/db-world (keep in sync with the SQL).
+enum LanCreatures : uint32
+{
+    NPC_LAN_OUTFITTER           = 9100001,              // starting-area Tier 6 vendor
+    NPC_LAN_BAG_VENDOR          = 9100002,
+    NPC_LAN_TELEPORTER          = 9100003,
+    NPC_LAN_COMMANDER_VALERIA   = 9100004,
+    NPC_LAN_PROFESSION_VENDOR   = 9100010,              // + profession index (14)
+    NPC_LAN_PROFESSION_TRAINER  = 9100030,              // + profession index (14)
+    NPC_LAN_SPEC_VENDOR         = 9100100,              // + spec index (33)
+    NPC_LAN_FIRST               = 9100001,
+    NPC_LAN_LAST                = 9100199
+};
+
+// Vendor lists that only exist in memory (ObjectMgr::AddVendorItem with persist = false).
+enum LanVirtualVendors : uint32
+{
+    LAN_VENDOR_T6               = 9200000,              // + spec index
+    LAN_VENDOR_BAGS             = 9200100,
+    LAN_VENDOR_T9               = 9200200,              // + spec index * 2 + team
+    LAN_VENDOR_PROFESSION       = 9201000               // + profession index * 100 + page
+};
+
+struct LanProfession
+{
+    char const* Name;
+    uint32 SkillId;
+};
+
+inline std::array<LanProfession, 14> const LanProfessions =
+{{
+    { "Alchemy",        SKILL_ALCHEMY },
+    { "Blacksmithing",  SKILL_BLACKSMITHING },
+    { "Enchanting",     SKILL_ENCHANTING },
+    { "Engineering",    SKILL_ENGINEERING },
+    { "Herbalism",      SKILL_HERBALISM },
+    { "Inscription",    SKILL_INSCRIPTION },
+    { "Jewelcrafting",  SKILL_JEWELCRAFTING },
+    { "Leatherworking", SKILL_LEATHERWORKING },
+    { "Mining",         SKILL_MINING },
+    { "Skinning",       SKILL_SKINNING },
+    { "Tailoring",      SKILL_TAILORING },
+    { "Cooking",        SKILL_COOKING },
+    { "First Aid",      SKILL_FIRST_AID },
+    { "Fishing",        SKILL_FISHING }
+}};
+
+struct LanConfig
+{
+    bool Enabled = true;
+    float XPRate = 200.0f;
+    uint32 StartGold = 150;
+    bool SoloRaids = true;
+
+    bool AutoLearnClassSpells = true;
+    bool AutoLearnQuestSpells = true;
+    bool AutoLearnRiding = true;
+
+    bool PartyAuraEnabled = true;
+    uint32 PartyAuraMinPlayers = 3;
+    uint32 PartyAuraSpell = 20217;                      // Blessing of Kings (+10% stats)
+    float PartyAuraXPBonus = 0.10f;
+
+    uint32 GearPrice = 10000;                           // copper per item at the gear and bag vendors
+    bool BlockSellBack = true;
+
+    bool LfgFillEnabled = true;
+    uint32 LfgFillDelay = 120;                          // seconds in queue before bots fill
+    bool HelperBotsBuff = true;
+    float HelperDamageDone = 1.25f;
+    float HelperHealingDone = 1.25f;
+    float HelperDamageTaken = 0.80f;
+    bool HelperFreeForAllLoot = true;
+};
+
+LanConfig const& GetLanConfig();
+void LoadLanConfig();
+
+// Bots
+bool LanIsBot(Player const* player);
+bool LanIsRealPlayer(Player const* player);
+bool LanIsHelperBot(ObjectGuid guid);
+uint32 LanRealPlayersOnline();
+
+// Spells
+void LanLearnSpells(Player* player);
+
+// Vendors
+void LanBuildVendors();
+bool LanIsVendorItem(uint32 itemId);
+uint32 LanFindEnchantSpell(uint32 enchantId);
+uint32 LanFindEnchantItem(uint32 enchantId);
+
+// Helper bots
+enum class LanBotRequest : uint8
+{
+    Fill10,
+    Fill25,
+    Tank,
+    Healer,
+    Dps,
+    DismissAll
+};
+std::string LanHandleBotRequest(Player* master, LanBotRequest request);
+void LanUpdateBots(uint32 diff);
+
+#endif

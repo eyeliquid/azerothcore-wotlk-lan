@@ -1,0 +1,126 @@
+#
+# mod-lan configuration
+#
+
+[worldserver]
+
+###################################################################################################
+# GENERAL
+#
+#    Lan.Enable
+#        Description: Turns every mod-lan feature on or off.
+#        Default:     1
+Lan.Enable = 1
+
+#    Lan.XPRate
+#        Description: Experience rate for kills, quests and exploration. Overrides the Rate.XP.*
+#                     values of worldserver.conf. 0 keeps the worldserver.conf values.
+#        Default:     200
+Lan.XPRate = 200
+
+#    Lan.StartGold
+#        Description: Gold new characters start with. Overrides StartPlayerMoney.
+#        Default:     150
+Lan.StartGold = 150
+
+#    Lan.SoloRaids
+#        Description: Raids can be entered without a raid group (sets Instance.IgnoreRaid).
+#        Default:     1
+Lan.SoloRaids = 1
+
+###################################################################################################
+# SPELL LEARNING
+#
+#    Lan.AutoLearn.ClassSpells
+#        Description: Learn all class trainer spells for free on login and level-up.
+#        Default:     1
+Lan.AutoLearn.ClassSpells = 1
+
+#    Lan.AutoLearn.QuestSpells
+#        Description: Learn the spells (and the shaman totems) that class quests give on login and level-up.
+#        Default:     1
+Lan.AutoLearn.QuestSpells = 1
+
+#    Lan.AutoLearn.Riding
+#        Description: Learn the riding skills (including Cold Weather Flying) for free when the level allows.
+#        Default:     1
+Lan.AutoLearn.Riding = 1
+
+###################################################################################################
+# LAN PARTY AURA
+#
+#    Lan.PartyAura.Enable
+#        Description: When enough real (non-bot) players are online, every real player gets a stat
+#                     buff and bonus experience.
+#        Default:     1
+Lan.PartyAura.Enable = 1
+
+#    Lan.PartyAura.MinPlayers
+#        Description: Real players that have to be online.
+#        Default:     3
+Lan.PartyAura.MinPlayers = 3
+
+#    Lan.PartyAura.Spell
+#        Description: The buff. 20217 is Blessing of Kings (+10% stats).
+#        Default:     20217
+Lan.PartyAura.Spell = 20217
+
+#    Lan.PartyAura.XPBonus
+#        Description: Extra experience in percent.
+#        Default:     10
+Lan.PartyAura.XPBonus = 10
+
+###################################################################################################
+# VENDORS
+#
+#    Lan.Vendors.GearPrice
+#        Description: Price in copper of every item at the gear vendors (starting areas and Dalaran)
+#                     and the bag vendor. The profession vendors are always free.
+#        Default:     10000 (1 gold)
+Lan.Vendors.GearPrice = 10000
+
+#    Lan.Vendors.BlockSellBack
+#        Description: Items the LAN vendors sell for less than their vendor value can't be sold to vendors.
+#        Default:     1
+Lan.Vendors.BlockSellBack = 1
+
+###################################################################################################
+# BOTS (needs mod-playerbots)
+#
+#    Lan.RandomBots
+#        Description: Number of random bots. -1 keeps Playerbots.MinRandomBots and
+#                     Playerbots.MaxRandomBots from playerbots.conf.
+#        Default:     100
+Lan.RandomBots = 100
+
+#    Lan.LfgFill.Enable
+#        Description: Random bots fill the missing tank, healer and damage slots of dungeon finder
+#                     queues with a real player, with the matching spec and gear.
+#        Default:     1
+Lan.LfgFill.Enable = 1
+
+#    Lan.LfgFill.Delay
+#        Description: Seconds in the queue before bots start to fill.
+#        Default:     120
+Lan.LfgFill.Delay = 120
+
+#    Lan.HelperBots.Buff
+#        Description: Bots in a group with a real player (helper bots) are stronger.
+#        Default:     1
+Lan.HelperBots.Buff = 1
+
+#    Lan.HelperBots.DamageDone / Lan.HelperBots.HealingDone
+#        Description: Extra damage and healing of helper bots, in percent.
+#        Default:     25
+Lan.HelperBots.DamageDone = 25
+Lan.HelperBots.HealingDone = 25
+
+#    Lan.HelperBots.DamageTakenReduction
+#        Description: Less damage taken by helper bots, in percent.
+#        Default:     20
+Lan.HelperBots.DamageTakenReduction = 20
+
+#    Lan.HelperBots.FreeForAllLoot
+#        Description: Groups with helper bots use free-for-all loot, so bots never roll.
+#        Default:     1
+Lan.HelperBots.FreeForAllLoot = 1
