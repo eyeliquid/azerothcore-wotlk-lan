@@ -92,6 +92,7 @@ struct LanConfig
     bool Enabled = true;
     float XPRate = 200.0f;
     uint32 StartGold = 150;
+    uint32 SkillGain = 4;                               // skill points per skill-up
     bool SoloRaids = true;
 
     bool AutoLearnClassSpells = true;

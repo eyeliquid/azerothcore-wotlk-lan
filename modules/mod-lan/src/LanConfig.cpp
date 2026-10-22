@@ -26,6 +26,7 @@ void LoadLanConfig()
     cfg.Enabled = sConfigMgr->GetOption<bool>("Lan.Enable", true);
     cfg.XPRate = sConfigMgr->GetOption<float>("Lan.XPRate", 200.0f);
     cfg.StartGold = sConfigMgr->GetOption<uint32>("Lan.StartGold", 150);
+    cfg.SkillGain = sConfigMgr->GetOption<uint32>("Lan.SkillGain", 4);
     cfg.SoloRaids = sConfigMgr->GetOption<bool>("Lan.SoloRaids", true);
 
     cfg.AutoLearnClassSpells = sConfigMgr->GetOption<bool>("Lan.AutoLearn.ClassSpells", true);
@@ -78,12 +79,22 @@ public:
             sWorld->setRate(RATE_XP_EXPLORE, cfg.XPRate);
         }
 
+        // Professions (crafting, gathering, fishing), weapon skills and defense
+        if (cfg.SkillGain > 0)
+        {
+            sWorld->setIntConfig(CONFIG_SKILL_GAIN_CRAFTING, cfg.SkillGain);
+            sWorld->setIntConfig(CONFIG_SKILL_GAIN_GATHERING, cfg.SkillGain);
+            sWorld->setIntConfig(CONFIG_SKILL_GAIN_WEAPON, cfg.SkillGain);
+            sWorld->setIntConfig(CONFIG_SKILL_GAIN_DEFENSE, cfg.SkillGain);
+        }
+
         sWorld->setIntConfig(CONFIG_START_PLAYER_MONEY, std::min<uint32>(cfg.StartGold * GOLD, MAX_MONEY_AMOUNT));
 
         if (cfg.SoloRaids)
             sWorld->setBoolConfig(CONFIG_INSTANCE_IGNORE_RAID, true);
 
-        LOG_INFO("module", "mod-lan: XP x{}, start gold {}, solo raids {}", cfg.XPRate, cfg.StartGold, cfg.SoloRaids);
+        LOG_INFO("module", "mod-lan: XP x{}, skill gain x{}, start gold {}, solo raids {}", cfg.XPRate, cfg.SkillGain,
+            cfg.StartGold, cfg.SoloRaids);
     }
 
     void OnStartup() override

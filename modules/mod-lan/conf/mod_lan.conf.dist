@@ -18,6 +18,13 @@ Lan.Enable = 1
 #        Default:     200
 Lan.XPRate = 200
 
+#    Lan.SkillGain
+#        Description: Skill points gained per skill-up, for professions (crafting, gathering, fishing),
+#                     weapon skills and defense. Overrides SkillGain.* in worldserver.conf.
+#                     0 keeps the worldserver.conf values.
+#        Default:     4 (4 times as fast)
+Lan.SkillGain = 4
+
 #    Lan.StartGold
 #        Description: Gold new characters start with. Overrides StartPlayerMoney.
 #        Default:     150
