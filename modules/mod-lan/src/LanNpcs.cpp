@@ -44,10 +44,10 @@ class npc_lan_teleporter : public CreatureScript
 public:
     npc_lan_teleporter() : CreatureScript("npc_lan_teleporter") { }
 
-    // The starting-area teleporter offers only the first six categories: the dungeons and raids
+    // Portal Keeper Ilsa offers the dungeons, raids, major cities and hubs, not every zone
     static uint32 CategoryCount(Creature* creature)
     {
-        return creature->GetEntry() == NPC_LAN_DUNGEON_TELEPORTER ? LAN_TELE_DUNGEON_CATEGORIES
+        return creature->GetEntry() == NPC_LAN_DUNGEON_TELEPORTER ? LAN_TELE_PORTAL_KEEPER_CATEGORIES
                                                                    : uint32(LanTeleCategories.size());
     }
 
