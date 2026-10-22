@@ -95,6 +95,55 @@ namespace
         42777   // Crusader's Waterskin (drink)
     };
 
+    constexpr std::array<uint32, 7> BestPotions =
+    {
+        33447,  // Runic Healing Potion
+        33448,  // Runic Mana Potion
+        40211,  // Potion of Speed
+        40212,  // Potion of Wild Magic
+        40093,  // Indestructible Potion
+        40081,  // Potion of Nightmares
+        13442   // Mighty Rage Potion
+    };
+
+    // Battle and guardian elixirs
+    constexpr std::array<uint32, 16> BestElixirs =
+    {
+        40073,  // Elixir of Mighty Strength
+        39666,  // Elixir of Mighty Agility
+        40070,  // Spellpower Elixir
+        40068,  // Wrath Elixir
+        40076,  // Guru's Elixir
+        44325,  // Elixir of Accuracy
+        44327,  // Elixir of Deadly Strikes
+        44329,  // Elixir of Expertise
+        44330,  // Elixir of Armor Piercing
+        44331,  // Elixir of Lightning Speed
+        40078,  // Elixir of Mighty Fortitude
+        40097,  // Elixir of Protection
+        44328,  // Elixir of Mighty Defense
+        40109,  // Elixir of Mighty Mageblood
+        44332,  // Elixir of Mighty Thoughts
+        40072   // Elixir of Spirit
+    };
+
+    constexpr std::array<uint32, 6> BestFlasks =
+    {
+        46377,  // Flask of Endless Rage
+        46376,  // Flask of the Frost Wyrm
+        46378,  // Flask of Pure Mojo
+        46379,  // Flask of Stoneblood
+        40079,  // Lesser Flask of Toughness
+        44939   // Lesser Flask of Resistance
+    };
+
+    // Consumable categories (offset on LAN_VENDOR_CONSUMABLES)
+    constexpr uint32 CONSUMABLE_POTIONS = 0;
+    constexpr uint32 CONSUMABLE_FOOD = 1;
+    constexpr uint32 CONSUMABLE_ELIXIRS = 2;
+    constexpr uint32 CONSUMABLE_FLASKS = 3;
+    constexpr uint32 CONSUMABLE_MAX = 4;
+
     constexpr uint32 VENDOR_PAGE_SIZE = MAX_VENDOR_ITEMS;
     constexpr uint32 PROFESSION_PAGES_RECIPES = 0;
     constexpr uint32 PROFESSION_PAGES_REAGENTS = 40;
@@ -227,6 +276,23 @@ namespace
 
         for (uint32 foodId : BestFood)
             AddVendorItem(LAN_VENDOR_FOOD, foodId, cfg.FoodPrice);
+
+        // Starting areas: the same food plus potions, elixirs and flasks, all usable from level 1
+        auto addConsumables = [&cfg](uint32 category, auto const& items)
+        {
+            for (uint32 itemId : items)
+            {
+                if (!AddVendorItem(uint32(LAN_VENDOR_CONSUMABLES) + category, itemId, cfg.FoodPrice))
+                    continue;
+
+                ItemTemplate* proto = const_cast<ItemTemplate*>(sObjectMgr->GetItemTemplate(itemId));
+                proto->RequiredLevel = 0;
+            }
+        };
+        addConsumables(CONSUMABLE_POTIONS, BestPotions);
+        addConsumables(CONSUMABLE_FOOD, BestFood);
+        addConsumables(CONSUMABLE_ELIXIRS, BestElixirs);
+        addConsumables(CONSUMABLE_FLASKS, BestFlasks);
     }
 
     void BuildProfessionVendors()
@@ -593,6 +659,40 @@ public:
     }
 };
 
+// Starting areas: pick potions, food, elixirs or flasks
+class npc_lan_consumables_vendor : public CreatureScript
+{
+public:
+    npc_lan_consumables_vendor() : CreatureScript("npc_lan_consumables_vendor") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        ClearGossipMenuFor(player);
+        AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "Potions", GOSSIP_SENDER_MAIN,
+            uint32(ACTION_PAGE) + CONSUMABLE_POTIONS);
+        AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "Food & drink", GOSSIP_SENDER_MAIN,
+            uint32(ACTION_PAGE) + CONSUMABLE_FOOD);
+        AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "Elixirs", GOSSIP_SENDER_MAIN,
+            uint32(ACTION_PAGE) + CONSUMABLE_ELIXIRS);
+        AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "Flasks", GOSSIP_SENDER_MAIN,
+            uint32(ACTION_PAGE) + CONSUMABLE_FLASKS);
+        SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        if (action >= ACTION_PAGE && action < uint32(ACTION_PAGE) + CONSUMABLE_MAX)
+        {
+            OpenVendor(player, creature, uint32(LAN_VENDOR_CONSUMABLES) + action - ACTION_PAGE);
+            return true;
+        }
+
+        CloseGossipMenuFor(player);
+        return true;
+    }
+};
+
 // Dalaran: one per spec, Tier 9 gear in the player's faction version plus gems and enchants
 class npc_lan_spec_vendor : public CreatureScript
 {
@@ -687,6 +787,7 @@ void AddSC_lan_vendors()
     new npc_lan_outfitter();
     new npc_lan_bag_vendor();
     new npc_lan_food_vendor();
+    new npc_lan_consumables_vendor();
     new npc_lan_spec_vendor();
     new npc_lan_profession_vendor();
 }

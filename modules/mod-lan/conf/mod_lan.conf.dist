@@ -105,7 +105,8 @@ Lan.PartyAura.XPBonus = 10
 Lan.Vendors.GearPrice = 10000
 
 #    Lan.Vendors.FoodPrice
-#        Description: Price in copper of every item at the Dalaran food vendor.
+#        Description: Price in copper of every item at the Dalaran food vendor and the starting-area
+#                     potions, food, elixirs and flasks vendor.
 #        Default:     0 (free)
 Lan.Vendors.FoodPrice = 0
 

@@ -28,6 +28,7 @@ gets 10% more experience.
 | --- | --- | --- |
 | Every starting area (also Ebon Hold) | Gearwright Holloway | Pick class and spec, buy its Black Temple / Hyjal (Tier 6) best-in-slot set, no level requirement |
 | Every starting area | Pack Merchant Dunstan | The largest bag of every kind |
+| Every starting area | Apothecary Brennick | Pick potions, food, elixirs or flasks: the best of each for free, usable from level 1 |
 | The 8 capitals and Krasus' Landing | Archmage Telvaris | Teleports to every classic, TBC and WotLK dungeon and raid entrance, and to every zone |
 | Krasus' Landing | Chef Rosalind | The best food and drink for free: feasts, every level 80 Well Fed food, the best food of every pet diet, the best drinks |
 | Krasus' Landing | Commander Valeria | Fills your group to a 10 or 25 player raid, adds a tank, healer or damage dealer bot, dismisses bots |
