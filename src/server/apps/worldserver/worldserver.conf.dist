@@ -181,8 +181,9 @@ Database.Reconnect.Attempts = 20
 #        Important:   DataDir needs to be quoted, as the string might contain space characters.
 #        Example:     "@prefix@\home\youruser\azerothcore\data"
 #        Default:     "."
+#        LAN:         the folder apps/lan/install-debian.sh downloads the client data to.
 
-DataDir = "."
+DataDir = "/home/debwow/azeroth-server/data"
 
 #
 #    LogsDir
