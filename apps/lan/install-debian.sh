@@ -82,3 +82,5 @@ fi
 step "Done"
 echo "Start the servers with:  bash $REPO_DIR/apps/lan/start.sh"
 echo "The first start sets up the databases and the bot accounts, which takes several minutes."
+echo "Once the worldserver is up, add the web admin panel and its tunnel (https://ermewow.terpstack.dev) with:"
+echo "  bash $REPO_DIR/apps/lan/install-webadmin.sh && bash $REPO_DIR/apps/lan/install-tunnel.sh"
