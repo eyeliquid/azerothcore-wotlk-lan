@@ -41,15 +41,15 @@ enum LanStatType : uint8
 // Creature templates shipped in data/sql/db-world (keep in sync with the SQL).
 enum LanCreatures : uint32
 {
-    NPC_LAN_OUTFITTER           = 9100001,              // starting-area Tier 6 vendor
-    NPC_LAN_BAG_VENDOR          = 9100002,
-    NPC_LAN_TELEPORTER          = 9100003,
-    NPC_LAN_COMMANDER_VALERIA   = 9100004,
-    NPC_LAN_PROFESSION_VENDOR   = 9100010,              // + profession index (14)
-    NPC_LAN_PROFESSION_TRAINER  = 9100030,              // + profession index (14)
-    NPC_LAN_SPEC_VENDOR         = 9100100,              // + spec index (33)
-    NPC_LAN_FIRST               = 9100001,
-    NPC_LAN_LAST                = 9100199
+    NPC_LAN_OUTFITTER           = 7340001,              // starting-area Tier 6 vendor
+    NPC_LAN_BAG_VENDOR          = 7340002,
+    NPC_LAN_TELEPORTER          = 7340003,
+    NPC_LAN_COMMANDER_VALERIA   = 7340004,
+    NPC_LAN_PROFESSION_VENDOR   = 7340010,              // + profession index (14)
+    NPC_LAN_PROFESSION_TRAINER  = 7340030,              // + profession index (14)
+    NPC_LAN_SPEC_VENDOR         = 7340100,              // + spec index (33)
+    NPC_LAN_FIRST               = 7340001,
+    NPC_LAN_LAST                = 7340199
 };
 
 // Vendor lists that only exist in memory (ObjectMgr::AddVendorItem with persist = false).
