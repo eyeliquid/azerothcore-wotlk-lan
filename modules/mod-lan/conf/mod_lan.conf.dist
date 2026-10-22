@@ -25,6 +25,16 @@ Lan.XPRate = 200
 #        Default:     4 (4 times as fast)
 Lan.SkillGain = 4
 
+#    Lan.TalentRate
+#        Description: Talent points per level from level 10 (overrides Rate.Talent). 0 keeps worldserver.conf.
+#        Default:     3
+Lan.TalentRate = 3
+
+#    Lan.NoResurrectionSickness
+#        Description: Nobody gets resurrection sickness (sets Death.SicknessLevel out of reach).
+#        Default:     1
+Lan.NoResurrectionSickness = 1
+
 #    Lan.StartGold
 #        Description: Gold new characters start with. Overrides StartPlayerMoney.
 #        Default:     150

@@ -10,6 +10,8 @@
 #include "ScriptMgr.h"
 #include "World.h"
 
+#include <limits>
+
 namespace
 {
     LanConfig _config;
@@ -27,6 +29,8 @@ void LoadLanConfig()
     cfg.XPRate = sConfigMgr->GetOption<float>("Lan.XPRate", 200.0f);
     cfg.StartGold = sConfigMgr->GetOption<uint32>("Lan.StartGold", 150);
     cfg.SkillGain = sConfigMgr->GetOption<uint32>("Lan.SkillGain", 4);
+    cfg.TalentRate = sConfigMgr->GetOption<float>("Lan.TalentRate", 3.0f);
+    cfg.NoResurrectionSickness = sConfigMgr->GetOption<bool>("Lan.NoResurrectionSickness", true);
     cfg.SoloRaids = sConfigMgr->GetOption<bool>("Lan.SoloRaids", true);
 
     cfg.AutoLearnClassSpells = sConfigMgr->GetOption<bool>("Lan.AutoLearn.ClassSpells", true);
@@ -87,6 +91,13 @@ public:
             sWorld->setIntConfig(CONFIG_SKILL_GAIN_WEAPON, cfg.SkillGain);
             sWorld->setIntConfig(CONFIG_SKILL_GAIN_DEFENSE, cfg.SkillGain);
         }
+
+        if (cfg.TalentRate > 0.0f)
+            sWorld->setRate(RATE_TALENT, cfg.TalentRate);
+
+        // Resurrection sickness starts at this level, so no character ever gets it
+        if (cfg.NoResurrectionSickness)
+            sWorld->setIntConfig(CONFIG_DEATH_SICKNESS_LEVEL, std::numeric_limits<int32>::max());
 
         sWorld->setIntConfig(CONFIG_START_PLAYER_MONEY, std::min<uint32>(cfg.StartGold * GOLD, MAX_MONEY_AMOUNT));
 

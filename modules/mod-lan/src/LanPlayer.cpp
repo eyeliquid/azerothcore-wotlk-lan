@@ -30,6 +30,7 @@ namespace
         8737, 750, 9116, 196, 197, 198, 199, 200, 201, 202, 227, 264, 266, 1180, 2567, 5011, 15590, 5009
     };
     constexpr uint32 SPELL_DUAL_WIELD = 674;
+    constexpr uint32 SPELL_RESURRECTION_SICKNESS = 15007;
 
     struct LearnCache
     {
@@ -208,6 +209,10 @@ public:
 
     void OnPlayerLogin(Player* player) override
     {
+        // Characters that still had resurrection sickness from before
+        if (GetLanConfig().Enabled && GetLanConfig().NoResurrectionSickness)
+            player->RemoveAurasDueToSpell(SPELL_RESURRECTION_SICKNESS);
+
         if (LanIsRealPlayer(player))
             LanLearnSpells(player);
     }

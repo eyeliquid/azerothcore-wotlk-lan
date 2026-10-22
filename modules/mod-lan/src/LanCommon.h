@@ -93,6 +93,8 @@ struct LanConfig
     float XPRate = 200.0f;
     uint32 StartGold = 150;
     uint32 SkillGain = 4;                               // skill points per skill-up
+    float TalentRate = 3.0f;                            // talent points per level
+    bool NoResurrectionSickness = true;
     bool SoloRaids = true;
 
     bool AutoLearnClassSpells = true;
