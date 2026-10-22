@@ -60,3 +60,10 @@ and belt tinkers are skipped.
 faction through `player_factionchange_items`. Tier 6 comes from the WoWSims TBC Phase 3 presets; the healer
 specs (no TBC sim) are picked by healing stat weights from Phase 3 items, and the death knight specs use the
 warrior plate sets without shields and ranged weapons.
+
+Every list is then checked against the world database and fixed where needed: each piece is the class's
+own armor type (plate, mail, leather, cloth), wearable by the class, available to the faction, and needs no
+reputation or profession. Items that fail are replaced by the best item for the slot that passes (stat
+weights per spec, same tier of content). Jewelcrafter-only Dragon's Eyes are replaced by the matching
+regular gem. Arcanums and shoulder inscriptions have no version without reputation, so their reputation
+requirement is removed.

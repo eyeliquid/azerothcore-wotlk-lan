@@ -266,8 +266,16 @@ namespace
                 for (uint32 gemId : spec.T9Gems[team])
                     AddVendorItem(vendor, gemId, cfg.GearPrice);
                 for (uint32 enchant : spec.T9Enchant[team])
-                    if (auto itr = _enchantItems.find(enchant); itr != _enchantItems.end())
-                        AddVendorItem(vendor, itr->second, cfg.GearPrice);
+                {
+                    auto itr = _enchantItems.find(enchant);
+                    if (itr == _enchantItems.end() || !AddVendorItem(vendor, itr->second, cfg.GearPrice))
+                        continue;
+
+                    // Arcanums and shoulder inscriptions need reputation and have no alternative without it
+                    ItemTemplate* proto = const_cast<ItemTemplate*>(sObjectMgr->GetItemTemplate(itr->second));
+                    proto->RequiredReputationFaction = 0;
+                    proto->RequiredReputationRank = 0;
+                }
             }
         }
 
