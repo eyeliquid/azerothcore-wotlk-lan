@@ -110,6 +110,7 @@ struct LanConfig
     bool RidingFromLevel1 = true;                       // all riding skills right away, at any level
 
     bool HunterPetsAlwaysHappy = true;
+    bool AllFlightPaths = true;
 
     bool PartyAuraEnabled = true;
     uint32 PartyAuraMinPlayers = 3;

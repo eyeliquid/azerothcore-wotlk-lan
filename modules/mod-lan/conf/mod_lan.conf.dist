@@ -69,6 +69,11 @@ Lan.AutoLearn.Riding = 1
 #        Default:     1
 Lan.AutoLearn.RidingFromLevel1 = 1
 
+#    Lan.AllFlightPaths
+#        Description: Every character knows all flight paths of its faction (and the neutral ones) on login.
+#        Default:     1
+Lan.AllFlightPaths = 1
+
 ###################################################################################################
 # HUNTER PETS
 #

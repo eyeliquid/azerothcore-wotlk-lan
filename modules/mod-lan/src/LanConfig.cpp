@@ -39,6 +39,7 @@ void LoadLanConfig()
     cfg.RidingFromLevel1 = sConfigMgr->GetOption<bool>("Lan.AutoLearn.RidingFromLevel1", true);
 
     cfg.HunterPetsAlwaysHappy = sConfigMgr->GetOption<bool>("Lan.HunterPets.AlwaysHappy", true);
+    cfg.AllFlightPaths = sConfigMgr->GetOption<bool>("Lan.AllFlightPaths", true);
 
     cfg.PartyAuraEnabled = sConfigMgr->GetOption<bool>("Lan.PartyAura.Enable", true);
     cfg.PartyAuraMinPlayers = sConfigMgr->GetOption<uint32>("Lan.PartyAura.MinPlayers", 3);

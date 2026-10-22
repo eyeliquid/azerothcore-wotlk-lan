@@ -7,6 +7,7 @@
  */
 
 #include "Chat.h"
+#include "DBCStores.h"
 #include "LanCommon.h"
 #include "ObjectMgr.h"
 #include "Player.h"
@@ -141,6 +142,21 @@ namespace
         }
     }
 
+    // Every flight path of the player's faction (plus the neutral ones, and Acherus for death knights)
+    void LearnAllFlightPaths(Player* player)
+    {
+        TaxiMask const& teamMask = player->GetTeamId(true) == TEAM_ALLIANCE ? sAllianceTaxiNodesMask
+                                                                             : sHordeTaxiNodesMask;
+        bool deathKnight = player->getClass() == CLASS_DEATH_KNIGHT;
+        for (std::size_t field = 0; field < TaxiMaskSize; ++field)
+        {
+            uint32 mask = teamMask[field] | (deathKnight ? sDeathKnightTaxiNodesMask[field] : 0);
+            for (uint32 bit = 0; bit < 32; ++bit)
+                if (mask & (1u << bit))
+                    player->m_taxi.SetTaximaskNode(uint32(field) * 32 + bit + 1);
+        }
+    }
+
     void LearnProficiencies(Player* player)
     {
         for (uint32 spellId : ProficiencySpells)
@@ -211,6 +227,8 @@ void LanLearnSpells(Player* player)
 
     BuildLearnCache();
     LearnProficiencies(player);
+    if (cfg.AllFlightPaths)
+        LearnAllFlightPaths(player);
     if (cfg.AutoLearnRiding && cfg.RidingFromLevel1)
         LearnAllRiding(player);
     LearnTrainerSpells(player);

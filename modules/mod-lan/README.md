@@ -15,6 +15,7 @@ database updater applies on the next worldserver start.
   are learned automatically, for free, on login and level-up. Riding trainers are free as well.
 - Armor and weapon proficiencies the class can use are learned at once, so the starter gear fits from level 1.
 - Raids can be entered without a raid group (`Lan.SoloRaids`, sets `Instance.IgnoreRaid`).
+- Every character knows all flight paths of its faction and the neutral ones (`Lan.AllFlightPaths`).
 - Hunter pets are always happy, so they never need feeding (`Lan.HunterPets.AlwaysHappy`).
 
 ## LAN party aura
