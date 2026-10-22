@@ -26,7 +26,7 @@ gets 10% more experience.
 
 | Where | NPC | What |
 | --- | --- | --- |
-| Every starting area (also Ebon Hold) | Gearwright Holloway | Pick class and spec, buy its Black Temple / Hyjal (Tier 6) best-in-slot set, no level requirement |
+| Every starting area (also Ebon Hold) | Gearwright Holloway | Pick class and spec, buy its full Tier 6 set (all 8 pieces: head, shoulders, chest, hands, legs, wrists, waist, feet) plus best-in-slot neck, back, rings, trinkets and weapons, no level requirement. Death knights get the warrior Onslaught set (DPS or tank version) |
 | Every starting area | Pack Merchant Dunstan | The largest bag of every kind |
 | Every starting area | Apothecary Brennick | Pick potions, food, elixirs or flasks: the best of each for free, usable from level 1 |
 | The 8 capitals and Krasus' Landing | Archmage Telvaris | Teleports to every classic, TBC and WotLK dungeon and raid entrance, and to every zone |

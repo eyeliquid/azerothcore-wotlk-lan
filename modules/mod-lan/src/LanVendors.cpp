@@ -255,6 +255,9 @@ namespace
 
                 ItemTemplate* proto = const_cast<ItemTemplate*>(sObjectMgr->GetItemTemplate(itemId));
                 proto->RequiredLevel = 0;
+
+                // Death knights wear the warrior Onslaught set (TBC has no death knight tier)
+                proto->AllowableClass |= 1 << (spec.ClassId - 1);
             }
 
             // Tier 9 with its gems and enchant items, once per faction
