@@ -10,9 +10,14 @@
 #include "Creature.h"
 #include "LanCommon.h"
 #include "Map.h"
+#include "ObjectAccessor.h"
+#include "ObjectMgr.h"
+#include "Opcodes.h"
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "ScriptedGossip.h"
+#include "WorldPacket.h"
+#include "WorldSession.h"
 
 namespace
 {
@@ -136,6 +141,106 @@ public:
     }
 };
 
+// The 33 Dalaran quartermasters look like a player of their spec in its Tier 9 set. They have
+// UNIT_FLAG2_MIRROR_IMAGE and a player race model (mod_lan_npcs.sql), so the client asks for their
+// appearance with CMSG_GET_MIRRORIMAGE_DATA; the answer carries the armor of the asking player's
+// faction version. The weapons are their creature_equip_template.
+class LanOutfitServerScript : public ServerScript
+{
+public:
+    LanOutfitServerScript() : ServerScript("LanOutfitServerScript", { SERVERHOOK_CAN_PACKET_RECEIVE }) { }
+
+    struct Look
+    {
+        uint8 Race;
+        uint8 Gender;
+    };
+
+    static constexpr std::array<Look, 33> Looks =
+    {{
+        { RACE_NIGHTELF, GENDER_FEMALE },       // Balance Druid
+        { RACE_NIGHTELF, GENDER_MALE },         // Feral (Cat) Druid
+        { RACE_TAUREN, GENDER_MALE },           // Feral (Bear) Druid
+        { RACE_NIGHTELF, GENDER_FEMALE },       // Restoration Druid
+        { RACE_HUMAN, GENDER_MALE },            // Blood (DPS) Death Knight
+        { RACE_ORC, GENDER_MALE },              // Blood (Tank) Death Knight
+        { RACE_BLOODELF, GENDER_MALE },         // Frost Death Knight
+        { RACE_UNDEAD_PLAYER, GENDER_MALE },    // Unholy Death Knight
+        { RACE_DWARF, GENDER_MALE },            // Beast Mastery Hunter
+        { RACE_NIGHTELF, GENDER_FEMALE },       // Marksmanship Hunter
+        { RACE_TROLL, GENDER_MALE },            // Survival Hunter
+        { RACE_HUMAN, GENDER_FEMALE },          // Arcane Mage
+        { RACE_BLOODELF, GENDER_MALE },         // Fire Mage
+        { RACE_GNOME, GENDER_MALE },            // Frostfire Mage
+        { RACE_HUMAN, GENDER_MALE },            // Frost Mage
+        { RACE_BLOODELF, GENDER_FEMALE },       // Holy Paladin
+        { RACE_DWARF, GENDER_MALE },            // Protection Paladin
+        { RACE_HUMAN, GENDER_MALE },            // Retribution Paladin
+        { RACE_DRAENEI, GENDER_FEMALE },        // Discipline Priest
+        { RACE_HUMAN, GENDER_FEMALE },          // Holy Priest
+        { RACE_UNDEAD_PLAYER, GENDER_FEMALE },  // Shadow Priest
+        { RACE_BLOODELF, GENDER_FEMALE },       // Assassination Rogue
+        { RACE_HUMAN, GENDER_MALE },            // Combat Rogue
+        { RACE_NIGHTELF, GENDER_MALE },         // Subtlety Rogue
+        { RACE_DRAENEI, GENDER_MALE },          // Elemental Shaman
+        { RACE_ORC, GENDER_MALE },              // Enhancement Shaman
+        { RACE_TAUREN, GENDER_FEMALE },         // Restoration Shaman
+        { RACE_UNDEAD_PLAYER, GENDER_MALE },    // Affliction Warlock
+        { RACE_GNOME, GENDER_FEMALE },          // Demonology Warlock
+        { RACE_HUMAN, GENDER_FEMALE },          // Destruction Warlock
+        { RACE_HUMAN, GENDER_MALE },            // Arms Warrior
+        { RACE_ORC, GENDER_MALE },              // Fury Warrior
+        { RACE_DWARF, GENDER_MALE },            // Protection Warrior
+    }};
+
+    bool CanPacketReceive(WorldSession* session, WorldPacket const& packet) override
+    {
+        if (packet.GetOpcode() != CMSG_GET_MIRRORIMAGE_DATA || !session)
+            return true;
+
+        Player* player = session->GetPlayer();
+        if (!player || packet.size() < sizeof(uint64))
+            return true;
+
+        WorldPacket copy(packet);
+        ObjectGuid guid;
+        copy >> guid;
+
+        Creature* creature = ObjectAccessor::GetCreature(*player, guid);
+        if (!creature || creature->GetEntry() < NPC_LAN_SPEC_VENDOR ||
+            creature->GetEntry() >= NPC_LAN_SPEC_VENDOR + LanSpecs.size())
+            return true;
+
+        uint8 specIndex = creature->GetEntry() - NPC_LAN_SPEC_VENDOR;
+        LanSpecData const& spec = LanSpecs[specIndex];
+        uint8 team = player->GetTeamId(true) == TEAM_HORDE ? 1 : 0;
+
+        WorldPacket data(SMSG_MIRRORIMAGE_DATA, 68);
+        data << guid;
+        data << uint32(creature->GetDisplayId());
+        data << uint8(Looks[specIndex].Race);
+        data << uint8(Looks[specIndex].Gender);
+        data << uint8(spec.ClassId);
+        data << uint8(0);       // skin
+        data << uint8(0);       // face
+        data << uint8(1);       // hair style
+        data << uint8(1);       // hair color
+        data << uint8(0);       // facial hair
+        data << uint32(0);      // guild
+
+        // Head, shoulders, shirt, chest, waist, legs, feet, wrists, hands, back, tabard as LanGearData slots
+        static constexpr std::array<int8, 11> GearSlots = { 0, 2, -1, 4, 7, 8, 9, 5, 6, 3, -1 };
+        for (int8 gearSlot : GearSlots)
+        {
+            ItemTemplate const* proto = gearSlot >= 0 ? sObjectMgr->GetItemTemplate(spec.T9[team][gearSlot]) : nullptr;
+            data << uint32(proto ? proto->DisplayInfoID : 0);
+        }
+
+        session->SendPacket(&data);
+        return false;
+    }
+};
+
 // The NPC spawns carry approximate heights; put them on the floor below when they enter the map.
 class LanNpcGroundScript : public AllCreatureScript
 {
@@ -163,4 +268,5 @@ void AddSC_lan_npcs()
     new npc_lan_teleporter();
     new npc_lan_commander_valeria();
     new LanNpcGroundScript();
+    new LanOutfitServerScript();
 }

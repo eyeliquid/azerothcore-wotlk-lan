@@ -31,7 +31,7 @@ gets 10% more experience.
 | The 8 capitals and Krasus' Landing | Archmage Telvaris | Teleports to every classic, TBC and WotLK dungeon and raid entrance, and to every zone |
 | Krasus' Landing | Chef Rosalind | The best food and drink for free: feasts, every level 80 Well Fed food, the best food of every pet diet, the best drinks |
 | Krasus' Landing | Commander Valeria | Fills your group to a 10 or 25 player raid, adds a tank, healer or damage dealer bot, dismisses bots |
-| Krasus' Landing | 33 Quartermasters | One per class and spec: Tier 9 (ToC 25H) best-in-slot from the WoWSims Phase 3 presets in your faction's version, with its gems and enchant items, and they enchant your equipped gear |
+| Krasus' Landing | 33 Quartermasters | One per class and spec: Tier 9 (ToC 25H) best-in-slot from the WoWSims Phase 3 presets in your faction's version, with its gems and enchant items, and they enchant your equipped gear. Each one wears its spec's Tier 9 set (your faction's version) and weapons |
 | Antonidas Memorial | 14 Suppliers | One per profession: every recipe, reagent and tool for free; recipe reputation requirements are removed |
 | Antonidas Memorial | 14 Grand Masters | One per profession: every rank from Apprentice to Grand Master and every trainer recipe, at the normal price |
 
