@@ -137,6 +137,115 @@ namespace
         44939   // Lesser Flask of Resistance
     };
 
+    struct LanGem
+    {
+        uint32 ItemId;
+        uint32 Color;                                   // ITEM_SUBCLASS_GEM_*
+    };
+
+    // Burning Crusade: every Sunwell epic cut gem and every cut meta gem
+    constexpr std::array<LanGem, 53> BestGems =
+    {{
+        { 32193, 0 }, // Bold Crimson Spinel
+        { 32197, 0 }, // Bright Crimson Spinel
+        { 32194, 0 }, // Delicate Crimson Spinel
+        { 32199, 0 }, // Flashing Crimson Spinel
+        { 32196, 0 }, // Runed Crimson Spinel
+        { 32198, 0 }, // Subtle Crimson Spinel
+        { 32195, 0 }, // Teardrop Crimson Spinel
+        { 32202, 1 }, // Lustrous Empyrean Sapphire
+        { 32200, 1 }, // Solid Empyrean Sapphire
+        { 32201, 1 }, // Sparkling Empyrean Sapphire
+        { 32203, 1 }, // Stormy Empyrean Sapphire
+        { 32204, 2 }, // Brilliant Lionseye
+        { 32207, 2 }, // Gleaming Lionseye
+        { 32210, 2 }, // Great Lionseye
+        { 32209, 2 }, // Mystic Lionseye
+        { 35761, 2 }, // Quick Lionseye
+        { 32206, 2 }, // Rigid Lionseye
+        { 32205, 2 }, // Smooth Lionseye
+        { 32208, 2 }, // Thick Lionseye
+        { 32213, 3 }, // Balanced Shadowsong Amethyst
+        { 32215, 3 }, // Glowing Shadowsong Amethyst
+        { 32214, 3 }, // Infused Shadowsong Amethyst
+        { 37503, 3 }, // Purified Shadowsong Amethyst
+        { 32216, 3 }, // Royal Shadowsong Amethyst
+        { 32212, 3 }, // Shifting Shadowsong Amethyst
+        { 32211, 3 }, // Sovereign Shadowsong Amethyst
+        { 32225, 4 }, // Dazzling Seaspray Emerald
+        { 32223, 4 }, // Enduring Seaspray Emerald
+        { 35759, 4 }, // Forceful Seaspray Emerald
+        { 32226, 4 }, // Jagged Seaspray Emerald
+        { 32224, 4 }, // Radiant Seaspray Emerald
+        { 35758, 4 }, // Steady Seaspray Emerald
+        { 32220, 5 }, // Glinting Pyrestone
+        { 32217, 5 }, // Inscribed Pyrestone
+        { 32219, 5 }, // Luminous Pyrestone
+        { 32218, 5 }, // Potent Pyrestone
+        { 35760, 5 }, // Reckless Pyrestone
+        { 32221, 5 }, // Veiled Pyrestone
+        { 32222, 5 }, // Wicked Pyrestone
+        { 25897, 6 }, // Bracing Earthstorm Diamond
+        { 25899, 6 }, // Brutal Earthstorm Diamond
+        { 34220, 6 }, // Chaotic Skyfire Diamond
+        { 25890, 6 }, // Destructive Skyfire Diamond
+        { 35503, 6 }, // Ember Skyfire Diamond
+        { 25895, 6 }, // Enigmatic Skyfire Diamond
+        { 35501, 6 }, // Eternal Earthstorm Diamond
+        { 25901, 6 }, // Insightful Earthstorm Diamond
+        { 25893, 6 }, // Mystical Skyfire Diamond
+        { 25896, 6 }, // Powerful Earthstorm Diamond
+        { 32409, 6 }, // Relentless Earthstorm Diamond
+        { 25894, 6 }, // Swift Skyfire Diamond
+        { 25898, 6 }, // Tenacious Earthstorm Diamond
+        { 32410, 6 }, // Thundering Skyfire Diamond
+    }};
+
+    struct GemColor
+    {
+        uint32 Subclass;
+        char const* Name;
+    };
+
+    constexpr std::array<GemColor, 7> GemColors =
+    {{
+        { ITEM_SUBCLASS_GEM_RED, "Red gems (Crimson Spinel)" },
+        { ITEM_SUBCLASS_GEM_BLUE, "Blue gems (Empyrean Sapphire)" },
+        { ITEM_SUBCLASS_GEM_YELLOW, "Yellow gems (Lionseye)" },
+        { ITEM_SUBCLASS_GEM_PURPLE, "Purple gems (Shadowsong Amethyst)" },
+        { ITEM_SUBCLASS_GEM_GREEN, "Green gems (Seaspray Emerald)" },
+        { ITEM_SUBCLASS_GEM_ORANGE, "Orange gems (Pyrestone)" },
+        { ITEM_SUBCLASS_GEM_META, "Meta gems (Earthstorm and Skyfire Diamonds)" }
+    }};
+
+    constexpr std::array<uint32, 10> GroundMounts =
+    {
+        13335,  // Deathcharger's Reins
+        19902,  // Swift Zulian Tiger
+        19872,  // Swift Razzashi Raptor
+        30480,  // Fiery Warhorse's Reins
+        32768,  // Reins of the Raven Lord
+        33809,  // Amani War Bear
+        35513,  // Swift White Hawkstrider
+        49284,  // Reins of the Swift Spectral Tiger
+        38576,  // Big Battle Bear
+        46778   // Magic Rooster Egg
+    };
+
+    constexpr std::array<uint32, 10> FlyingMounts =
+    {
+        50818,  // Invincible's Reins
+        32458,  // Ashes of Al'ar
+        45693,  // Mimiron's Head
+        54811,  // Celestial Steed
+        49636,  // Reins of the Onyxian Drake
+        43986,  // Reins of the Black Drake
+        43954,  // Reins of the Twilight Drake
+        43952,  // Reins of the Azure Drake
+        44175,  // Reins of the Plagued Proto-Drake
+        45801   // Reins of the Ironbound Proto-Drake
+    };
+
     // Consumable categories (offset on LAN_VENDOR_CONSUMABLES)
     constexpr uint32 CONSUMABLE_POTIONS = 0;
     constexpr uint32 CONSUMABLE_FOOD = 1;
@@ -304,6 +413,33 @@ namespace
         addConsumables(CONSUMABLE_FOOD, BestFood);
         addConsumables(CONSUMABLE_ELIXIRS, BestElixirs);
         addConsumables(CONSUMABLE_FLASKS, BestFlasks);
+
+        // Starting areas: Burning Crusade gems, no level requirement
+        for (LanGem const& gem : BestGems)
+        {
+            if (!AddVendorItem(uint32(LAN_VENDOR_GEMS) + gem.Color, gem.ItemId, cfg.GemPrice))
+                continue;
+
+            ItemTemplate* proto = const_cast<ItemTemplate*>(sObjectMgr->GetItemTemplate(gem.ItemId));
+            proto->RequiredLevel = 0;
+        }
+
+        // Mounts, usable at any level and riding skill
+        auto addMounts = [&cfg](uint32 list, auto const& items)
+        {
+            for (uint32 itemId : items)
+            {
+                if (!AddVendorItem(uint32(LAN_VENDOR_MOUNTS) + list, itemId, cfg.MountPrice))
+                    continue;
+
+                ItemTemplate* proto = const_cast<ItemTemplate*>(sObjectMgr->GetItemTemplate(itemId));
+                proto->RequiredLevel = 0;
+                proto->RequiredSkill = 0;
+                proto->RequiredSkillRank = 0;
+            }
+        };
+        addMounts(0, GroundMounts);
+        addMounts(1, FlyingMounts);
     }
 
     void BuildProfessionVendors()
@@ -704,6 +840,61 @@ public:
     }
 };
 
+class npc_lan_gem_vendor : public CreatureScript
+{
+public:
+    npc_lan_gem_vendor() : CreatureScript("npc_lan_gem_vendor") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        ClearGossipMenuFor(player);
+        for (GemColor const& color : GemColors)
+            AddGossipItemFor(player, GOSSIP_ICON_VENDOR, color.Name, GOSSIP_SENDER_MAIN,
+                uint32(ACTION_PAGE) + color.Subclass);
+        SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        if (action >= ACTION_PAGE && action <= uint32(ACTION_PAGE) + ITEM_SUBCLASS_GEM_META)
+        {
+            OpenVendor(player, creature, uint32(LAN_VENDOR_GEMS) + action - ACTION_PAGE);
+            return true;
+        }
+
+        CloseGossipMenuFor(player);
+        return true;
+    }
+};
+
+class npc_lan_mount_vendor : public CreatureScript
+{
+public:
+    npc_lan_mount_vendor() : CreatureScript("npc_lan_mount_vendor") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        ClearGossipMenuFor(player);
+        AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "Ground mounts", GOSSIP_SENDER_MAIN, ACTION_PAGE);
+        AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "Flying mounts", GOSSIP_SENDER_MAIN, uint32(ACTION_PAGE) + 1);
+        SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        if (action == ACTION_PAGE || action == uint32(ACTION_PAGE) + 1)
+        {
+            OpenVendor(player, creature, uint32(LAN_VENDOR_MOUNTS) + action - ACTION_PAGE);
+            return true;
+        }
+
+        CloseGossipMenuFor(player);
+        return true;
+    }
+};
+
 // Dalaran: one per spec, Tier 9 gear in the player's faction version plus gems and enchants
 class npc_lan_spec_vendor : public CreatureScript
 {
@@ -799,6 +990,8 @@ void AddSC_lan_vendors()
     new npc_lan_bag_vendor();
     new npc_lan_food_vendor();
     new npc_lan_consumables_vendor();
+    new npc_lan_gem_vendor();
+    new npc_lan_mount_vendor();
     new npc_lan_spec_vendor();
     new npc_lan_profession_vendor();
 }

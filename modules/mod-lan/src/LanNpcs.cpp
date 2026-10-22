@@ -44,10 +44,17 @@ class npc_lan_teleporter : public CreatureScript
 public:
     npc_lan_teleporter() : CreatureScript("npc_lan_teleporter") { }
 
+    // The starting-area teleporter offers only the first six categories: the dungeons and raids
+    static uint32 CategoryCount(Creature* creature)
+    {
+        return creature->GetEntry() == NPC_LAN_DUNGEON_TELEPORTER ? LAN_TELE_DUNGEON_CATEGORIES
+                                                                   : uint32(LanTeleCategories.size());
+    }
+
     static void ShowCategories(Player* player, Creature* creature)
     {
         ClearGossipMenuFor(player);
-        for (uint32 i = 0; i < LanTeleCategories.size(); ++i)
+        for (uint32 i = 0; i < CategoryCount(creature); ++i)
             AddGossipItemFor(player, GOSSIP_ICON_TAXI, LanTeleCategories[i].Name, GOSSIP_SENDER_MAIN,
                 ACTION_TELE_CATEGORY + i);
         SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
@@ -66,7 +73,7 @@ public:
             CloseGossipMenuFor(player);
             uint32 category = (action - ACTION_TELE_LOCATION) / 100;
             uint32 index = (action - ACTION_TELE_LOCATION) % 100;
-            if (category >= LanTeleCategories.size() || index >= LanTeleCategories[category].Locations.size())
+            if (category >= CategoryCount(creature) || index >= LanTeleCategories[category].Locations.size())
                 return true;
 
             if (player->IsInCombat())
@@ -80,7 +87,7 @@ public:
             return true;
         }
 
-        if (action >= ACTION_TELE_CATEGORY && action < ACTION_TELE_CATEGORY + LanTeleCategories.size())
+        if (action >= ACTION_TELE_CATEGORY && action < ACTION_TELE_CATEGORY + CategoryCount(creature))
         {
             uint32 category = action - ACTION_TELE_CATEGORY;
             ClearGossipMenuFor(player);

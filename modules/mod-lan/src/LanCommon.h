@@ -47,6 +47,9 @@ enum LanCreatures : uint32
     NPC_LAN_COMMANDER_VALERIA   = 7340004,
     NPC_LAN_FOOD_VENDOR         = 7340005,
     NPC_LAN_CONSUMABLES_VENDOR  = 7340006,              // starting-area potions, food, elixirs, flasks
+    NPC_LAN_GEM_VENDOR          = 7340007,              // starting-area Burning Crusade gems
+    NPC_LAN_MOUNT_VENDOR        = 7340008,              // starting areas and Dalaran
+    NPC_LAN_DUNGEON_TELEPORTER  = 7340009,              // starting-area dungeon and raid teleporter
     NPC_LAN_PROFESSION_VENDOR   = 7340010,              // + profession index (14)
     NPC_LAN_PROFESSION_TRAINER  = 7340030,              // + profession index (14)
     NPC_LAN_SPEC_VENDOR         = 7340100,              // + spec index (33)
@@ -61,6 +64,8 @@ enum LanVirtualVendors : uint32
     LAN_VENDOR_BAGS             = 9200100,
     LAN_VENDOR_FOOD             = 9200101,
     LAN_VENDOR_CONSUMABLES      = 9200110,              // + category (potions, food, elixirs, flasks)
+    LAN_VENDOR_GEMS             = 9200120,              // + gem color (ITEM_SUBCLASS_GEM_*)
+    LAN_VENDOR_MOUNTS           = 9200130,              // + 0 ground, 1 flying
     LAN_VENDOR_T9               = 9200200,              // + spec index * 2 + team
     LAN_VENDOR_PROFESSION       = 9201000               // + profession index * 100 + page
 };
@@ -102,6 +107,7 @@ struct LanConfig
     bool AutoLearnClassSpells = true;
     bool AutoLearnQuestSpells = true;
     bool AutoLearnRiding = true;
+    bool RidingFromLevel1 = true;                       // all riding skills right away, at any level
 
     bool HunterPetsAlwaysHappy = true;
 
@@ -112,6 +118,8 @@ struct LanConfig
 
     uint32 GearPrice = 10000;                           // copper per item at the gear and bag vendors
     uint32 FoodPrice = 0;                               // copper per item at the food and consumables vendors
+    uint32 GemPrice = 0;                                // copper per gem at the gem vendor
+    uint32 MountPrice = 0;                              // copper per mount at the mount vendor
     bool BlockSellBack = true;
 
     bool LfgFillEnabled = true;

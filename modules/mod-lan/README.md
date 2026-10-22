@@ -28,6 +28,9 @@ gets 10% more experience.
 | --- | --- | --- |
 | Every starting area (also Ebon Hold) | Gearwright Holloway | Pick class and spec, buy its full Tier 6 set (all 8 pieces: head, shoulders, chest, hands, legs, wrists, waist, feet) plus best-in-slot neck, back, rings, trinkets and weapons, no level requirement. Death knights get the warrior Onslaught set (DPS or tank version) |
 | Every starting area | Pack Merchant Dunstan | The largest bag of every kind |
+| Every starting area | Jeweler Saphira | Pick a color: every Burning Crusade epic cut gem (Crimson Spinel, Empyrean Sapphire, Lionseye, Shadowsong Amethyst, Seaspray Emerald, Pyrestone) and every cut meta gem, free, no level requirement |
+| Every starting area and Krasus' Landing | Stablemaster Korrin | 10 ground and 10 flying mounts, free, usable from level 1 (every riding skill is learned at once) |
+| Every starting area | Portal Keeper Ilsa | Teleports to every classic, TBC and WotLK dungeon and raid entrance |
 | Every starting area | Apothecary Brennick | Pick potions, food, elixirs or flasks: the best of each for free, usable from level 1 |
 | The 8 capitals and Krasus' Landing | Archmage Telvaris | Teleports to every classic, TBC and WotLK dungeon and raid entrance, and to every zone |
 | Krasus' Landing | Chef Rosalind | The best food and drink for free: feasts, every level 80 Well Fed food, the best food of every pet diet, the best drinks |

@@ -36,6 +36,7 @@ void LoadLanConfig()
     cfg.AutoLearnClassSpells = sConfigMgr->GetOption<bool>("Lan.AutoLearn.ClassSpells", true);
     cfg.AutoLearnQuestSpells = sConfigMgr->GetOption<bool>("Lan.AutoLearn.QuestSpells", true);
     cfg.AutoLearnRiding = sConfigMgr->GetOption<bool>("Lan.AutoLearn.Riding", true);
+    cfg.RidingFromLevel1 = sConfigMgr->GetOption<bool>("Lan.AutoLearn.RidingFromLevel1", true);
 
     cfg.HunterPetsAlwaysHappy = sConfigMgr->GetOption<bool>("Lan.HunterPets.AlwaysHappy", true);
 
@@ -46,6 +47,8 @@ void LoadLanConfig()
 
     cfg.GearPrice = sConfigMgr->GetOption<uint32>("Lan.Vendors.GearPrice", 10000);
     cfg.FoodPrice = sConfigMgr->GetOption<uint32>("Lan.Vendors.FoodPrice", 0);
+    cfg.GemPrice = sConfigMgr->GetOption<uint32>("Lan.Vendors.GemPrice", 0);
+    cfg.MountPrice = sConfigMgr->GetOption<uint32>("Lan.Vendors.MountPrice", 0);
     cfg.BlockSellBack = sConfigMgr->GetOption<bool>("Lan.Vendors.BlockSellBack", true);
 
     cfg.LfgFillEnabled = sConfigMgr->GetOption<bool>("Lan.LfgFill.Enable", true);

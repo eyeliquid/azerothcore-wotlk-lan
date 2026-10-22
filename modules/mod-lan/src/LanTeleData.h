@@ -13,6 +13,9 @@ struct LanTeleCategory
     std::vector<LanTeleLocation> Locations;
 };
 
+// Classic, TBC and WotLK dungeons and raids come first, then the continents
+constexpr uint32 LAN_TELE_DUNGEON_CATEGORIES = 6;
+
 inline std::vector<LanTeleCategory> const LanTeleCategories =
 {
     { "Classic Dungeons", {

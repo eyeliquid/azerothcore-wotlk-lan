@@ -121,6 +121,26 @@ namespace
         }
     }
 
+    // All riding skills at once, whatever the level: the trainer rules (level, previous rank) are skipped
+    void LearnAllRiding(Player* player)
+    {
+        for (uint32 ridingSpell : RidingSpells)
+        {
+            if (player->HasSpell(ridingSpell))
+                continue;
+
+            auto itr = std::find_if(_cache.Riding.begin(), _cache.Riding.end(),
+                [ridingSpell](auto const& pair) { return pair.second->SpellId == ridingSpell; });
+            if (itr == _cache.Riding.end() || !sScriptMgr->OnPlayerCanLearnSpell(player, ridingSpell))
+                continue;
+
+            if (itr->second->IsCastable())
+                player->CastSpell(player, ridingSpell, true);
+            else
+                player->learnSpell(ridingSpell, false);
+        }
+    }
+
     void LearnProficiencies(Player* player)
     {
         for (uint32 spellId : ProficiencySpells)
@@ -191,6 +211,8 @@ void LanLearnSpells(Player* player)
 
     BuildLearnCache();
     LearnProficiencies(player);
+    if (cfg.AutoLearnRiding && cfg.RidingFromLevel1)
+        LearnAllRiding(player);
     LearnTrainerSpells(player);
 
     if (cfg.AutoLearnQuestSpells)

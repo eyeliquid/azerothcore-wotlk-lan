@@ -63,6 +63,12 @@ Lan.AutoLearn.QuestSpells = 1
 #        Default:     1
 Lan.AutoLearn.Riding = 1
 
+#    Lan.AutoLearn.RidingFromLevel1
+#        Description: With Lan.AutoLearn.Riding, learn every riding skill right away at any level, so the
+#                     mounts can be used from level 1 (flying still only works where the game allows it).
+#        Default:     1
+Lan.AutoLearn.RidingFromLevel1 = 1
+
 ###################################################################################################
 # HUNTER PETS
 #
@@ -109,6 +115,12 @@ Lan.Vendors.GearPrice = 10000
 #                     potions, food, elixirs and flasks vendor.
 #        Default:     0 (free)
 Lan.Vendors.FoodPrice = 0
+
+#    Lan.Vendors.GemPrice / Lan.Vendors.MountPrice
+#        Description: Price in copper at the starting-area gem vendor and at the mount vendors.
+#        Default:     0 (free)
+Lan.Vendors.GemPrice = 0
+Lan.Vendors.MountPrice = 0
 
 #    Lan.Vendors.BlockSellBack
 #        Description: Items the LAN vendors sell for less than their vendor value can't be sold to vendors.
