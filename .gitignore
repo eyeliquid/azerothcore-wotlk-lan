@@ -14,6 +14,7 @@
 !/modules/mod-playerbots
 !/modules/mod-autobalance
 !/modules/mod-lan
+!/modules/mod-player-statistics
 /build*/
 /var/*
 !/var/build/.gitkeep
