@@ -13,6 +13,7 @@
 #include "LanCommon.h"
 #include "Log.h"
 #include "ObjectAccessor.h"
+#include "Pet.h"
 #include "Player.h"
 #include "PlayerbotFactory.h"
 #include "Playerbots.h"
@@ -117,6 +118,24 @@ namespace
 
         botAI->ResetStrategies();
         bot->SaveToDB(false, false);
+    }
+
+    // Hunter pets stay at full happiness (no feeding needed, +25% pet damage)
+    void KeepHunterPetsHappy()
+    {
+        for (auto const& [guid, player] : ObjectAccessor::GetPlayers())
+        {
+            if (!player || !player->IsInWorld() || player->getClass() != CLASS_HUNTER)
+                continue;
+
+            Pet* pet = player->GetPet();
+            if (!pet || pet->getPetType() != HUNTER_PET || !pet->IsAlive())
+                continue;
+
+            uint32 maxHappiness = pet->GetMaxPower(POWER_HAPPINESS);
+            if (pet->GetPower(POWER_HAPPINESS) < maxHappiness)
+                pet->SetPower(POWER_HAPPINESS, maxHappiness);
+        }
     }
 
     void RefreshHelpersAndAura()
@@ -556,6 +575,8 @@ void LanUpdateBots(uint32 diff)
     {
         _botTimer = 0;
         RefreshHelpersAndAura();
+        if (cfg.HunterPetsAlwaysHappy)
+            KeepHunterPetsHappy();
         if (sPlayerbotAIConfig.Enabled)
             UpdatePendingHelpers();
     }

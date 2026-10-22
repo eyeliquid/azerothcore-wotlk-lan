@@ -58,6 +58,43 @@ namespace
         44447   // Dragonscale Ammo Pouch (28)
     };
 
+    // The best food and drink: feasts, the level 80 Well Fed foods, the pet buff treat, the best plain
+    // food of every pet diet (meat, fish, cheese, bread, fungus, fruit) and the best drinks
+    constexpr std::array<uint32, 31> BestFood =
+    {
+        43015,  // Fish Feast
+        34753,  // Great Feast
+        43000,  // Dragonfin Filet
+        42999,  // Blackened Dragonfin
+        34767,  // Firecracker Salmon
+        34755,  // Tender Shoveltusk Steak
+        34754,  // Mega Mammoth Meal
+        34766,  // Poached Northern Sculpin
+        34756,  // Spiced Worm Burger
+        34768,  // Spicy Blue Nettlefish
+        34757,  // Very Burnt Worg
+        34769,  // Imperial Manta Steak
+        42993,  // Spicy Fried Herring
+        42996,  // Snapper Extreme
+        44953,  // Worg Tartare
+        42994,  // Rhinolicious Wormsteak
+        42995,  // Hearty Rhino
+        42997,  // Blackened Worg Steak
+        42998,  // Cuttlesteak
+        34758,  // Mighty Rhino Dogs
+        43001,  // Tracker Snacks
+        43005,  // Spiced Mammoth Treats
+        35953,  // Mead Basted Caribou (meat)
+        35951,  // Poached Emperor Salmon (fish)
+        35952,  // Briny Hardcheese (cheese)
+        35950,  // Sweet Potato Bread (bread)
+        35947,  // Sparkling Frostcap (fungus)
+        35948,  // Savory Snowplum (fruit)
+        33445,  // Honeymint Tea (drink)
+        41731,  // Yeti Milk (drink)
+        42777   // Crusader's Waterskin (drink)
+    };
+
     constexpr uint32 VENDOR_PAGE_SIZE = MAX_VENDOR_ITEMS;
     constexpr uint32 PROFESSION_PAGES_RECIPES = 0;
     constexpr uint32 PROFESSION_PAGES_REAGENTS = 40;
@@ -187,6 +224,9 @@ namespace
 
         for (uint32 bagId : BiggestBags)
             AddVendorItem(LAN_VENDOR_BAGS, bagId, cfg.GearPrice);
+
+        for (uint32 foodId : BestFood)
+            AddVendorItem(LAN_VENDOR_FOOD, foodId, cfg.FoodPrice);
     }
 
     void BuildProfessionVendors()
@@ -541,6 +581,18 @@ public:
     }
 };
 
+class npc_lan_food_vendor : public CreatureScript
+{
+public:
+    npc_lan_food_vendor() : CreatureScript("npc_lan_food_vendor") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        OpenVendor(player, creature, LAN_VENDOR_FOOD);
+        return true;
+    }
+};
+
 // Dalaran: one per spec, Tier 9 gear in the player's faction version plus gems and enchants
 class npc_lan_spec_vendor : public CreatureScript
 {
@@ -634,6 +686,7 @@ void AddSC_lan_vendors()
 {
     new npc_lan_outfitter();
     new npc_lan_bag_vendor();
+    new npc_lan_food_vendor();
     new npc_lan_spec_vendor();
     new npc_lan_profession_vendor();
 }

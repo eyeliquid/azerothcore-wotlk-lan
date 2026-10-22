@@ -47,6 +47,14 @@ Lan.AutoLearn.QuestSpells = 1
 Lan.AutoLearn.Riding = 1
 
 ###################################################################################################
+# HUNTER PETS
+#
+#    Lan.HunterPets.AlwaysHappy
+#        Description: Hunter pets always have full happiness, so they never need feeding.
+#        Default:     1
+Lan.HunterPets.AlwaysHappy = 1
+
+###################################################################################################
 # LAN PARTY AURA
 #
 #    Lan.PartyAura.Enable
@@ -78,6 +86,11 @@ Lan.PartyAura.XPBonus = 10
 #                     and the bag vendor. The profession vendors are always free.
 #        Default:     10000 (1 gold)
 Lan.Vendors.GearPrice = 10000
+
+#    Lan.Vendors.FoodPrice
+#        Description: Price in copper of every item at the Dalaran food vendor.
+#        Default:     0 (free)
+Lan.Vendors.FoodPrice = 0
 
 #    Lan.Vendors.BlockSellBack
 #        Description: Items the LAN vendors sell for less than their vendor value can't be sold to vendors.

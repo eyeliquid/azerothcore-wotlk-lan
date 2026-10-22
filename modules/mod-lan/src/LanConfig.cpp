@@ -32,12 +32,15 @@ void LoadLanConfig()
     cfg.AutoLearnQuestSpells = sConfigMgr->GetOption<bool>("Lan.AutoLearn.QuestSpells", true);
     cfg.AutoLearnRiding = sConfigMgr->GetOption<bool>("Lan.AutoLearn.Riding", true);
 
+    cfg.HunterPetsAlwaysHappy = sConfigMgr->GetOption<bool>("Lan.HunterPets.AlwaysHappy", true);
+
     cfg.PartyAuraEnabled = sConfigMgr->GetOption<bool>("Lan.PartyAura.Enable", true);
     cfg.PartyAuraMinPlayers = sConfigMgr->GetOption<uint32>("Lan.PartyAura.MinPlayers", 3);
     cfg.PartyAuraSpell = sConfigMgr->GetOption<uint32>("Lan.PartyAura.Spell", 20217);
     cfg.PartyAuraXPBonus = sConfigMgr->GetOption<float>("Lan.PartyAura.XPBonus", 10.0f) / 100.0f;
 
     cfg.GearPrice = sConfigMgr->GetOption<uint32>("Lan.Vendors.GearPrice", 10000);
+    cfg.FoodPrice = sConfigMgr->GetOption<uint32>("Lan.Vendors.FoodPrice", 0);
     cfg.BlockSellBack = sConfigMgr->GetOption<bool>("Lan.Vendors.BlockSellBack", true);
 
     cfg.LfgFillEnabled = sConfigMgr->GetOption<bool>("Lan.LfgFill.Enable", true);
