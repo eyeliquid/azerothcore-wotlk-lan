@@ -74,10 +74,10 @@ fi
 step "Installing the panel's Python packages"
 sudo apt-get install -y python3-flask python3-pymysql python3-gunicorn
 
-# The panel's service starts gunicorn with --no-control-socket, which only exists from gunicorn 23 on.
-# Debian 12 ships gunicorn 20, which refuses the option and exits, so start it without it there.
+# The panel's service starts gunicorn with --no-control-socket, which only newer gunicorn versions know.
+# Debian's gunicorn refuses the option and exits, so start it without it when it isn't there.
 sudo mkdir -p /etc/systemd/system/acore-webadmin.service.d
-if [ "$(python3 -c 'import gunicorn; print(gunicorn.version_info[0])')" -lt 23 ]; then
+if ! python3 -m gunicorn --help 2>/dev/null | grep -q -- '--no-control-socket'; then
     sudo tee /etc/systemd/system/acore-webadmin.service.d/old-gunicorn.conf >/dev/null <<EOF
 [Service]
 ExecStart=
