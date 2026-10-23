@@ -6,16 +6,18 @@
 #
 #   bash apps/lan/install-webadmin.sh
 #
-# The panel listens on 127.0.0.1:8090 only. It is reached from outside through the Cloudflare tunnel
-# (apps/lan/install-tunnel.sh) at https://ermewow.terpstack.dev, which terminates TLS, so the panel's own
-# nginx proxy is not installed. Running it again updates the panel and keeps every password.
+# The panel is served over plain HTTP on port 80 of every address of the server (http://192.168.2.35),
+# with a page where players create their own game account (/register). It is meant for the LAN: don't
+# forward port 80 on the router, the panel has a GM console behind its login.
+# Running it again updates the panel and keeps every password. It also removes the Cloudflare tunnel an
+# earlier version of these scripts set up.
 
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 INSTALL_DIR="${INSTALL_DIR:-$HOME/azeroth-server}"
 WORLD_CONF="$INSTALL_DIR/etc/worldserver.conf"
-PANEL_PORT="${PANEL_PORT:-8090}"
+PANEL_PORT="${PANEL_PORT:-80}"
 SOAP_ACCOUNT="WEBADMINSOAP"
 SOAP_ENV="/etc/acore/soap.env"
 
@@ -37,6 +39,7 @@ fi
 
 step "Enabling SOAP on 127.0.0.1:7878 in worldserver.conf (the panel sends GM commands through it)"
 restart_needed=0
+tunnel_removed=0
 if ! grep -qE '^SOAP\.Enabled *= *1' "$WORLD_CONF"; then
     sed -i 's|^SOAP\.Enabled *=.*|SOAP.Enabled = 1|' "$WORLD_CONF"
     restart_needed=1
@@ -71,40 +74,79 @@ PY
     sudo rm -f "$SOAP_ENV"
 fi
 
+if sudo test -f /etc/cloudflared/config.yml \
+    && sudo grep -q 'apps/lan/install-tunnel.sh' /etc/cloudflared/config.yml; then
+    step "Removing the Cloudflare tunnel"
+    if [ -f "$HOME/.cloudflared/cert.pem" ]; then
+        cloudflared tunnel cleanup ermewow >/dev/null 2>&1 || true
+        cloudflared tunnel delete -f ermewow || echo "Could not delete the tunnel at Cloudflare; remove it in the dashboard."
+    fi
+    sudo cloudflared service uninstall || true
+    sudo systemctl disable --now cloudflared >/dev/null 2>&1 || true
+    sudo rm -rf /etc/cloudflared "$HOME/.cloudflared"
+    sudo apt-get purge -y cloudflared || true
+    sudo rm -f /etc/apt/sources.list.d/cloudflared.list /usr/share/keyrings/cloudflare-main.gpg
+    tunnel_removed=1
+fi
+
 step "Installing the panel's Python packages"
 sudo apt-get install -y python3-flask python3-pymysql python3-gunicorn
 
-# The panel's service starts gunicorn with --no-control-socket, which only newer gunicorn versions know.
-# Debian's gunicorn refuses the option and exits, so start it without it when it isn't there.
-sudo mkdir -p /etc/systemd/system/acore-webadmin.service.d
-if ! python3 -m gunicorn --help 2>/dev/null | grep -q -- '--no-control-socket'; then
-    sudo tee /etc/systemd/system/acore-webadmin.service.d/old-gunicorn.conf >/dev/null <<EOF
-[Service]
-ExecStart=
-ExecStart=/usr/bin/python3 -m gunicorn --bind 127.0.0.1:$PANEL_PORT --workers 2 --threads 4 --timeout 30 \
-    --access-logfile - --error-logfile - app:app
-EOF
-else
-    sudo rm -f /etc/systemd/system/acore-webadmin.service.d/old-gunicorn.conf
+listeners="$(sudo ss -Htlnp "sport = :$PANEL_PORT")"
+if [ -n "$listeners" ] && ! grep -q -e gunicorn -e python3 <<<"$listeners"; then
+    echo "Something else already uses port $PANEL_PORT:"
+    echo "$listeners"
+    echo "Stop it (or run with PANEL_PORT=8080) and run this script again."
+    exit 1
 fi
 
-step "Installing the panel (systemd service acore-webadmin, app on 127.0.0.1:$PANEL_PORT)"
-sudo env TLS_MODE=none BIND_ADDR=127.0.0.1 PORT="$PANEL_PORT" \
+# One drop-in sets how the panel runs here:
+# - gunicorn binds 0.0.0.0:$PANEL_PORT itself; CAP_NET_BIND_SERVICE lets the unprivileged service user
+#   open port 80. With no proxy in front, the client address is the real one for the login lockout.
+# - Debian's gunicorn doesn't know --no-control-socket (only newer versions do) and exits on it.
+# - Plain HTTP, so the session cookie must not be marked Secure.
+# - The /register page is switched on.
+gunicorn_extra=""
+if python3 -m gunicorn --help 2>/dev/null | grep -q -- '--no-control-socket'; then
+    gunicorn_extra="--no-control-socket "
+fi
+DROPIN_DIR=/etc/systemd/system/acore-webadmin.service.d
+sudo mkdir -p "$DROPIN_DIR"
+sudo rm -f "$DROPIN_DIR/old-gunicorn.conf" "$DROPIN_DIR/cloudflare-tunnel.conf"
+sudo tee "$DROPIN_DIR/lan.conf" >/dev/null <<EOF
+# Written by apps/lan/install-webadmin.sh; running it again overwrites this file.
+[Service]
+ExecStart=
+ExecStart=/usr/bin/python3 -m gunicorn --bind 0.0.0.0:$PANEL_PORT --workers 2 --threads 4 --timeout 30 \\
+    ${gunicorn_extra}--access-logfile - --error-logfile - app:app
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+Environment=ACORE_WEBADMIN_BEHIND_TLS_PROXY=0
+Environment=ACORE_WEBADMIN_REGISTRATION=1
+EOF
+
+step "Installing the panel (systemd service acore-webadmin, http://0.0.0.0:$PANEL_PORT)"
+sudo env TLS_MODE=none BIND_ADDR=0.0.0.0 PORT="$PANEL_PORT" \
     SOAP_USER="$SOAP_ACCOUNT" SOAP_PASS="$soap_pass" \
     BOT_ACCOUNT_PREFIX=rndbot \
     bash "$REPO_DIR/apps/webadmin/deploy/install.sh"
 
-step "Telling the panel it runs behind Cloudflare (HTTPS cookies, real client IPs for the login lockout)"
-sudo mkdir -p /etc/systemd/system/acore-webadmin.service.d
-printf '[Service]\nEnvironment=ACORE_WEBADMIN_BEHIND_TLS_PROXY=1\n' \
-    | sudo tee /etc/systemd/system/acore-webadmin.service.d/cloudflare-tunnel.conf >/dev/null
-sudo systemctl daemon-reload
-sudo systemctl restart acore-webadmin
+if command -v ufw >/dev/null 2>&1 && sudo ufw status | grep -q "Status: active"; then
+    step "Opening port $PANEL_PORT in the firewall"
+    sudo ufw allow "$PANEL_PORT/tcp"
+fi
 
 step "Done"
-echo "The panel login is printed above (user admin; the password is kept in /etc/acore/webadmin.env)."
+ip="$(hostname -I | awk '{print $1}')"
+url="http://$ip"
+[ "$PANEL_PORT" = 80 ] || url="$url:$PANEL_PORT"
+echo "The panel is at $url  (players create their account at $url/register)."
+echo "Admin login is printed above (user admin; the password is kept in /etc/acore/webadmin.env)."
 echo "Any game account logs in too; its GM level decides what it can do."
-echo "Make it reachable at https://ermewow.terpstack.dev with:  bash $REPO_DIR/apps/lan/install-tunnel.sh"
+if [ "${tunnel_removed:-0}" = 1 ]; then
+    echo
+    echo "The Cloudflare tunnel is removed. Delete the DNS record ermewow.terpstack.dev in the Cloudflare"
+    echo "dashboard (DNS > Records) as well; it points at the tunnel that no longer exists."
+fi
 if [ "$restart_needed" = 1 ]; then
     echo
     echo "SOAP was just switched on: restart the servers so GM commands from the panel work:"
