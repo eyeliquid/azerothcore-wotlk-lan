@@ -41,7 +41,11 @@
         </div>
         <button>Enter command</button>
       </form>
+      {% if REGISTRATION_ENABLED %}
+      <p class="hint secure-note">No account yet? <a href="{{ url_for('register') }}">Create one</a>.</p>
+      {% else %}
       <p class="hint secure-note">Encrypted tailnet access only. Administrative actions remain protected by confirmation and audit controls.</p>
+      {% endif %}
     {% endif %}
     </div>
   </section>

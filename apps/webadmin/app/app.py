@@ -19,10 +19,12 @@ from flask import (
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 import gamedata
+import pymysql
+
 from core import (
-    ADMIN_CFG, AUTH_DB, EXPANSIONS, GM_LEVELS, ROLE_ADMIN, ROLE_GAMEMASTER,
-    ROLE_MODERATOR, ROLE_NAMES, ROLE_PLAYER, authenticate, check_csrf,
-    close_db, csrf_token, query, server_online,
+    ADMIN_CFG, AUTH_DB, BOT_PREFIX, EXPANSIONS, GM_LEVELS, ROLE_ADMIN, ROLE_GAMEMASTER,
+    ROLE_MODERATOR, ROLE_NAMES, ROLE_PLAYER, SOAP_CFG, authenticate, check_csrf,
+    close_db, csrf_token, execute, query, server_online, srp6_make, validate_credentials,
 )
 import bp_accounts
 import bp_chars
@@ -113,6 +115,7 @@ app.jinja_env.globals.update(
     race_name=gamedata.race_name, race_faction=gamedata.race_faction,
     class_name=gamedata.class_name, class_color=gamedata.class_color,
     map_name=gamedata.map_name, zone_name=gamedata.zone_name,
+    REGISTRATION_ENABLED=os.environ.get("ACORE_WEBADMIN_REGISTRATION", "0") == "1",
 )
 
 
@@ -272,6 +275,97 @@ def login():
         _record_failure(user_key)
         flash("Invalid credentials.", "error")
     return render_template("login.html", locked=0)
+
+
+# ---------------------------------------------------------------- self-registration
+#
+# Off unless ACORE_WEBADMIN_REGISTRATION=1 (set by apps/lan/install-webadmin.sh). Anyone who can reach the panel
+# can then create an ordinary player account (gmlevel 0, Wrath of the Lich King). Bounded per source address so
+# one machine cannot fill the account table.
+REGISTRATION_ENABLED = os.environ.get("ACORE_WEBADMIN_REGISTRATION", "0") == "1"
+MIN_USERNAME = 3
+MIN_PASSWORD = 6
+MAX_REGISTRATIONS_PER_IP = 5
+REGISTRATION_WINDOW_SECONDS = 60 * 60
+_registrations = {}
+
+
+def _registration_blocked(ip):
+    now = time.time()
+    stamps = [t for t in _registrations.get(ip, []) if now - t < REGISTRATION_WINDOW_SECONDS]
+    if stamps:
+        _registrations[ip] = stamps
+    else:
+        _registrations.pop(ip, None)
+    if len(_registrations) > MAX_TRACKED_ENTRIES:
+        for key in list(_registrations)[: len(_registrations) // 2]:
+            _registrations.pop(key, None)
+    return len(stamps) >= MAX_REGISTRATIONS_PER_IP
+
+
+def _register_errors(username, password, confirm):
+    errors = validate_credentials(username, password)
+    uname = username.upper()
+    if not errors:
+        if len(username) < MIN_USERNAME:
+            errors.append(f"Username must be at least {MIN_USERNAME} characters.")
+        if len(password) < MIN_PASSWORD:
+            errors.append(f"Password must be at least {MIN_PASSWORD} characters.")
+        if password != confirm:
+            errors.append("The two passwords are not the same.")
+        reserved = {ADMIN_CFG.get("WEB_ADMIN_USER", "").upper(), SOAP_CFG.get("SOAP_USER", "").upper()}
+        if uname.startswith(BOT_PREFIX) or uname in reserved:
+            errors.append("That username is reserved.")
+    return errors
+
+
+def _realm_address():
+    try:
+        row = query(f"SELECT address FROM {AUTH_DB}.realmlist ORDER BY id LIMIT 1", one=True)
+    except Exception:
+        row = None
+    return row["address"] if row else None
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if not REGISTRATION_ENABLED:
+        abort(404)
+    if session.get("authed"):
+        return redirect(_default_landing(session.get("role", ROLE_PLAYER)))
+
+    ip = request.remote_addr or "unknown"
+    if request.method == "POST":
+        if _registration_blocked(ip):
+            abort(429, "Too many accounts created from this address - try again later.")
+        username = (request.form.get("username") or "").strip()
+        password = request.form.get("password") or ""
+        confirm = request.form.get("confirm") or ""
+        errors = _register_errors(username, password, confirm)
+        uname = username.upper()
+        if not errors and query(f"SELECT id FROM {AUTH_DB}.account WHERE username=%s", (uname,), one=True):
+            errors.append(f"The account '{uname}' already exists.")
+        if not errors:
+            salt, verifier = srp6_make(uname, password)
+            try:
+                execute(
+                    f"""INSERT INTO {AUTH_DB}.account (username, salt, verifier, email, reg_mail, expansion,
+                            joindate, last_ip)
+                        VALUES (%s, %s, %s, '', '', 2, NOW(), %s)""",
+                    (uname, salt, verifier, ip[:15]),
+                )
+            except pymysql.err.IntegrityError:
+                errors.append(f"The account '{uname}' already exists.")
+        if errors:
+            for e in errors:
+                flash(e, "error")
+            return render_template("register.html", username=username), 400
+
+        _registrations.setdefault(ip, []).append(time.time())
+        app.logger.info("REGISTER account=%s remote=%s", uname, ip)
+        return render_template("register.html", created=uname, realm_address=_realm_address())
+
+    return render_template("register.html", username="")
 
 
 @app.route("/logout", methods=["POST"])

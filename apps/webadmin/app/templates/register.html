@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Create account{% endblock %}
+{% block body %}
+<div class="login-shell">
+  <section class="login-art" aria-label="Frozen citadel illustration">
+    <svg viewBox="0 0 520 520" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <radialGradient id="rg" cx="50%" cy="30%" r="70%"><stop stop-color="#67c9f4" stop-opacity=".25"/><stop offset="1" stop-color="#06101a" stop-opacity="0"/></radialGradient>
+        <linearGradient id="rm" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#759db5"/><stop offset="1" stop-color="#09131d"/></linearGradient>
+      </defs>
+      <rect width="520" height="520" fill="url(#rg)"/>
+      <g fill="none" stroke="#bdeeff" stroke-opacity=".20">
+        <path d="M78 70l22 22-22 22-22-22zM426 112l18 18-18 18-18-18z"/>
+        <path d="M260 28v76m-38-38h76M222 28l76 76m0-76l-76 76"/>
+      </g>
+      <path d="M0 335L85 214l62 82 87-154 72 139 72-93 73 102 69-60v290H0Z" fill="url(#rm)" opacity=".78"/>
+      <path d="M137 408h250l-25-35-12-119-38-22-15-89-18 89-39 24-13 117-22 34-17-66-27-18-13-74-15 74-28 18z" fill="#050a10"/>
+      <path d="M0 415q124-32 260 0t260 0v105H0z" fill="#c8f1ff" opacity=".09"/>
+    </svg>
+    <div class="login-art-copy">
+      <div class="eyebrow">&#10052; Join the realm</div>
+      <h1>Create your account</h1>
+      <p>One account for the game and for this site.</p>
+    </div>
+  </section>
+  <section class="card login-card"{% if created %} style="justify-content:flex-start"{% endif %}>
+    <h2>{% if created %}Account created{% else %}Create account{% endif %}</h2>
+    <div class="card-body">
+    {% if created %}
+      <div class="flash ok">Your account <strong>{{ created }}</strong> is ready.</div>
+      <p class="hint">Log in to the game with this username and password.
+      {% if realm_address %}Your client's <code>realmlist.wtf</code> must say:</p>
+      <p><code>set realmlist {{ realm_address }}</code></p>
+      {% else %}</p>{% endif %}
+      <p class="hint">The same login works on this site, where you can see your characters and change your password.</p>
+      <form method="get" action="{{ url_for('login') }}"><button>Sign in</button></form>
+    {% else %}
+      <form method="post">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <div class="field" style="margin-bottom:14px">
+          <label for="u">Username</label>
+          <input id="u" name="username" value="{{ username }}" autocomplete="username" autofocus required
+                 minlength="3" maxlength="16" pattern="[A-Za-z0-9]+" title="3 to 16 letters and numbers">
+        </div>
+        <div class="field" style="margin-bottom:14px">
+          <label for="p">Password</label>
+          <input id="p" name="password" type="password" autocomplete="new-password" required
+                 minlength="6" maxlength="16" title="6 to 16 characters">
+        </div>
+        <div class="field" style="margin-bottom:18px">
+          <label for="c">Password again</label>
+          <input id="c" name="confirm" type="password" autocomplete="new-password" required
+                 minlength="6" maxlength="16">
+        </div>
+        <button>Create account</button>
+      </form>
+      <p class="hint secure-note">Username: 3 to 16 letters and numbers. Password: 6 to 16 characters
+        (the game client can't send more). Already have an account? <a href="{{ url_for('login') }}">Sign in</a>.</p>
+    {% endif %}
+    </div>
+  </section>
+</div>
+{% endblock %}
