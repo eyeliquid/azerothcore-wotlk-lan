@@ -71,6 +71,23 @@ PY
     sudo rm -f "$SOAP_ENV"
 fi
 
+step "Installing the panel's Python packages"
+sudo apt-get install -y python3-flask python3-pymysql python3-gunicorn
+
+# The panel's service starts gunicorn with --no-control-socket, which only exists from gunicorn 23 on.
+# Debian 12 ships gunicorn 20, which refuses the option and exits, so start it without it there.
+sudo mkdir -p /etc/systemd/system/acore-webadmin.service.d
+if [ "$(python3 -c 'import gunicorn; print(gunicorn.version_info[0])')" -lt 23 ]; then
+    sudo tee /etc/systemd/system/acore-webadmin.service.d/old-gunicorn.conf >/dev/null <<EOF
+[Service]
+ExecStart=
+ExecStart=/usr/bin/python3 -m gunicorn --bind 127.0.0.1:$PANEL_PORT --workers 2 --threads 4 --timeout 30 \
+    --access-logfile - --error-logfile - app:app
+EOF
+else
+    sudo rm -f /etc/systemd/system/acore-webadmin.service.d/old-gunicorn.conf
+fi
+
 step "Installing the panel (systemd service acore-webadmin, app on 127.0.0.1:$PANEL_PORT)"
 sudo env TLS_MODE=none BIND_ADDR=127.0.0.1 PORT="$PANEL_PORT" \
     SOAP_USER="$SOAP_ACCOUNT" SOAP_PASS="$soap_pass" \
