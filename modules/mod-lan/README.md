@@ -26,7 +26,7 @@ gets 10% more experience.
 
 | Where | NPC | What |
 | --- | --- | --- |
-| Every starting area (also Ebon Hold) | Gearwright Holloway | Pick class and spec, buy its full Tier 6 set (all 8 pieces: head, shoulders, chest, hands, legs, wrists, waist, feet) plus best-in-slot neck, back, rings, trinkets and weapons, no level requirement. Death knights get the warrior Onslaught set (DPS or tank version) |
+| Every starting area, Ebon Hold and Krasus' Landing | Pathfinder Maren | The adventure route (below): quests from level 1 to 80, the dungeon teleports and the Tier 6 token exchange |
 | Every starting area | Pack Merchant Dunstan | The largest bag of every kind |
 | Every starting area | Jeweler Saphira | Pick a color: every Burning Crusade epic cut gem (Crimson Spinel, Empyrean Sapphire, Lionseye, Shadowsong Amethyst, Seaspray Emerald, Pyrestone) and every cut meta gem, free, no level requirement |
 | Every starting area and Krasus' Landing | Stablemaster Korrin | 10 ground and 10 flying mounts, free, usable from level 1 (every riding skill is learned at once) |
@@ -46,6 +46,33 @@ The enchanting quartermasters use the spec's enchants. An enchant that needs a p
 replaced by the best one anyone can use (Greater Inscriptions for the Master's Inscriptions, Arcanum for the
 Mind Amplification Dish, regular cloak, bracer, glove and boot enchants for the profession ones); ring enchants
 and belt tinkers are skipped.
+
+## Adventure route
+
+Pathfinder Maren (every starting area, Ebon Hold and Krasus' Landing) leads a new character from level 1 to 80.
+
+1. **Starting area:** 10 quests, each "defeat X enemies" (any kill counts, also for the group). Each one rewards
+   a choice of six: cloth, leather (agility or caster), mail (agility or caster) or plate. Quests 1-5 give the
+   Dungeon Set 3 pieces, 6-8 blue bracers, belt and boots, 9 a weapon and 10 an off-hand; all usable from
+   level 1. Quest 10 sets the level to 10.
+2. **Ragefire Chasm to the Shadow Labyrinth (level 10-70):** one quest per dungeon (Ragefire Chasm, Deadmines,
+   Shadowfang Keep, Scarlet Monastery Cathedral, Razorfen Downs, Uldaman, Zul'Farrak, Maraudon, Sunken Temple,
+   Blackrock Depths, Stratholme, Hellfire Ramparts, Blood Furnace, Slave Pens, Underbog, Mana-Tombs, Auchenai
+   Crypts, Steamvault, Sethekk Halls, Shadow Labyrinth): kill the last boss. Each quest gives a Tier 6 token;
+   Maren exchanges it for the item of the spec you pick (the 17 slots of the Tier 6 lists in `LanGearData.h`,
+   three dungeons give a free-choice token). The Shadow Labyrinth quest ends with a teleport to Dalaran.
+3. **Utgarde Keep to Utgarde Pinnacle (level 70-80):** 10 WotLK dungeons, 60 Emblems of Heroism each (Naxxramas
+   10-player level gear at the Dalaran emblem quartermasters). The last quest teleports you into Naxxramas.
+
+- Accepting a dungeon quest teleports you and every group member on the same map inside the dungeon; group
+  members who can take the quest get it too. Maren's "Take me and my group to ..." does the same later.
+- The boss kill counts for everyone in the instance, and Maren appears next to the boss for an hour
+  (`Lan.Route.KeeperDespawn`). Quests can be turned in with any Maren.
+- Turning a quest in raises your level to the next dungeon's level (no level is ever taken away).
+- Mobs in the 30 route dungeons don't attack on their own; they only fight back (`Lan.Route.PassiveMobs`).
+- The dungeons scale to the group size through mod-autobalance (5-player dungeons are enabled for it).
+- Death knights get "A New Road" in Ebon Hold: the gear and tokens of the first part, level 57, and the
+  Stratholme quest next.
 
 ## Bots (mod-playerbots)
 

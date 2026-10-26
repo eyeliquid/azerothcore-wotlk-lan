@@ -8,9 +8,11 @@ void AddSC_lan_player();
 void AddSC_lan_bots();
 void AddSC_lan_vendors();
 void AddSC_lan_npcs();
+void AddSC_lan_route();
 
 void Addmod_lanScripts()
 {
+    AddSC_lan_route();
     AddSC_lan_config();
     AddSC_lan_player();
     AddSC_lan_bots();

@@ -59,6 +59,10 @@ void LoadLanConfig()
     cfg.HelperDamageTaken = 1.0f - sConfigMgr->GetOption<float>("Lan.HelperBots.DamageTakenReduction", 20.0f) / 100.0f;
     cfg.HelperFreeForAllLoot = sConfigMgr->GetOption<bool>("Lan.HelperBots.FreeForAllLoot", true);
 
+    cfg.RouteEnabled = sConfigMgr->GetOption<bool>("Lan.Route.Enable", true);
+    cfg.RoutePassiveMobs = sConfigMgr->GetOption<bool>("Lan.Route.PassiveMobs", true);
+    cfg.RouteKeeperDespawn = sConfigMgr->GetOption<uint32>("Lan.Route.KeeperDespawn", 3600);
+
     _config = cfg;
 }
 
@@ -105,8 +109,12 @@ public:
 
     void OnStartup() override
     {
-        if (GetLanConfig().Enabled)
-            LanBuildVendors();
+        if (!GetLanConfig().Enabled)
+            return;
+
+        // The route's Tier 6 tokens rely on the vendors removing the T6 level requirement
+        LanBuildVendors();
+        LanBuildRoute();
     }
 };
 

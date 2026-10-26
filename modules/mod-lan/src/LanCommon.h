@@ -52,6 +52,8 @@ enum LanCreatures : uint32
     NPC_LAN_DUNGEON_TELEPORTER  = 7340009,              // starting-area dungeon and raid teleporter
     NPC_LAN_PROFESSION_VENDOR   = 7340010,              // + profession index (14)
     NPC_LAN_PROFESSION_TRAINER  = 7340030,              // + profession index (14)
+    NPC_LAN_GUIDE               = 7340050,              // adventure route quest giver (also summoned at dungeon bosses)
+    NPC_LAN_KILL_CREDIT         = 7340051,              // kill credit of the starting-area quests (never spawned)
     NPC_LAN_SPEC_VENDOR         = 7340100,              // + spec index (33)
     NPC_LAN_FIRST               = 7340001,
     NPC_LAN_LAST                = 7340199
@@ -69,6 +71,39 @@ enum LanVirtualVendors : uint32
     LAN_VENDOR_T9               = 9200200,              // + spec index * 2 + team
     LAN_VENDOR_PROFESSION       = 9201000               // + profession index * 100 + page
 };
+
+// Adventure route quests and token items shipped in data/sql/db-world/mod_lan_route.sql (keep in sync).
+enum LanRouteQuests : uint32
+{
+    QUEST_LAN_START_FIRST       = 7340001,              // 10 starting-area quests
+    QUEST_LAN_START_LAST        = 7340010,
+    QUEST_LAN_DUNGEON_FIRST     = 7340011,              // 30 dungeon quests (20 classic and TBC, 10 WotLK)
+    QUEST_LAN_DUNGEON_LAST      = 7340040,
+    QUEST_LAN_DEATH_KNIGHT      = 7340041               // death knights join the route at Stratholme
+};
+
+enum LanTokens : uint8
+{
+    LAN_TOKEN_HEAD,
+    LAN_TOKEN_NECK,
+    LAN_TOKEN_SHOULDERS,
+    LAN_TOKEN_BACK,
+    LAN_TOKEN_CHEST,
+    LAN_TOKEN_WRISTS,
+    LAN_TOKEN_HANDS,
+    LAN_TOKEN_WAIST,
+    LAN_TOKEN_LEGS,
+    LAN_TOKEN_FEET,
+    LAN_TOKEN_RING,
+    LAN_TOKEN_TRINKET,
+    LAN_TOKEN_MAIN_HAND,
+    LAN_TOKEN_OFF_HAND,
+    LAN_TOKEN_RANGED,
+    LAN_TOKEN_FREE_CHOICE,
+    LAN_TOKEN_COUNT
+};
+
+constexpr uint32 ITEM_LAN_TOKEN_FIRST = 7340001;        // + LanTokens
 
 struct LanProfession
 {
@@ -129,6 +164,10 @@ struct LanConfig
     float HelperHealingDone = 1.25f;
     float HelperDamageTaken = 0.80f;
     bool HelperFreeForAllLoot = true;
+
+    bool RouteEnabled = true;
+    bool RoutePassiveMobs = true;                       // route dungeon mobs only fight back
+    uint32 RouteKeeperDespawn = 3600;                   // seconds the guide stays at a killed dungeon boss
 };
 
 LanConfig const& GetLanConfig();
@@ -148,6 +187,9 @@ void LanBuildVendors();
 bool LanIsVendorItem(uint32 itemId);
 uint32 LanFindEnchantSpell(uint32 enchantId);
 uint32 LanFindEnchantItem(uint32 enchantId);
+
+// Adventure route
+void LanBuildRoute();
 
 // Helper bots
 enum class LanBotRequest : uint8
