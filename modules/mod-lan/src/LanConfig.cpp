@@ -26,7 +26,6 @@ void LoadLanConfig()
 {
     LanConfig cfg;
     cfg.Enabled = sConfigMgr->GetOption<bool>("Lan.Enable", true);
-    cfg.XPRate = sConfigMgr->GetOption<float>("Lan.XPRate", 200.0f);
     cfg.StartGold = sConfigMgr->GetOption<uint32>("Lan.StartGold", 150);
     cfg.SkillGain = sConfigMgr->GetOption<uint32>("Lan.SkillGain", 4);
     cfg.TalentRate = sConfigMgr->GetOption<float>("Lan.TalentRate", 3.0f);
@@ -79,14 +78,6 @@ public:
         if (!cfg.Enabled)
             return;
 
-        if (cfg.XPRate > 0.0f)
-        {
-            sWorld->setRate(RATE_XP_KILL, cfg.XPRate);
-            sWorld->setRate(RATE_XP_QUEST, cfg.XPRate);
-            sWorld->setRate(RATE_XP_QUEST_DF, cfg.XPRate);
-            sWorld->setRate(RATE_XP_EXPLORE, cfg.XPRate);
-        }
-
         // Professions (crafting, gathering, fishing), weapon skills and defense
         if (cfg.SkillGain > 0)
         {
@@ -108,7 +99,7 @@ public:
         if (cfg.SoloRaids)
             sWorld->setBoolConfig(CONFIG_INSTANCE_IGNORE_RAID, true);
 
-        LOG_INFO("module", "mod-lan: XP x{}, skill gain x{}, start gold {}, solo raids {}", cfg.XPRate, cfg.SkillGain,
+        LOG_INFO("module", "mod-lan: skill gain x{}, start gold {}, solo raids {}", cfg.SkillGain,
             cfg.StartGold, cfg.SoloRaids);
     }
 

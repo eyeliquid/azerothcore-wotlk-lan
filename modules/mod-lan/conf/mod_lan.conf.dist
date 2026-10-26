@@ -12,12 +12,6 @@
 #        Default:     1
 Lan.Enable = 1
 
-#    Lan.XPRate
-#        Description: Experience rate for kills, quests and exploration. Overrides the Rate.XP.*
-#                     values of worldserver.conf. 0 keeps the worldserver.conf values.
-#        Default:     200
-Lan.XPRate = 200
-
 #    Lan.SkillGain
 #        Description: Skill points gained per skill-up, for professions (crafting, gathering, fishing),
 #                     weapon skills and defense. Overrides SkillGain.* in worldserver.conf.
