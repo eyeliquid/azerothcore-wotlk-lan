@@ -12,6 +12,7 @@ database updater applies on the next worldserver start.
 - Always fully rested: kills give double experience, the rested bonus is topped up all the time (`Lan.AlwaysRested`).
 - Three times as many enemies in the eight starting zones (`Lan.StartZones.SpawnMultiplier`): every normal
   mob up to level 15 gets two copies a few yards away. The quest kill counts stay the same.
+- Hearthstone cooldown of 5 minutes instead of 60 (`Lan.HearthstoneCooldown`).
 - New characters start with 150 gold (`Lan.StartGold`, overrides `StartPlayerMoney`).
 - Class trainer spells, class quest spells (and the shaman totems) and riding up to Cold Weather Flying
   are learned automatically, for free, on login and level-up. Riding trainers are free as well.

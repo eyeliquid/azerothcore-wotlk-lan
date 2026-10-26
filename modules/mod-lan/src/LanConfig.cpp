@@ -6,6 +6,7 @@
 #include "Config.h"
 #include "LanCommon.h"
 #include "Log.h"
+#include "ObjectMgr.h"
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "World.h"
@@ -15,6 +16,21 @@
 namespace
 {
     LanConfig _config;
+
+    constexpr uint32 ITEM_HEARTHSTONE = 6948;
+
+    // The item's own cooldown wins over the spell's 60 minutes, and it is sent to the client with the item
+    void SetHearthstoneCooldown(uint32 seconds)
+    {
+        ItemTemplate const* proto = sObjectMgr->GetItemTemplate(ITEM_HEARTHSTONE);
+        if (!proto || !seconds)
+            return;
+
+        ItemTemplate* hearthstone = const_cast<ItemTemplate*>(proto);
+        hearthstone->Spells[0].SpellCooldown = int32(seconds * IN_MILLISECONDS);
+        hearthstone->Spells[0].SpellCategoryCooldown = -1;
+        LOG_INFO("module", "mod-lan: Hearthstone cooldown {} seconds", seconds);
+    }
 }
 
 LanConfig const& GetLanConfig()
@@ -32,6 +48,7 @@ void LoadLanConfig()
     cfg.NoResurrectionSickness = sConfigMgr->GetOption<bool>("Lan.NoResurrectionSickness", true);
     cfg.AlwaysRested = sConfigMgr->GetOption<bool>("Lan.AlwaysRested", true);
     cfg.StartZoneSpawnMultiplier = sConfigMgr->GetOption<uint32>("Lan.StartZones.SpawnMultiplier", 3);
+    cfg.HearthstoneCooldown = sConfigMgr->GetOption<uint32>("Lan.HearthstoneCooldown", 300);
     cfg.SoloRaids = sConfigMgr->GetOption<bool>("Lan.SoloRaids", true);
 
     cfg.AutoLearnClassSpells = sConfigMgr->GetOption<bool>("Lan.AutoLearn.ClassSpells", true);
@@ -118,6 +135,7 @@ public:
         LanBuildVendors();
         LanBuildRoute();
         LanBuildStartZoneSpawns();
+        SetHearthstoneCooldown(GetLanConfig().HearthstoneCooldown);
     }
 };
 

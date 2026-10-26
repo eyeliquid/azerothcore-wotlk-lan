@@ -138,6 +138,7 @@ struct LanConfig
     bool NoResurrectionSickness = true;
     bool AlwaysRested = true;                           // rested XP is topped up to the maximum all the time
     uint32 StartZoneSpawnMultiplier = 3;                // enemy spawns in the starting zones (1 = unchanged)
+    uint32 HearthstoneCooldown = 300;                   // seconds (0 keeps the normal 60 minutes)
     bool SoloRaids = true;
 
     bool AutoLearnClassSpells = true;
