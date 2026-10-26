@@ -35,6 +35,14 @@ Lan.NoResurrectionSickness = 1
 #        Default:     1
 Lan.AlwaysRested = 1
 
+#    Lan.StartZones.SpawnMultiplier
+#        Description: Enemies in the eight starting zones (Elwynn Forest, Dun Morogh, Tirisfal Glades, Durotar,
+#                     Mulgore, Teldrassil, Azuremyst Isle, Eversong Woods). Every hostile or neutral normal mob
+#                     up to level 15 gets copies a few yards away: 3 means three times as many. Rares, elites,
+#                     critters, NPCs with services and pooled or scripted spawns stay single. 1 turns it off.
+#        Default:     3
+Lan.StartZones.SpawnMultiplier = 3
+
 #    Lan.StartGold
 #        Description: Gold new characters start with. Overrides StartPlayerMoney.
 #        Default:     150

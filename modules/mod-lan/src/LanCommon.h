@@ -137,6 +137,7 @@ struct LanConfig
     float TalentRate = 3.0f;                            // talent points per level
     bool NoResurrectionSickness = true;
     bool AlwaysRested = true;                           // rested XP is topped up to the maximum all the time
+    uint32 StartZoneSpawnMultiplier = 3;                // enemy spawns in the starting zones (1 = unchanged)
     bool SoloRaids = true;
 
     bool AutoLearnClassSpells = true;
@@ -191,6 +192,9 @@ uint32 LanFindEnchantItem(uint32 enchantId);
 
 // Adventure route
 void LanBuildRoute();
+
+// Starting zones
+void LanBuildStartZoneSpawns();
 
 // Helper bots
 enum class LanBotRequest : uint8

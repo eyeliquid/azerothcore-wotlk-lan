@@ -31,6 +31,7 @@ void LoadLanConfig()
     cfg.TalentRate = sConfigMgr->GetOption<float>("Lan.TalentRate", 3.0f);
     cfg.NoResurrectionSickness = sConfigMgr->GetOption<bool>("Lan.NoResurrectionSickness", true);
     cfg.AlwaysRested = sConfigMgr->GetOption<bool>("Lan.AlwaysRested", true);
+    cfg.StartZoneSpawnMultiplier = sConfigMgr->GetOption<uint32>("Lan.StartZones.SpawnMultiplier", 3);
     cfg.SoloRaids = sConfigMgr->GetOption<bool>("Lan.SoloRaids", true);
 
     cfg.AutoLearnClassSpells = sConfigMgr->GetOption<bool>("Lan.AutoLearn.ClassSpells", true);
@@ -116,6 +117,7 @@ public:
         // The route's Tier 6 tokens rely on the vendors removing the T6 level requirement
         LanBuildVendors();
         LanBuildRoute();
+        LanBuildStartZoneSpawns();
     }
 };
 
