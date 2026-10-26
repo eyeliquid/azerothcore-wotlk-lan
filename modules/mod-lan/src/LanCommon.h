@@ -97,7 +97,6 @@ inline std::array<LanProfession, 14> const LanProfessions =
 struct LanConfig
 {
     bool Enabled = true;
-    float XPRate = 200.0f;
     uint32 StartGold = 150;
     uint32 SkillGain = 4;                               // skill points per skill-up
     float TalentRate = 3.0f;                            // talent points per level
