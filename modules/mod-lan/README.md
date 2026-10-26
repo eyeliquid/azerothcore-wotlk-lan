@@ -9,6 +9,7 @@ database updater applies on the next worldserver start.
 - Professions, weapon skills and defense level 4 times as fast: 4 points per skill-up (`Lan.SkillGain`).
 - 3 talent points per level instead of 1 (`Lan.TalentRate`).
 - No resurrection sickness (`Lan.NoResurrectionSickness`).
+- Always fully rested: kills give double experience, the rested bonus is topped up all the time (`Lan.AlwaysRested`).
 - New characters start with 150 gold (`Lan.StartGold`, overrides `StartPlayerMoney`).
 - Class trainer spells, class quest spells (and the shaman totems) and riding up to Cold Weather Flying
   are learned automatically, for free, on login and level-up. Riding trainers are free as well.

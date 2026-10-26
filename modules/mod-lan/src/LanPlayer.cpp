@@ -17,6 +17,7 @@
 #include "Trainer.h"
 
 #include <bit>
+#include <limits>
 
 namespace
 {
@@ -32,6 +33,14 @@ namespace
     };
     constexpr uint32 SPELL_DUAL_WIELD = 674;
     constexpr uint32 SPELL_RESURRECTION_SICKNESS = 15007;
+
+    // SetRestBonus caps the value at the maximum (1.5 levels of rested experience by default)
+    void FillRestBonus(Player* player)
+    {
+        LanConfig const& cfg = GetLanConfig();
+        if (cfg.Enabled && cfg.AlwaysRested && LanIsRealPlayer(player))
+            player->SetRestBonus(std::numeric_limits<float>::max());
+    }
 
     struct LearnCache
     {
@@ -255,16 +264,23 @@ public:
 
         if (LanIsRealPlayer(player))
             LanLearnSpells(player);
+
+        FillRestBonus(player);
     }
 
     void OnPlayerLevelChanged(Player* player, uint8 /*oldLevel*/) override
     {
         if (LanIsRealPlayer(player))
             LanLearnSpells(player);
+
+        FillRestBonus(player);
     }
 
+    // Runs before the kill experience takes its rested part, so every kill gets the full bonus
     void OnPlayerGiveXP(Player* player, uint32& amount, Unit* /*victim*/, uint8 /*xpSource*/) override
     {
+        FillRestBonus(player);
+
         LanConfig const& cfg = GetLanConfig();
         if (!cfg.Enabled || !cfg.PartyAuraEnabled || !LanIsRealPlayer(player))
             return;

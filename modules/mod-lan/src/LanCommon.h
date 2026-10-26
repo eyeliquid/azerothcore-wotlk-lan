@@ -136,6 +136,7 @@ struct LanConfig
     uint32 SkillGain = 4;                               // skill points per skill-up
     float TalentRate = 3.0f;                            // talent points per level
     bool NoResurrectionSickness = true;
+    bool AlwaysRested = true;                           // rested XP is topped up to the maximum all the time
     bool SoloRaids = true;
 
     bool AutoLearnClassSpells = true;

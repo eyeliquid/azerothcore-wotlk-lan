@@ -29,6 +29,12 @@ Lan.TalentRate = 3
 #        Default:     1
 Lan.NoResurrectionSickness = 1
 
+#    Lan.AlwaysRested
+#        Description: Real players are always fully rested: the rested bonus (double experience from kills)
+#                     is topped up to the maximum on login, on level-up and before every experience gain.
+#        Default:     1
+Lan.AlwaysRested = 1
+
 #    Lan.StartGold
 #        Description: Gold new characters start with. Overrides StartPlayerMoney.
 #        Default:     150

@@ -30,6 +30,7 @@ void LoadLanConfig()
     cfg.SkillGain = sConfigMgr->GetOption<uint32>("Lan.SkillGain", 4);
     cfg.TalentRate = sConfigMgr->GetOption<float>("Lan.TalentRate", 3.0f);
     cfg.NoResurrectionSickness = sConfigMgr->GetOption<bool>("Lan.NoResurrectionSickness", true);
+    cfg.AlwaysRested = sConfigMgr->GetOption<bool>("Lan.AlwaysRested", true);
     cfg.SoloRaids = sConfigMgr->GetOption<bool>("Lan.SoloRaids", true);
 
     cfg.AutoLearnClassSpells = sConfigMgr->GetOption<bool>("Lan.AutoLearn.ClassSpells", true);
