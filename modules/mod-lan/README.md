@@ -58,12 +58,11 @@ Pathfinder Maren (every starting area, Ebon Hold and Krasus' Landing) leads a ne
    a choice of six: cloth, leather (agility or caster), mail (agility or caster) or plate. Quests 1-5 give the
    Dungeon Set 3 pieces, 6-8 blue bracers, belt and boots, 9 a weapon and 10 an off-hand; all usable from
    level 1. Quest 10 sets the level to 10.
-2. **Ragefire Chasm to the Shadow Labyrinth (level 10-70):** one quest per dungeon (Ragefire Chasm, Deadmines,
-   Shadowfang Keep, Scarlet Monastery Cathedral, Razorfen Downs, Uldaman, Zul'Farrak, Maraudon, Sunken Temple,
-   Blackrock Depths, Stratholme, Hellfire Ramparts, Blood Furnace, Slave Pens, Underbog, Mana-Tombs, Auchenai
-   Crypts, Steamvault, Sethekk Halls, Shadow Labyrinth): kill the last boss. Each quest gives a Tier 6 token;
-   Maren exchanges it for the item of the spec you pick (the 17 slots of the Tier 6 lists in `LanGearData.h`,
-   three dungeons give a free-choice token). The Shadow Labyrinth quest ends with a teleport to Dalaran.
+2. **Deadmines to the Shadow Labyrinth (level 10-70):** one quest per dungeon (Deadmines, Shadowfang Keep,
+   Scarlet Monastery Cathedral, Uldaman, Zul'Farrak, Blackrock Depths, Stratholme, Hellfire Ramparts, Underbog,
+   Shadow Labyrinth): kill the last boss. Each quest gives two Tier 6 tokens; Maren exchanges them for the items
+   of the spec you pick (the 17 slots of the Tier 6 lists in `LanGearData.h`, plus three free-choice tokens).
+   The Shadow Labyrinth quest ends with a teleport to Dalaran.
 3. **Utgarde Keep to Utgarde Pinnacle (level 70-80):** 10 WotLK dungeons, 60 Emblems of Heroism each (Naxxramas
    10-player level gear at the Dalaran emblem quartermasters). The last quest teleports you into Naxxramas.
 
@@ -72,10 +71,10 @@ Pathfinder Maren (every starting area, Ebon Hold and Krasus' Landing) leads a ne
 - The boss kill counts for everyone in the instance, and Maren appears next to the boss for an hour
   (`Lan.Route.KeeperDespawn`). Quests can be turned in with any Maren.
 - Turning a quest in raises your level to the next dungeon's level (no level is ever taken away).
-- Mobs in the 30 route dungeons don't attack on their own; they only fight back (`Lan.Route.PassiveMobs`).
+- Mobs in the 20 route dungeons don't attack on their own; they only fight back (`Lan.Route.PassiveMobs`).
 - The dungeons scale to the group size through mod-autobalance (5-player dungeons are enabled for it).
-- Death knights get "A New Road" in Ebon Hold: the gear and tokens of the first part, level 57, and the
-  Stratholme quest next.
+- Death knights get "A New Road" in Ebon Hold: the gear and tokens of the starting area and the first six
+  dungeons, level 57, and the Stratholme quest next.
 
 ## Bots (mod-playerbots)
 

@@ -145,13 +145,13 @@ Lan.Vendors.BlockSellBack = 1
 #
 #    Lan.Route.Enable
 #        Description: Pathfinder Maren's quests: 10 starting-area quests, then one quest per dungeon from
-#                     Ragefire Chasm to Utgarde Pinnacle (level 10 to 80). Accepting a dungeon quest
+#                     the Deadmines to Utgarde Pinnacle (level 10 to 80). Accepting a dungeon quest
 #                     teleports the group inside, turning it in raises the level for the next dungeon.
 #        Default:     1
 Lan.Route.Enable = 1
 
 #    Lan.Route.PassiveMobs
-#        Description: Mobs in the 30 route dungeons don't attack on their own; they only fight back.
+#        Description: Mobs in the 20 route dungeons don't attack on their own; they only fight back.
 #        Default:     1
 Lan.Route.PassiveMobs = 1
 

@@ -3,8 +3,9 @@
  * Released under GNU AGPL v3 license: https://github.com/azerothcore/azerothcore-wotlk/blob/master/LICENSE-AGPL3
  *
  * The adventure route: Pathfinder Maren hands out 10 starting-area quests (Dungeon Set 3, blue extras, a
- * weapon and an off-hand), then one quest per dungeon from Ragefire Chasm to the Shadow Labyrinth (level 10
- * to 70, a Tier 6 token each) and from Utgarde Keep to Utgarde Pinnacle (70 to 80, Emblems of Heroism).
+ * weapon and an off-hand), then one quest per dungeon from the Deadmines to the Shadow Labyrinth (10
+ * dungeons, level 10 to 70, two Tier 6 tokens each) and from Utgarde Keep to Utgarde Pinnacle (70 to 80,
+ * Emblems of Heroism).
  *
  * - Accepting a dungeon quest teleports the player and the group into that dungeon; group members without
  *   the quest get it too.
@@ -48,28 +49,18 @@ namespace
                                                         // Nazan die separately)
     };
 
-    std::array<RouteDungeon, 30> const RouteDungeons =
+    std::array<RouteDungeon, 20> const RouteDungeons =
     {{
-        { 7340011, "Ragefire Chasm",                    389, 2230, 15, { 11520, 0 } },
-        { 7340012, "The Deadmines",                     36,  78,   20, { 639, 0 } },
-        { 7340013, "Shadowfang Keep",                   33,  145,  25, { 4275, 0 } },
-        { 7340014, "the Scarlet Monastery Cathedral",   189, 610,  32, { 3977, 3976 } },
-        { 7340015, "Razorfen Downs",                    129, 442,  37, { 7358, 0 } },
-        { 7340016, "Uldaman",                           70,  286,  42, { 2748, 0 } },
-        { 7340017, "Zul'Farrak",                        209, 924,  46, { 7267, 7797 } },
-        { 7340018, "Maraudon",                          349, 3133, 50, { 12201, 0 } },
-        { 7340019, "the Sunken Temple",                 109, 446,  53, { 5709, 0 } },
-        { 7340020, "Blackrock Depths",                  230, 1466, 57, { 9019, 0 } },
-        { 7340021, "Stratholme",                        329, 2214, 60, { 10440, 0 } },
-        { 7340022, "the Hellfire Ramparts",             543, 4150, 61, { 17537, 17536 } },
-        { 7340023, "the Blood Furnace",                 542, 4152, 62, { 17377, 0 } },
-        { 7340024, "the Slave Pens",                    547, 4365, 63, { 17942, 0 } },
-        { 7340025, "the Underbog",                      546, 4363, 64, { 17882, 0 } },
-        { 7340026, "the Mana-Tombs",                    557, 4405, 65, { 18344, 0 } },
-        { 7340027, "the Auchenai Crypts",               558, 4404, 66, { 18373, 0 } },
-        { 7340028, "the Steamvault",                    545, 4364, 67, { 17798, 0 } },
-        { 7340029, "the Sethekk Halls",                 556, 4406, 68, { 18473, 0 } },
-        { 7340030, "the Shadow Labyrinth",              555, 4407, 70, { 18708, 0 } },
+        { 7340011, "The Deadmines",                     36,  78,   17, { 639, 0 } },
+        { 7340012, "Shadowfang Keep",                   33,  145,  24, { 4275, 0 } },
+        { 7340013, "the Scarlet Monastery Cathedral",   189, 610,  31, { 3977, 3976 } },
+        { 7340014, "Uldaman",                           70,  286,  38, { 2748, 0 } },
+        { 7340015, "Zul'Farrak",                        209, 924,  45, { 7267, 7797 } },
+        { 7340016, "Blackrock Depths",                  230, 1466, 52, { 9019, 0 } },
+        { 7340017, "Stratholme",                        329, 2214, 60, { 10440, 0 } },
+        { 7340018, "the Hellfire Ramparts",             543, 4150, 64, { 17537, 17536 } },
+        { 7340019, "the Underbog",                      546, 4363, 67, { 17882, 0 } },
+        { 7340020, "the Shadow Labyrinth",              555, 4407, 70, { 18708, 0 } },
         { 7340031, "Utgarde Keep",                      574, 4745, 71, { 23954, 23980 } },
         { 7340032, "the Nexus",                         576, 4983, 72, { 26723, 0 } },
         { 7340033, "Azjol-Nerub",                       601, 5117, 73, { 29120, 0 } },
@@ -82,7 +73,8 @@ namespace
         { 7340040, "Utgarde Pinnacle",                  575, 4747, 80, { 26861, 0 } }
     }};
 
-    constexpr uint32 QUEST_LAST_TBC_DUNGEON = 7340030;      // Shadow Labyrinth: then off to Dalaran
+    constexpr uint32 QUEST_STRATHOLME = 7340017;            // death knights start here
+    constexpr uint32 QUEST_LAST_TBC_DUNGEON = 7340020;      // Shadow Labyrinth: then off to Dalaran
     constexpr uint32 QUEST_LAST_WOTLK_DUNGEON = 7340040;    // Utgarde Pinnacle: then off to Naxxramas
     constexpr uint32 TRIGGER_NAXXRAMAS = 5191;
     constexpr uint8 LEVEL_AFTER_START = 10;
@@ -94,7 +86,7 @@ namespace
     constexpr float DALARAN_Z = 660.0f;
     constexpr float DALARAN_O = 1.57f;
 
-    // What the starting-area quests and the first ten dungeons would have given a death knight
+    // What the starting-area quests and the dungeons before Stratholme would have given a death knight
     constexpr std::array<uint32, 9> DeathKnightGear =
     {
         28350, 27803, 28205, 27475, 27977,  // Dungeon Set 3 plate: Warhelm, Shoulderguards, Breastplate,
@@ -102,10 +94,10 @@ namespace
         34789, 28375, 28318,                // Bracers of Slaughter, Rubium War-Girdle, Obsidian Clodstompers
         27524                               // Firemaul of Destruction
     };
-    constexpr std::array<uint8, 10> DeathKnightTokens =
+    constexpr std::array<uint8, 12> DeathKnightTokens =
     {
-        LAN_TOKEN_NECK, LAN_TOKEN_BACK, LAN_TOKEN_HANDS, LAN_TOKEN_RING, LAN_TOKEN_TRINKET, LAN_TOKEN_SHOULDERS,
-        LAN_TOKEN_RING, LAN_TOKEN_MAIN_HAND, LAN_TOKEN_WAIST, LAN_TOKEN_OFF_HAND
+        LAN_TOKEN_NECK, LAN_TOKEN_BACK, LAN_TOKEN_HANDS, LAN_TOKEN_RING, LAN_TOKEN_SHOULDERS, LAN_TOKEN_TRINKET,
+        LAN_TOKEN_WAIST, LAN_TOKEN_RING, LAN_TOKEN_MAIN_HAND, LAN_TOKEN_OFF_HAND, LAN_TOKEN_WRISTS, LAN_TOKEN_TRINKET
     };
 
     // LanSpecData::T6 slots (WoWSims order) each token can become; rings and trinkets have two
@@ -368,6 +360,16 @@ namespace
     // After an exchange: offer the next route quest right away, or go back to the main menu
     void ShowNextStep(Player* player, Creature* creature)
     {
+        // Every dungeon gives two tokens: exchange the rest first
+        for (uint8 token = 0; token < LAN_TOKEN_COUNT; ++token)
+        {
+            if (player->HasItemCount(TokenItem(token)))
+            {
+                ShowTokenMenu(player, creature, token);
+                return;
+            }
+        }
+
         for (uint32 questId = QUEST_LAN_START_FIRST; questId <= QUEST_LAN_DEATH_KNIGHT; ++questId)
         {
             Quest const* quest = sObjectMgr->GetQuestTemplate(questId);
@@ -411,8 +413,8 @@ namespace
 
     void GiveDeathKnightStart(Player* player)
     {
-        // The starting-area quests and the first ten dungeons count as done, so Stratholme is next
-        for (uint32 questId = QUEST_LAN_START_FIRST; questId < RouteDungeons[10].QuestId; ++questId)
+        // The starting-area quests and the dungeons before Stratholme count as done, so Stratholme is next
+        for (uint32 questId = QUEST_LAN_START_FIRST; questId < QUEST_STRATHOLME; ++questId)
             if (!player->GetQuestRewardStatus(questId))
                 player->SetRewardedQuest(questId);
 
@@ -494,7 +496,7 @@ public:
         if (questId == QUEST_LAN_START_LAST)
         {
             RaiseLevel(player, LEVEL_AFTER_START);
-            return false;                               // the core offers the Ragefire Chasm quest next
+            return false;                               // the core offers the Deadmines quest next
         }
 
         RouteDungeon const* dungeon = FindDungeonByQuest(questId);
