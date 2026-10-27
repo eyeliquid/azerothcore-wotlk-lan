@@ -1,4 +1,6 @@
--- mod-lan: every mob in the Scarlet Monastery drops The Scarlet Key (7146) for players who don't have it yet,
+-- mod-lan: Scarlet Monastery for the adventure route.
+
+-- Every mob in the Scarlet Monastery drops The Scarlet Key (7146) for players who don't have it yet,
 -- so the adventure route can open the Cathedral without the Library's Doan's Strongbox.
 -- The loot ids below are those of the creatures spawned on map 189. Scarlet Sentry and Suffering Victim also
 -- stand outside in Tirisfal, so the key only drops inside the Scarlet Monastery (map 189).
@@ -120,3 +122,8 @@ INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry
 (1, 6489, 7146, 0, 0, 22, 0, 189, 0, 0, 0, 0, 0, '', 'mod-lan: The Scarlet Key only in the Scarlet Monastery'),
 (1, 6490, 7146, 0, 0, 22, 0, 189, 0, 0, 0, 0, 0, '', 'mod-lan: The Scarlet Key only in the Scarlet Monastery'),
 (1, 6547, 7146, 0, 0, 22, 0, 189, 0, 0, 0, 0, 0, '', 'mod-lan: The Scarlet Key only in the Scarlet Monastery');
+
+-- Scarlet Commander Mograine no longer calls the whole Cathedral to the fight: his "In Combat - Set Instance Data 1
+-- to 1" makes the instance send every Monk, Abbot, Champion, Centurion, Wizard and Chaplain in the hall at the
+-- player. The rest of the Mograine and Whitemane event (resurrection, door, evade) doesn't use that state.
+DELETE FROM `smart_scripts` WHERE `entryorguid` = 3976 AND `source_type` = 0 AND `id` = 2 AND `action_type` = 34 AND `action_param1` = 1 AND `action_param2` = 1;

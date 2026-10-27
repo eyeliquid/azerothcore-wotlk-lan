@@ -73,6 +73,8 @@ Pathfinder Maren (every starting area, Ebon Hold and Krasus' Landing) leads a ne
   (`Lan.Route.KeeperDespawn`). Quests can be turned in with any Maren.
 - Every mob in the Scarlet Monastery drops The Scarlet Key (for the Cathedral door) for players who don't have
   it yet (`mod_lan_scarlet_key.sql`).
+- Scarlet Commander Mograine fights alone: he no longer pulls every mob in the Cathedral hall along
+  (`mod_lan_scarlet_key.sql`).
 - Turning a quest in raises your level to the next dungeon's level (no level is ever taken away).
 - Mobs in the 20 route dungeons don't attack on their own; they only fight back (`Lan.Route.PassiveMobs`).
 - The dungeons scale to the group size through mod-autobalance (5-player dungeons are enabled for it).
