@@ -2,8 +2,8 @@
  * mod-lan: LAN party features for AzerothCore + mod-playerbots.
  * Released under GNU AGPL v3 license: https://github.com/azerothcore/azerothcore-wotlk/blob/master/LICENSE-AGPL3
  *
- * The adventure route: Pathfinder Maren hands out 10 starting-area quests (Dungeon Set 3, blue extras, a
- * weapon and an off-hand), then one quest per dungeon from the Deadmines to the Shadow Labyrinth (10
+ * The adventure route: Pathfinder Maren hands out 6 starting-area quests (satchels with Dungeon Set 3 and blue
+ * extras, a weapon and an off-hand), then one quest per dungeon from the Deadmines to the Shadow Labyrinth (10
  * dungeons, level 20 to 72, two Tier 6 tokens each) and from Utgarde Keep to Utgarde Pinnacle (5 dungeons,
  * 72 to 80, Emblems of Heroism).
  *
@@ -53,7 +53,7 @@ namespace
     {{
         { 7340011, "The Deadmines",                     36,  78,   25, { 639, 0 } },
         { 7340012, "Shadowfang Keep",                   33,  145,  35, { 4275, 0 } },
-        { 7340013, "the Scarlet Monastery Cathedral",   189, 610,  45, { 3977, 3976 } },
+        { 7340013, "the Scarlet Monastery Armory",      189, 612,  45, { 3975, 0 } },
         { 7340014, "Uldaman",                           70,  286,  50, { 2748, 0 } },
         { 7340015, "Zul'Farrak",                        209, 924,  55, { 7267, 7797 } },
         { 7340016, "Blackrock Depths",                  230, 1466, 60, { 9019, 0 } },
@@ -72,7 +72,21 @@ namespace
     constexpr uint32 QUEST_LAST_TBC_DUNGEON = 7340020;      // Shadow Labyrinth: then off to Dalaran
     constexpr uint32 QUEST_LAST_WOTLK_DUNGEON = 7340035;    // Utgarde Pinnacle: then off to Naxxramas
     constexpr uint32 TRIGGER_NAXXRAMAS = 5191;
-    constexpr uint8 LEVELS_PER_START_QUEST = 2;         // quest 1 to level 2, ..., quest 10 to level 20
+    constexpr std::array<uint8, 6> StartQuestLevels = { 4, 7, 10, 14, 17, 20 };    // level after each start quest
+
+    // The armor in the starting-area satchels (item_loot_template 7340101-7340124): one column per armor profile
+    // (cloth, leather agility, leather caster, mail agility, mail caster, plate), one row per slot
+    constexpr std::array<uint32, 48> StartSatchelGear =
+    {
+        28278, 28224, 28348, 28275, 28349, 28350,   // helm
+        27738, 27797, 27737, 27801, 27802, 27803,   // shoulders
+        28229, 28264, 28202, 28228, 28231, 28205,   // chest
+        27508, 27531, 27468, 27474, 27510, 27475,   // gloves
+        27838, 27837, 27873, 27874, 27909, 27977,   // leggings
+        27462, 27712, 27483, 34698, 27522, 34789,   // bracers
+        27742, 27911, 28398, 27521, 27835, 28375,   // belt
+        27902, 27467, 28251, 27915, 27845, 28318    // boots
+    };
     constexpr uint8 LEVEL_DEATH_KNIGHT = 60;    // Stratholme's level
 
     // Krasus' Landing, in front of Pathfinder Maren
@@ -410,7 +424,7 @@ namespace
     {
         // The starting-area quests and the dungeons before Stratholme count as done, so Stratholme is next
         for (uint32 questId = QUEST_LAN_START_FIRST; questId < QUEST_STRATHOLME; ++questId)
-            if (!player->GetQuestRewardStatus(questId))
+            if (sObjectMgr->GetQuestTemplate(questId) && !player->GetQuestRewardStatus(questId))
                 player->SetRewardedQuest(questId);
 
         std::vector<uint32> items(DeathKnightGear.begin(), DeathKnightGear.end());
@@ -490,8 +504,8 @@ public:
 
         if (questId >= QUEST_LAN_START_FIRST && questId <= QUEST_LAN_START_LAST)
         {
-            RaiseLevel(player, uint8((questId - QUEST_LAN_START_FIRST + 1) * LEVELS_PER_START_QUEST));
-            return false;                               // the core offers the next quest (after 10: the Deadmines)
+            RaiseLevel(player, StartQuestLevels[questId - QUEST_LAN_START_FIRST]);
+            return false;                               // the core offers the next quest (after 6: the Deadmines)
         }
 
         RouteDungeon const* dungeon = FindDungeonByQuest(questId);
@@ -683,6 +697,9 @@ void LanBuildRoute()
     }
 
     for (uint32 itemId : DeathKnightGear)
+        noLevelRequirement(itemId);
+
+    for (uint32 itemId : StartSatchelGear)
         noLevelRequirement(itemId);
 
     // Group members of any level can be taken along

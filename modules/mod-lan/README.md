@@ -55,12 +55,13 @@ and belt tinkers are skipped.
 
 Pathfinder Maren (every starting area, Ebon Hold and Krasus' Landing) leads a new character from level 1 to 80.
 
-1. **Starting area:** 10 quests, each "defeat X enemies" (any kill counts, also for the group). Each one rewards
-   a choice of six: cloth, leather (agility or caster), mail (agility or caster) or plate. Quests 1-5 give the
-   Dungeon Set 3 pieces, 6-8 blue bracers, belt and boots, 9 a weapon and 10 an off-hand; all usable from
-   level 1. Every quest gives two levels: quest 1 sets the level to 2, quest 10 to 20.
+1. **Starting area (level 1-20):** 6 quests, each "defeat X enemies" (any kill counts, also for the group).
+   Quests 1-4 each reward a choice of six satchels, one per armor type: cloth, leather (agility or caster), mail
+   (agility or caster) or plate. A satchel holds two pieces (helm and shoulders, chest and gloves, leggings and
+   bracers, belt and boots: Dungeon Set 3 plus blue extras). Quest 5 gives a weapon, quest 6 an off-hand. All of it
+   is usable from level 1. The quests bring you to level 4, 7, 10, 14, 17 and 20.
 2. **Deadmines to the Shadow Labyrinth (level 20-72):** one quest per dungeon (Deadmines, Shadowfang Keep,
-   Scarlet Monastery Cathedral, Uldaman, Zul'Farrak, Blackrock Depths, Stratholme, Hellfire Ramparts, Underbog,
+   Scarlet Monastery Armory, Uldaman, Zul'Farrak, Blackrock Depths, Stratholme, Hellfire Ramparts, Underbog,
    Shadow Labyrinth): kill the last boss. Each quest gives two Tier 6 tokens; Maren exchanges them for the items
    of the spec you pick (the 17 slots of the Tier 6 lists in `LanGearData.h`, plus three free-choice tokens).
    The Shadow Labyrinth quest ends with a teleport to Dalaran.
@@ -72,7 +73,7 @@ Pathfinder Maren (every starting area, Ebon Hold and Krasus' Landing) leads a ne
   members who can take the quest get it too. Maren's "Take me and my group to ..." does the same later.
 - The boss kill counts for everyone in the instance, and Maren appears next to the boss for an hour
   (`Lan.Route.KeeperDespawn`). Quests can be turned in with any Maren.
-- Every mob in the Scarlet Monastery drops The Scarlet Key (for the Cathedral door) for players who don't have
+- Every mob in the Scarlet Monastery drops The Scarlet Key (for the Armory door) for players who don't have
   it yet (`mod_lan_scarlet_key.sql`).
 - Scarlet Commander Mograine fights alone: he no longer pulls every mob in the Cathedral hall along
   (`mod_lan_scarlet_key.sql`).
