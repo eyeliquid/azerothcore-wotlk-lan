@@ -79,6 +79,8 @@ Pathfinder Maren (every starting area, Ebon Hold and Krasus' Landing) leads a ne
   who don't have one (`mod_lan_zulfarrak.sql`).
 - Every mob in Blackrock Depths drops the Shadowforge Key for players who don't have it, so the Dark Iron Legacy
   quest isn't needed (`mod_lan_blackrock_depths.sql`).
+- Every mob in Uldaman drops the Staff of Prehistoria (Keystone door to Ironaya) and every mob in Stratholme the Key
+  to the City, again only for players who don't have it (`mod_lan_uldaman.sql`, `mod_lan_stratholme.sql`).
 - Scarlet Commander Mograine fights alone: he no longer pulls every mob in the Cathedral hall along
   (`mod_lan_scarlet_key.sql`).
 - Turning a quest in raises your level to the next dungeon's level (no level is ever taken away).
