@@ -77,8 +77,8 @@ enum LanRouteQuests : uint32
 {
     QUEST_LAN_START_FIRST       = 7340001,              // 10 starting-area quests
     QUEST_LAN_START_LAST        = 7340010,
-    QUEST_LAN_DUNGEON_FIRST     = 7340011,              // 7340011-7340020 classic and TBC, 7340031-7340040 WotLK
-    QUEST_LAN_DUNGEON_LAST      = 7340040,
+    QUEST_LAN_DUNGEON_FIRST     = 7340011,              // 7340011-7340020 classic and TBC, 7340031-7340035 WotLK
+    QUEST_LAN_DUNGEON_LAST      = 7340035,
     QUEST_LAN_DEATH_KNIGHT      = 7340041               // death knights join the route at Stratholme
 };
 

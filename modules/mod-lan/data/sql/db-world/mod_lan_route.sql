@@ -1,4 +1,4 @@
--- mod-lan: adventure route. Quests 7340001-7340020 and 7340031-7340041 (Pathfinder Maren, NPC 7340050), token items 7340001-7340016.
+-- mod-lan: adventure route. Quests 7340001-7340020, 7340031-7340035 and 7340041 (Pathfinder Maren, NPC 7340050), token items 7340001-7340016.
 -- Keep the quest, item and boss IDs in sync with src/LanCommon.h and src/LanRoute.cpp.
 
 -- Tier 6 tokens, exchanged by Pathfinder Maren for the item of the player's spec
@@ -43,16 +43,11 @@ INSERT INTO `quest_template` (`ID`, `QuestType`, `QuestLevel`, `MinLevel`, `Rewa
 (7340018, 2, -1, 1, 7340019, 7340009, 1, 7340016, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Through the Portal', 'Defeat Vazruden and Nazan in the Hellfire Ramparts.', 'The Hellfire Ramparts is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat Vazruden and Nazan and I will meet you there. Your reward: two Tier 6 tokens, which I exchange for the items of your spec, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 17537, 1, 0),
 (7340019, 2, -1, 1, 7340020, 7340001, 1, 7340016, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Deep in the Bog', 'Defeat The Black Stalker in the Underbog.', 'The Underbog is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat The Black Stalker and I will meet you there. Your reward: two Tier 6 tokens, which I exchange for the items of your spec, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 17882, 1, 0),
 (7340020, 2, -1, 1, 0, 7340005, 1, 7340016, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Echoes of Murmur', 'Defeat Murmur in the Shadow Labyrinth.', 'The Shadow Labyrinth is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat Murmur and I will meet you there. Your reward: two Tier 6 tokens, which I exchange for the items of your spec, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 18708, 1, 0),
-(7340031, 2, -1, 1, 7340032, 40752, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A Northrend Welcome', 'Defeat Ingvar the Plunderer in Utgarde Keep.', 'Utgarde Keep is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat Ingvar the Plunderer and I will meet you there. Your reward: 60 Emblems of Heroism to spend at the emblem quartermasters in Dalaran, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 23954, 1, 0),
-(7340032, 2, -1, 1, 7340033, 40752, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'The Blue Dragon', 'Defeat Keristrasza in the Nexus.', 'The Nexus is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat Keristrasza and I will meet you there. Your reward: 60 Emblems of Heroism to spend at the emblem quartermasters in Dalaran, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 26723, 1, 0),
-(7340033, 2, -1, 1, 7340034, 40752, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'The Spider Kingdom', 'Defeat Anub''arak in Azjol-Nerub.', 'Azjol-Nerub is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat Anub''arak and I will meet you there. Your reward: 60 Emblems of Heroism to spend at the emblem quartermasters in Dalaran, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 29120, 1, 0),
-(7340034, 2, -1, 1, 7340035, 40752, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Whispers of the Old Kingdom', 'Defeat Herald Volazj in Ahn''kahet: The Old Kingdom.', 'Ahn''kahet: The Old Kingdom is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat Herald Volazj and I will meet you there. Your reward: 60 Emblems of Heroism to spend at the emblem quartermasters in Dalaran, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 29311, 1, 0),
-(7340035, 2, -1, 1, 7340036, 40752, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'The Prophet''s Keep', 'Defeat The Prophet Tharon''ja in Drak''Tharon Keep.', 'Drak''Tharon Keep is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat The Prophet Tharon''ja and I will meet you there. Your reward: 60 Emblems of Heroism to spend at the emblem quartermasters in Dalaran, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 26632, 1, 0),
-(7340036, 2, -1, 1, 7340037, 40752, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Hold the Line', 'Defeat Cyanigosa in the Violet Hold.', 'The Violet Hold is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat Cyanigosa and I will meet you there. Your reward: 60 Emblems of Heroism to spend at the emblem quartermasters in Dalaran, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 31134, 1, 0),
-(7340037, 2, -1, 1, 7340038, 40752, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Gods of Gundrak', 'Defeat Gal''darah in Gundrak.', 'Gundrak is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat Gal''darah and I will meet you there. Your reward: 60 Emblems of Heroism to spend at the emblem quartermasters in Dalaran, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 29306, 1, 0),
-(7340038, 2, -1, 1, 7340039, 40752, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Stone Cold', 'Defeat Sjonnir The Ironshaper in the Halls of Stone.', 'The Halls of Stone is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat Sjonnir The Ironshaper and I will meet you there. Your reward: 60 Emblems of Heroism to spend at the emblem quartermasters in Dalaran, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 27978, 1, 0),
-(7340039, 2, -1, 1, 7340040, 40752, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Thunder in the Halls', 'Defeat Loken in the Halls of Lightning.', 'The Halls of Lightning is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat Loken and I will meet you there. Your reward: 60 Emblems of Heroism to spend at the emblem quartermasters in Dalaran, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 28923, 1, 0),
-(7340040, 2, -1, 1, 0, 40752, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'The King of Utgarde', 'Defeat King Ymiron in Utgarde Pinnacle.', 'Utgarde Pinnacle is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat King Ymiron and I will meet you there. Your reward: 60 Emblems of Heroism to spend at the emblem quartermasters in Dalaran, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 26861, 1, 0),
+(7340031, 2, -1, 1, 7340032, 40752, 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A Northrend Welcome', 'Defeat Ingvar the Plunderer in Utgarde Keep.', 'Utgarde Keep is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat Ingvar the Plunderer and I will meet you there. Your reward: 120 Emblems of Heroism to spend at the emblem quartermasters in Dalaran, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 23954, 1, 0),
+(7340032, 2, -1, 1, 7340033, 40752, 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'The Blue Dragon', 'Defeat Keristrasza in the Nexus.', 'The Nexus is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat Keristrasza and I will meet you there. Your reward: 120 Emblems of Heroism to spend at the emblem quartermasters in Dalaran, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 26723, 1, 0),
+(7340033, 2, -1, 1, 7340034, 40752, 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'The Spider Kingdom', 'Defeat Anub''arak in Azjol-Nerub.', 'Azjol-Nerub is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat Anub''arak and I will meet you there. Your reward: 120 Emblems of Heroism to spend at the emblem quartermasters in Dalaran, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 29120, 1, 0),
+(7340034, 2, -1, 1, 7340035, 40752, 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Hold the Line', 'Defeat Cyanigosa in the Violet Hold.', 'The Violet Hold is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat Cyanigosa and I will meet you there. Your reward: 120 Emblems of Heroism to spend at the emblem quartermasters in Dalaran, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 31134, 1, 0),
+(7340035, 2, -1, 1, 0, 40752, 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'The King of Utgarde', 'Defeat King Ymiron in Utgarde Pinnacle.', 'Utgarde Pinnacle is next, $N. I will send you and your group straight inside. The creatures there won''t attack unless you strike first, and the dungeon grows with the size of your group.$B$BDefeat King Ymiron and I will meet you there. Your reward: 120 Emblems of Heroism to spend at the emblem quartermasters in Dalaran, and enough experience to take on the next dungeon.', 'Return to Pathfinder Maren.', 26861, 1, 0),
 (7340041, 2, -1, 55, 7340017, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A New Road', 'Speak with Pathfinder Maren.', 'The Lich King''s grip is broken, death knight. The other heroes started at level 1 and are well on their way.$B$BTake the gear they earned so far, and I will send you to Stratholme to join the adventure.', 'Speak with Pathfinder Maren.', 0, 0, 0);
 
 DELETE FROM `quest_template_addon` WHERE `ID` BETWEEN 7340001 AND 7340041;
@@ -82,11 +77,6 @@ INSERT INTO `quest_template_addon` (`ID`, `AllowableClasses`, `PrevQuestID`) VAL
 (7340033, 0, 7340032),
 (7340034, 0, 7340033),
 (7340035, 0, 7340034),
-(7340036, 0, 7340035),
-(7340037, 0, 7340036),
-(7340038, 0, 7340037),
-(7340039, 0, 7340038),
-(7340040, 0, 7340039),
 (7340041, 32, 0);
 
 DELETE FROM `quest_request_items` WHERE `ID` BETWEEN 7340001 AND 7340041;
@@ -114,13 +104,8 @@ INSERT INTO `quest_request_items` (`ID`, `CompletionText`) VALUES
 (7340031, 'Is Ingvar the Plunderer defeated?'),
 (7340032, 'Is Keristrasza defeated?'),
 (7340033, 'Is Anub''arak defeated?'),
-(7340034, 'Is Herald Volazj defeated?'),
-(7340035, 'Is The Prophet Tharon''ja defeated?'),
-(7340036, 'Is Cyanigosa defeated?'),
-(7340037, 'Is Gal''darah defeated?'),
-(7340038, 'Is Sjonnir The Ironshaper defeated?'),
-(7340039, 'Is Loken defeated?'),
-(7340040, 'Is King Ymiron defeated?');
+(7340034, 'Is Cyanigosa defeated?'),
+(7340035, 'Is King Ymiron defeated?');
 
 DELETE FROM `quest_offer_reward` WHERE `ID` BETWEEN 7340001 AND 7340041;
 INSERT INTO `quest_offer_reward` (`ID`, `RewardText`) VALUES
@@ -133,7 +118,7 @@ INSERT INTO `quest_offer_reward` (`ID`, `RewardText`) VALUES
 (7340007, 'Well fought, $N. Choose the belt that suits you.'),
 (7340008, 'Well fought, $N. Choose the boots that suits you.'),
 (7340009, 'Well fought, $N. Choose the weapon that suits you.'),
-(7340010, 'You are ready, $N: you reached level 10. Choose your off-hand, and then the real adventure begins.'),
+(7340010, 'You are ready, $N: you reached level 20. Choose your off-hand, and then the real adventure begins.'),
 (7340011, 'Well done, $N. Pick the items of your spec, and on to the next dungeon.'),
 (7340012, 'Well done, $N. Pick the items of your spec, and on to the next dungeon.'),
 (7340013, 'Well done, $N. Pick the items of your spec, and on to the next dungeon.'),
@@ -143,17 +128,12 @@ INSERT INTO `quest_offer_reward` (`ID`, `RewardText`) VALUES
 (7340017, 'Well done, $N. Pick the items of your spec, and on to the next dungeon.'),
 (7340018, 'Well done, $N. Pick the items of your spec, and on to the next dungeon.'),
 (7340019, 'Well done, $N. Pick the items of your spec, and on to the next dungeon.'),
-(7340020, 'Outland is behind you, $N, and you are level 70. A portal to Dalaran is waiting: find me at Krasus'' Landing to exchange your token and start on Northrend.'),
+(7340020, 'Outland is behind you, $N, and you are level 72. A portal to Dalaran is waiting: find me at Krasus'' Landing to exchange your token and start on Northrend.'),
 (7340031, 'Well done, $N. Take these emblems; the next dungeon is waiting.'),
 (7340032, 'Well done, $N. Take these emblems; the next dungeon is waiting.'),
 (7340033, 'Well done, $N. Take these emblems; the next dungeon is waiting.'),
 (7340034, 'Well done, $N. Take these emblems; the next dungeon is waiting.'),
-(7340035, 'Well done, $N. Take these emblems; the next dungeon is waiting.'),
-(7340036, 'Well done, $N. Take these emblems; the next dungeon is waiting.'),
-(7340037, 'Well done, $N. Take these emblems; the next dungeon is waiting.'),
-(7340038, 'Well done, $N. Take these emblems; the next dungeon is waiting.'),
-(7340039, 'Well done, $N. Take these emblems; the next dungeon is waiting.'),
-(7340040, 'Level 80, $N! You have seen every corner of Azeroth''s dungeons. Naxxramas is waiting for you and your raid.'),
+(7340035, 'Level 80, $N! You have seen every corner of Azeroth''s dungeons. Naxxramas is waiting for you and your raid.'),
 (7340041, 'Here is your gear and a stack of tokens: exchange them with me for the Tier 6 items of your spec. Stratholme is next.');
 
 -- Pathfinder Maren starts and ends every route quest, wherever she stands
@@ -184,11 +164,6 @@ INSERT INTO `creature_queststarter` (`id`, `quest`) VALUES
 (7340050, 7340033),
 (7340050, 7340034),
 (7340050, 7340035),
-(7340050, 7340036),
-(7340050, 7340037),
-(7340050, 7340038),
-(7340050, 7340039),
-(7340050, 7340040),
 (7340050, 7340041);
 
 DELETE FROM `creature_questender` WHERE `id` = 7340050;
@@ -218,9 +193,4 @@ INSERT INTO `creature_questender` (`id`, `quest`) VALUES
 (7340050, 7340033),
 (7340050, 7340034),
 (7340050, 7340035),
-(7340050, 7340036),
-(7340050, 7340037),
-(7340050, 7340038),
-(7340050, 7340039),
-(7340050, 7340040),
 (7340050, 7340041);

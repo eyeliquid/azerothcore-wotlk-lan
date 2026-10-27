@@ -4,8 +4,8 @@
  *
  * The adventure route: Pathfinder Maren hands out 10 starting-area quests (Dungeon Set 3, blue extras, a
  * weapon and an off-hand), then one quest per dungeon from the Deadmines to the Shadow Labyrinth (10
- * dungeons, level 10 to 70, two Tier 6 tokens each) and from Utgarde Keep to Utgarde Pinnacle (70 to 80,
- * Emblems of Heroism).
+ * dungeons, level 20 to 72, two Tier 6 tokens each) and from Utgarde Keep to Utgarde Pinnacle (5 dungeons,
+ * 72 to 80, Emblems of Heroism).
  *
  * - Accepting a dungeon quest teleports the player and the group into that dungeon; group members without
  *   the quest get it too.
@@ -49,36 +49,31 @@ namespace
                                                         // Nazan die separately)
     };
 
-    std::array<RouteDungeon, 20> const RouteDungeons =
+    std::array<RouteDungeon, 15> const RouteDungeons =
     {{
-        { 7340011, "The Deadmines",                     36,  78,   17, { 639, 0 } },
-        { 7340012, "Shadowfang Keep",                   33,  145,  24, { 4275, 0 } },
-        { 7340013, "the Scarlet Monastery Cathedral",   189, 610,  31, { 3977, 3976 } },
-        { 7340014, "Uldaman",                           70,  286,  38, { 2748, 0 } },
-        { 7340015, "Zul'Farrak",                        209, 924,  45, { 7267, 7797 } },
-        { 7340016, "Blackrock Depths",                  230, 1466, 52, { 9019, 0 } },
-        { 7340017, "Stratholme",                        329, 2214, 60, { 10440, 0 } },
-        { 7340018, "the Hellfire Ramparts",             543, 4150, 64, { 17537, 17536 } },
-        { 7340019, "the Underbog",                      546, 4363, 67, { 17882, 0 } },
-        { 7340020, "the Shadow Labyrinth",              555, 4407, 70, { 18708, 0 } },
-        { 7340031, "Utgarde Keep",                      574, 4745, 71, { 23954, 23980 } },
-        { 7340032, "the Nexus",                         576, 4983, 72, { 26723, 0 } },
-        { 7340033, "Azjol-Nerub",                       601, 5117, 73, { 29120, 0 } },
-        { 7340034, "Ahn'kahet: The Old Kingdom",        619, 5215, 74, { 29311, 0 } },
-        { 7340035, "Drak'Tharon Keep",                  600, 4998, 75, { 26632, 27696 } },
-        { 7340036, "the Violet Hold",                   608, 5209, 76, { 31134, 0 } },
-        { 7340037, "Gundrak",                           604, 5205, 77, { 29306, 0 } },
-        { 7340038, "the Halls of Stone",                599, 5010, 78, { 27978, 0 } },
-        { 7340039, "the Halls of Lightning",            602, 5093, 79, { 28923, 0 } },
-        { 7340040, "Utgarde Pinnacle",                  575, 4747, 80, { 26861, 0 } }
+        { 7340011, "The Deadmines",                     36,  78,   25, { 639, 0 } },
+        { 7340012, "Shadowfang Keep",                   33,  145,  35, { 4275, 0 } },
+        { 7340013, "the Scarlet Monastery Cathedral",   189, 610,  45, { 3977, 3976 } },
+        { 7340014, "Uldaman",                           70,  286,  50, { 2748, 0 } },
+        { 7340015, "Zul'Farrak",                        209, 924,  55, { 7267, 7797 } },
+        { 7340016, "Blackrock Depths",                  230, 1466, 60, { 9019, 0 } },
+        { 7340017, "Stratholme",                        329, 2214, 64, { 10440, 0 } },
+        { 7340018, "the Hellfire Ramparts",             543, 4150, 68, { 17537, 17536 } },
+        { 7340019, "the Underbog",                      546, 4363, 70, { 17882, 0 } },
+        { 7340020, "the Shadow Labyrinth",              555, 4407, 72, { 18708, 0 } },
+        { 7340031, "Utgarde Keep",                      574, 4745, 74, { 23954, 23980 } },
+        { 7340032, "the Nexus",                         576, 4983, 75, { 26723, 0 } },
+        { 7340033, "Azjol-Nerub",                       601, 5117, 78, { 29120, 0 } },
+        { 7340034, "the Violet Hold",                   608, 5209, 79, { 31134, 0 } },
+        { 7340035, "Utgarde Pinnacle",                  575, 4747, 80, { 26861, 0 } }
     }};
 
     constexpr uint32 QUEST_STRATHOLME = 7340017;            // death knights start here
     constexpr uint32 QUEST_LAST_TBC_DUNGEON = 7340020;      // Shadow Labyrinth: then off to Dalaran
-    constexpr uint32 QUEST_LAST_WOTLK_DUNGEON = 7340040;    // Utgarde Pinnacle: then off to Naxxramas
+    constexpr uint32 QUEST_LAST_WOTLK_DUNGEON = 7340035;    // Utgarde Pinnacle: then off to Naxxramas
     constexpr uint32 TRIGGER_NAXXRAMAS = 5191;
-    constexpr uint8 LEVEL_AFTER_START = 10;
-    constexpr uint8 LEVEL_DEATH_KNIGHT = 57;
+    constexpr uint8 LEVEL_AFTER_START = 20;
+    constexpr uint8 LEVEL_DEATH_KNIGHT = 60;    // Stratholme's level
 
     // Krasus' Landing, in front of Pathfinder Maren
     constexpr float DALARAN_X = 5822.0f;
