@@ -41,6 +41,8 @@ namespace
         GEAR_HEAD = 0, GEAR_SHOULDER = 2, GEAR_BACK = 3, GEAR_WRIST = 5, GEAR_HANDS = 6, GEAR_WAIST = 7, GEAR_FEET = 9
     };
 
+    constexpr uint32 ITEM_NIGHTBLADE = 1982;
+
     // The largest bag of every kind (general, soul, herb, enchanting, engineering, gem, mining,
     // leatherworking, inscription, quiver, ammo pouch)
     constexpr std::array<uint32, 11> BiggestBags =
@@ -393,6 +395,29 @@ namespace
 
         for (uint32 bagId : BiggestBags)
             AddVendorItem(LAN_VENDOR_BAGS, bagId, cfg.GearPrice);
+
+        // The LAN party sword, free at the bag vendor
+        if (ItemTemplate const* proto = sObjectMgr->GetItemTemplate(ITEM_NIGHTBLADE))
+        {
+            ItemTemplate* nightblade = const_cast<ItemTemplate*>(proto);
+            nightblade->RequiredLevel = 0;
+            nightblade->Delay = 500;                    // 0.5 speed
+            nightblade->Damage[0].DamageMin = 3000.0f;
+            nightblade->Damage[0].DamageMax = 4000.0f;
+
+            constexpr std::array<uint32, 5> AllStats =
+            {
+                ITEM_MOD_STRENGTH, ITEM_MOD_AGILITY, ITEM_MOD_STAMINA, ITEM_MOD_INTELLECT, ITEM_MOD_SPIRIT
+            };
+            for (uint8 i = 0; i < MAX_ITEM_PROTO_STATS; ++i)
+            {
+                nightblade->ItemStat[i].ItemStatType = i < AllStats.size() ? AllStats[i] : 0;
+                nightblade->ItemStat[i].ItemStatValue = i < AllStats.size() ? 1000 : 0;
+            }
+            nightblade->StatsCount = AllStats.size();
+
+            AddVendorItem(LAN_VENDOR_BAGS, ITEM_NIGHTBLADE, 0);
+        }
 
         for (uint32 foodId : BestFood)
             AddVendorItem(LAN_VENDOR_FOOD, foodId, cfg.FoodPrice);

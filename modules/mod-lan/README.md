@@ -31,7 +31,7 @@ gets 10% more experience.
 | Where | NPC | What |
 | --- | --- | --- |
 | Every starting area, Ebon Hold and Krasus' Landing | Pathfinder Maren | The adventure route (below): quests from level 1 to 80, the dungeon teleports and the Tier 6 token exchange |
-| Every starting area | Pack Merchant Dunstan | The largest bag of every kind |
+| Every starting area | Pack Merchant Dunstan | The largest bag of every kind, and the Nightblade for free: 0.5 speed, 3000-4000 damage, +1000 to every stat, no level requirement |
 | Every starting area | Jeweler Saphira | Pick a color: every Burning Crusade epic cut gem (Crimson Spinel, Empyrean Sapphire, Lionseye, Shadowsong Amethyst, Seaspray Emerald, Pyrestone) and every cut meta gem, free, no level requirement |
 | Every starting area and Krasus' Landing | Stablemaster Korrin | 10 ground and 10 flying mounts, free, usable from level 1 (every riding skill is learned at once) |
 | Every starting area and every dungeon and raid entrance | Portal Keeper Ilsa | Teleports to every classic, TBC and WotLK dungeon and raid entrance, the 14 major cities (capitals, Shattrath, Dalaran, Booty Bay, Gadgetzan, Ratchet, Everlook) and the main hubs of every zone on all four continents |
