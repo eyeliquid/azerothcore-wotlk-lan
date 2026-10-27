@@ -58,7 +58,7 @@ Pathfinder Maren (every starting area, Ebon Hold and Krasus' Landing) leads a ne
 1. **Starting area:** 10 quests, each "defeat X enemies" (any kill counts, also for the group). Each one rewards
    a choice of six: cloth, leather (agility or caster), mail (agility or caster) or plate. Quests 1-5 give the
    Dungeon Set 3 pieces, 6-8 blue bracers, belt and boots, 9 a weapon and 10 an off-hand; all usable from
-   level 1. Quest 10 sets the level to 20.
+   level 1. Every quest gives two levels: quest 1 sets the level to 2, quest 10 to 20.
 2. **Deadmines to the Shadow Labyrinth (level 20-72):** one quest per dungeon (Deadmines, Shadowfang Keep,
    Scarlet Monastery Cathedral, Uldaman, Zul'Farrak, Blackrock Depths, Stratholme, Hellfire Ramparts, Underbog,
    Shadow Labyrinth): kill the last boss. Each quest gives two Tier 6 tokens; Maren exchanges them for the items

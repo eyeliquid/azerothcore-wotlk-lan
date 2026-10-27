@@ -72,7 +72,7 @@ namespace
     constexpr uint32 QUEST_LAST_TBC_DUNGEON = 7340020;      // Shadow Labyrinth: then off to Dalaran
     constexpr uint32 QUEST_LAST_WOTLK_DUNGEON = 7340035;    // Utgarde Pinnacle: then off to Naxxramas
     constexpr uint32 TRIGGER_NAXXRAMAS = 5191;
-    constexpr uint8 LEVEL_AFTER_START = 20;
+    constexpr uint8 LEVELS_PER_START_QUEST = 2;         // quest 1 to level 2, ..., quest 10 to level 20
     constexpr uint8 LEVEL_DEATH_KNIGHT = 60;    // Stratholme's level
 
     // Krasus' Landing, in front of Pathfinder Maren
@@ -488,10 +488,10 @@ public:
             return false;                               // the core offers the Stratholme quest next
         }
 
-        if (questId == QUEST_LAN_START_LAST)
+        if (questId >= QUEST_LAN_START_FIRST && questId <= QUEST_LAN_START_LAST)
         {
-            RaiseLevel(player, LEVEL_AFTER_START);
-            return false;                               // the core offers the Deadmines quest next
+            RaiseLevel(player, uint8((questId - QUEST_LAN_START_FIRST + 1) * LEVELS_PER_START_QUEST));
+            return false;                               // the core offers the next quest (after 10: the Deadmines)
         }
 
         RouteDungeon const* dungeon = FindDungeonByQuest(questId);
