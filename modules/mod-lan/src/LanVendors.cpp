@@ -45,6 +45,15 @@ namespace
 
     // The largest bag of every kind (general, soul, herb, enchanting, engineering, gem, mining,
     // leatherworking, inscription, quiver, ammo pouch)
+    // Hunter ammo: the best arrows and bullets, and the level 72 ones (all usable from level 1)
+    constexpr std::array<uint32, 4> BestAmmo =
+    {
+        52021,  // Iceblade Arrow
+        52020,  // Shatter Rounds
+        41165,  // Saronite Razorheads
+        41164   // Mammoth Cutters
+    };
+
     constexpr std::array<uint32, 11> BiggestBags =
     {
         51809,  // Portable Hole (24)
@@ -400,6 +409,19 @@ namespace
 
         for (uint32 bagId : BiggestBags)
             AddVendorItem(LAN_VENDOR_BAGS, bagId, cfg.GearPrice);
+
+        // Arrows and bullets at the bag vendors (next to the quivers and ammo pouches) and at the Dalaran food
+        // vendor, priced like food
+        for (uint32 ammoId : BestAmmo)
+        {
+            bool bags = AddVendorItem(LAN_VENDOR_BAGS, ammoId, cfg.FoodPrice);
+            bool dalaran = AddVendorItem(LAN_VENDOR_FOOD, ammoId, cfg.FoodPrice);
+            if (!bags && !dalaran)
+                continue;
+
+            ItemTemplate* proto = const_cast<ItemTemplate*>(sObjectMgr->GetItemTemplate(ammoId));
+            proto->RequiredLevel = 0;
+        }
 
         // Pathfinder Maren after the Hellfire Ramparts: level 80 blue gear, usable at any level
         for (uint32 category = 0; category < LanLevel80Gear.size(); ++category)
