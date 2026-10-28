@@ -86,6 +86,8 @@ void LoadLanConfig()
     uint32 ramparts = sConfigMgr->GetOption<uint32>("Lan.Route.RampartsStrength", 10);
     cfg.RouteDeadminesStrength = std::clamp(deadmines, 1u, 100u) / 100.0f;
     cfg.RouteRampartsStrength = std::clamp(ramparts, 1u, 100u) / 100.0f;
+    uint32 northrend = sConfigMgr->GetOption<uint32>("Lan.Route.NorthrendStrength", 25);
+    cfg.RouteNorthrendStrength = std::clamp(northrend, 1u, 100u) / 100.0f;
 
     _config = cfg;
 }

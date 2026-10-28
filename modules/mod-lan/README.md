@@ -79,7 +79,7 @@ Pathfinder Maren (every starting area, Ebon Hold and Krasus' Landing) leads a ne
    Deadmines use `Lan.Route.DeadminesStrength`). Afterwards (level 70) Maren sells level 80 blue gear for every armor type, plus necks, cloaks, rings,
    trinkets, weapons, shields and off-hands, without a level requirement (`LanRouteData.h`).
 4. **Northrend:** Utgarde Keep (to level 74), Azjol-Nerub (77) and Drak'Tharon Keep (80), 120 Emblems of Heroism
-   each. The last quest ends with a teleport to Dalaran.
+   each. Their mobs deal 25% of their damage and take 4 times as much (`Lan.Route.NorthrendStrength`). The last quest ends with a teleport to Dalaran.
 
 - Accepting a dungeon quest teleports you and every group member on the same map inside the dungeon; group
   members who can take the quest get it too. Maren's "Take me and my group to ..." does the same later.

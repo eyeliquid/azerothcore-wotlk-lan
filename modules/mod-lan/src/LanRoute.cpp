@@ -65,6 +65,9 @@ namespace
     constexpr uint8 LEVEL_DEATH_KNIGHT = 60;
     constexpr uint32 MAP_DEADMINES = 36;
     constexpr uint32 MAP_HELLFIRE_RAMPARTS = 543;
+    constexpr uint32 MAP_UTGARDE_KEEP = 574;
+    constexpr uint32 MAP_AZJOL_NERUB = 601;
+    constexpr uint32 MAP_DRAKTHARON_KEEP = 600;
     constexpr uint32 BEAST_DESPAWN = 10 * MINUTE * IN_MILLISECONDS;
 
     // Krasus' Landing, in front of Pathfinder Maren
@@ -300,6 +303,9 @@ namespace
         {
             case MAP_DEADMINES:         return GetLanConfig().RouteDeadminesStrength;
             case MAP_HELLFIRE_RAMPARTS: return GetLanConfig().RouteRampartsStrength;
+            case MAP_UTGARDE_KEEP:
+            case MAP_AZJOL_NERUB:
+            case MAP_DRAKTHARON_KEEP:   return GetLanConfig().RouteNorthrendStrength;
             default:                    return 1.0f;
         }
     }
@@ -472,7 +478,7 @@ public:
             HandleStartAreaKill(creature, killer);
     }
 
-    // The Deadmines and Hellfire Ramparts mobs (bosses too) are weaker: they deal less damage and take more
+    // The route dungeon mobs (bosses too) are weaker: they deal less damage and take more
     void ModifyMeleeDamage(Unit* target, Unit* attacker, uint32& damage) override
     {
         damage = uint32(damage * DungeonFactor(target, attacker));
