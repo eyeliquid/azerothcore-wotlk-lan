@@ -75,7 +75,7 @@ Pathfinder Maren (every starting area, Ebon Hold and Krasus' Landing) leads a ne
    quest. In the Deadmines every mob, the bosses too, deals half damage and takes double damage, and the loot is
    random level 70 gear without a level requirement (bosses drop two pieces, the other mobs one in three).
 3. **"Wasn't that a bit too easy?"** - "Yes, far too easy." You become level 60 and go straight into the Hellfire
-   Ramparts, whose mobs deal 40% of their damage and take 2.5 times as much (`Lan.Route.RampartsStrength`; the
+   Ramparts, whose mobs deal 10% of their damage and take 10 times as much (`Lan.Route.RampartsStrength`; the
    Deadmines use `Lan.Route.DeadminesStrength`). Afterwards (level 70) Maren sells level 80 blue gear for every armor type, plus necks, cloaks, rings,
    trinkets, weapons, shields and off-hands, without a level requirement (`LanRouteData.h`).
 4. **Northrend:** Utgarde Keep (to level 74), Azjol-Nerub (77) and Drak'Tharon Keep (80), 120 Emblems of Heroism
