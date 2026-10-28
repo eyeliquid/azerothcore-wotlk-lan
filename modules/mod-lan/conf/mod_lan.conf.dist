@@ -172,10 +172,10 @@ Lan.Route.KeeperDespawn = 3600
 #                     dungeons (Utgarde Keep, Azjol-Nerub, Drak'Tharon Keep), bosses too, in percent:
 #                     they deal this much of their damage and take the inverse (50 = half damage dealt, double
 #                     damage taken). 100 leaves them as they are.
-#        Default:     50 (Deadmines), 10 (Hellfire Ramparts), 25 (Northrend)
+#        Default:     50 (Deadmines), 10 (Hellfire Ramparts), 10 (Northrend)
 Lan.Route.DeadminesStrength = 50
 Lan.Route.RampartsStrength = 10
-Lan.Route.NorthrendStrength = 25
+Lan.Route.NorthrendStrength = 10
 
 ###################################################################################################
 # BOTS (needs mod-playerbots)

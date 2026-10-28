@@ -166,7 +166,7 @@ struct LanConfig
     uint32 RouteKeeperDespawn = 3600;                   // seconds the guide stays at a killed dungeon boss
     float RouteDeadminesStrength = 0.5f;                // damage factor of the Deadmines mobs; they take 1 / this
     float RouteRampartsStrength = 0.1f;                 // the same for the Hellfire Ramparts
-    float RouteNorthrendStrength = 0.25f;               // and for Utgarde Keep, Azjol-Nerub and Drak'Tharon Keep
+    float RouteNorthrendStrength = 0.1f;                // and for Utgarde Keep, Azjol-Nerub and Drak'Tharon Keep
 };
 
 LanConfig const& GetLanConfig();

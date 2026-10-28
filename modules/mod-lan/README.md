@@ -80,7 +80,7 @@ Pathfinder Maren (every starting area, Ebon Hold and Krasus' Landing) leads a ne
    type, plus necks, cloaks, rings, trinkets, weapons, shields and off-hands, without a level requirement
    (`LanRouteData.h`).
 4. **Northrend:** Utgarde Keep (to level 74), Azjol-Nerub (77) and Drak'Tharon Keep (80), 120 Emblems of Heroism
-   each. Their mobs deal 25% of their damage and take 4 times as much (`Lan.Route.NorthrendStrength`). The last quest
+   each. Their mobs deal 10% of their damage and take 10 times as much (`Lan.Route.NorthrendStrength`). The last quest
    ends with a teleport to Dalaran.
 
 - Accepting a dungeon quest teleports you and every group member on the same map inside the dungeon; group
