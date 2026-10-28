@@ -49,7 +49,7 @@ INSERT INTO `creature_template` (`entry`, `name`, `subname`, `minlevel`, `maxlev
 (7340043, 'Fishing Grand Master', 'Fishing Trainer', 80, 80, 2, 35, 80, 1, 768, 0, 7, 2, ''),
 (7340050, 'Pathfinder Maren', 'LAN Adventure', 80, 80, 2, 35, 131, 1, 768, 0, 7, 2, 'npc_lan_guide'),
 (7340051, 'Enemy defeated', '', 1, 1, 0, 35, 0, 1, 33554688, 0, 10, 128, ''),
-(7340052, 'Gorefang', 'Beast of the Wilds', 6, 6, 0, 14, 0, 1, 0, 0, 1, 0, ''),
+(7340052, 'Gorefang', 'Beast of the Wilds', 6, 6, 0, 14, 0, 1, 512, 0, 1, 0, ''),
 (7340100, 'Balance Druid Quartermaster', 'Tier 9 Best-in-Slot', 80, 80, 2, 35, 129, 1, 768, 16, 7, 2, 'npc_lan_spec_vendor'),
 (7340101, 'Feral (Cat) Druid Quartermaster', 'Tier 9 Best-in-Slot', 80, 80, 2, 35, 129, 1, 768, 16, 7, 2, 'npc_lan_spec_vendor'),
 (7340102, 'Feral (Bear) Druid Quartermaster', 'Tier 9 Best-in-Slot', 80, 80, 2, 35, 129, 1, 768, 16, 7, 2, 'npc_lan_spec_vendor'),
@@ -86,7 +86,8 @@ INSERT INTO `creature_template` (`entry`, `name`, `subname`, `minlevel`, `maxlev
 
 DELETE FROM `creature_template_locale` WHERE `entry` BETWEEN 7340001 AND 7340199;
 
--- Gorefang (adventure route quest 4): an elite beast, tougher and harder hitting than its level
+-- Gorefang (adventure route quest 4): an elite beast, tougher than its level. Immune to NPCs (unit_flags 512), so
+-- guards and other NPCs leave it to the player.
 UPDATE `creature_template` SET `rank` = 1, `HealthModifier` = 3, `DamageModifier` = 1, `family` = 1 WHERE `entry` = 7340052;
 
 DELETE FROM `creature_template_model` WHERE `CreatureID` BETWEEN 7340001 AND 7340199;

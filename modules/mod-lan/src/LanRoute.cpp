@@ -198,6 +198,7 @@ namespace
         if (!beast)
             return;
 
+        beast->SetImmuneToNPC(true);                   // guards and other NPCs leave it to the player
         beast->SetFacingToObject(player);
         beast->AI()->AttackStart(player);
         ChatHandler(player->GetSession()).SendNotification("Gorefang is coming for you!");
