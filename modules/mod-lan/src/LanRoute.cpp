@@ -142,6 +142,10 @@ namespace
         player->GiveLevel(level);
         player->InitTalentForLevel();
         player->SetUInt32Value(PLAYER_XP, 0);
+
+        // Weapon skills, defense and the other level-bound skills jump to the new maximum too (not professions
+        // or riding); the class spells follow through LanPlayer's level-up hook
+        player->UpdateSkillsToMaxSkillsForLevel();
     }
 
     // The player and every group member on the same map go into the dungeon. Real players without the

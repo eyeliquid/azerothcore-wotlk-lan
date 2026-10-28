@@ -86,6 +86,8 @@ Pathfinder Maren (every starting area, Ebon Hold and Krasus' Landing) leads a ne
   (`Lan.Route.KeeperDespawn`). Quests can be turned in with any Maren.
 - Mobs in the five route dungeons don't attack on their own; they only fight back (`Lan.Route.PassiveMobs`).
 - The dungeons scale to the group size through mod-autobalance (5-player dungeons are enabled for it).
+- Every level jump of the route (20, 60, and the dungeon quests) also raises weapon skills and defense to the
+  maximum for the new level; the class spells are learned automatically as usual.
 - Death knights get "A New Road" in Ebon Hold: the Bloodied Arcanite Reaper, Swift Hand of Justice and a strength
   or tank ring satchel, level 60, the Tier 6 vendor, and the Hellfire Ramparts next.
 
