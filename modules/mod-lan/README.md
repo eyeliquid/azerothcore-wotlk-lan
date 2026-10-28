@@ -59,8 +59,9 @@ Pathfinder Maren (every starting area, Ebon Hold and Krasus' Landing) leads a ne
    - *First Blood*: defeat 10 enemies. A heirloom weapon of choice (Bloodied Arcanite Reaper, Venerable Dal'Rend's
      Sacred Charge, Balanced Heartseeker, Dignified Headmaster's Charge, Devout Aurastone Hammer, Charmed Ancient Bone
      Bow): they scale with your level up to 80.
-   - *Flowers for the Road*: pick 10 Wildflowers. They grow a yard from every Peacebloom, Silverleaf, Earthroot and
-     Bloodthistle spot in the starting zones (`LanSpawns.cpp`) and need no Herbalism. An off-hand of choice: heirloom
+   - *Flowers for the Road*: pick 10 Wildflowers. Three grow around every Peacebloom, Silverleaf, Earthroot and
+     Bloodthistle spot in the starting zones and one near every enemy spawn there (`LanSpawns.cpp`); they need no
+     Herbalism. An off-hand of choice: heirloom
      Battleworn Thrash Blade, Sharpened Scarlet Kris or Venerable Mass of McGowan, or a level 70 tank shield, caster
      shield or held item.
    - *Proving Grounds*: defeat 15 enemies. A satchel with two Tier 6 rings for your role (caster, healer, agility,

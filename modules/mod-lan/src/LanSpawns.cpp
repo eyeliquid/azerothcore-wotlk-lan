@@ -16,6 +16,7 @@
 #include "MapMgr.h"
 #include "ObjectMgr.h"
 #include "PoolMgr.h"
+#include "Random.h"
 #include "ScriptMgr.h"
 
 #include <unordered_set>
@@ -135,37 +136,85 @@ namespace
     }
 }
 
-// Wildflowers for the adventure route's quest 2, a yard from every Peacebloom, Silverleaf, Earthroot and
-// Bloodthistle spawn point in the starting zones (also the pooled ones that are not up right now)
-static void LanBuildWildflowers()
+// Wildflowers for the adventure route's quest 2: three around every Peacebloom, Silverleaf, Earthroot and
+// Bloodthistle spawn point in the starting zones (also the pooled ones that are not up right now), and one near
+// every enemy spawn there. They only exist in memory, like the extra enemies.
+static void AddWildflower(uint32 mapId, float x, float y, float z, float o)
 {
-    constexpr std::array<uint32, 7> Herbs = { 1617, 1618, 1619, 3724, 3725, 3726, 181166 };
     constexpr uint32 WILDFLOWER_RESPAWN = 60;       // seconds
 
-    std::vector<GameObjectData> herbs;
+    // On the ground at that spot, so flowers on a slope don't float or sink
+    if (Map* map = sMapMgr->CreateBaseMap(mapId))
+    {
+        float ground = map->GetHeight(PHASEMASK_NORMAL, x, y, z + 5.0f, true, 15.0f);
+        if (ground > INVALID_HEIGHT)
+            z = ground;
+    }
+
+    sObjectMgr->AddGOData(GO_LAN_WILDFLOWER, mapId, x, y, z, o, WILDFLOWER_RESPAWN);
+}
+
+static void LanBuildWildflowers(FactionTemplateEntry const* alliance, FactionTemplateEntry const* horde)
+{
+    constexpr std::array<uint32, 7> Herbs = { 1617, 1618, 1619, 3724, 3725, 3726, 181166 };
+    constexpr uint32 FLOWERS_PER_HERB = 3;
+    constexpr float HERB_DISTANCE = 2.5f;           // yards from the herb
+    constexpr float ENEMY_DISTANCE = 7.0f;          // yards from the enemy spawn
+
+    // Collect first: adding flowers changes the gameobject data store
+    struct Spot
+    {
+        uint32 MapId;
+        float X, Y, Z;
+    };
+
+    std::vector<Spot> herbs;
     for (auto const& [spawnId, data] : sObjectMgr->GetAllGOData())
         if (std::find(Herbs.begin(), Herbs.end(), data.id) != Herbs.end() && IsInStartZone(data))
-            herbs.push_back(data);
+            herbs.push_back({ data.mapid, data.posX, data.posY, data.posZ });
 
-    for (GameObjectData const& herb : herbs)
-        sObjectMgr->AddGOData(GO_LAN_WILDFLOWER, herb.mapid, herb.posX + 1.0f, herb.posY, herb.posZ, herb.orientation,
-            WILDFLOWER_RESPAWN, herb.rotation.x, herb.rotation.y, herb.rotation.z, herb.rotation.w);
+    std::vector<Spot> enemies;
+    for (auto const& [spawnId, data] : sObjectMgr->GetAllCreatureData())
+        if (data.dbData && IsEnemySpawn(data, alliance, horde) && IsInStartZone(data))
+            enemies.push_back({ data.mapid, data.posX, data.posY, data.posZ });
 
-    LOG_INFO("module", "mod-lan: {} Wildflowers in the starting zones", herbs.size());
+    uint32 flowers = 0;
+    for (Spot const& herb : herbs)
+    {
+        for (uint32 i = 0; i < FLOWERS_PER_HERB; ++i)
+        {
+            float angle = 2.0f * float(M_PI) * float(i) / float(FLOWERS_PER_HERB);
+            AddWildflower(herb.MapId, herb.X + HERB_DISTANCE * std::cos(angle), herb.Y + HERB_DISTANCE * std::sin(angle),
+                herb.Z, angle);
+            ++flowers;
+        }
+    }
+
+    for (Spot const& enemy : enemies)
+    {
+        float angle = frand(0.0f, 2.0f * float(M_PI));
+        AddWildflower(enemy.MapId, enemy.X + ENEMY_DISTANCE * std::cos(angle), enemy.Y + ENEMY_DISTANCE * std::sin(angle),
+            enemy.Z, angle);
+        ++flowers;
+    }
+
+    LOG_INFO("module", "mod-lan: {} Wildflowers in the starting zones ({} herb spots, {} enemy spawns)", flowers,
+        herbs.size(), enemies.size());
 }
 
 void LanBuildStartZoneSpawns()
 {
-    if (GetLanConfig().RouteEnabled)
-        LanBuildWildflowers();
-
-    uint32 multiplier = GetLanConfig().StartZoneSpawnMultiplier;
-    if (multiplier <= 1)
-        return;
-
     FactionTemplateEntry const* alliance = sFactionTemplateStore.LookupEntry(FACTION_TEMPLATE_HUMAN);
     FactionTemplateEntry const* horde = sFactionTemplateStore.LookupEntry(FACTION_TEMPLATE_ORC);
     if (!alliance || !horde)
+        return;
+
+    // Before the extra enemies, so the flowers follow the original spawns only
+    if (GetLanConfig().RouteEnabled)
+        LanBuildWildflowers(alliance, horde);
+
+    uint32 multiplier = GetLanConfig().StartZoneSpawnMultiplier;
+    if (multiplier <= 1)
         return;
 
     // Collect first: adding copies changes the creature data store
