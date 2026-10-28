@@ -164,6 +164,8 @@ struct LanConfig
     bool RouteEnabled = true;
     bool RoutePassiveMobs = true;                       // route dungeon mobs only fight back
     uint32 RouteKeeperDespawn = 3600;                   // seconds the guide stays at a killed dungeon boss
+    float RouteDeadminesStrength = 0.5f;                // damage factor of the Deadmines mobs; they take 1 / this
+    float RouteRampartsStrength = 0.4f;                 // the same for the Hellfire Ramparts
 };
 
 LanConfig const& GetLanConfig();

@@ -167,6 +167,14 @@ Lan.Route.PassiveMobs = 1
 #        Default:     3600
 Lan.Route.KeeperDespawn = 3600
 
+#    Lan.Route.DeadminesStrength / Lan.Route.RampartsStrength
+#        Description: Strength of every mob in the Deadmines and the Hellfire Ramparts, bosses too, in percent:
+#                     they deal this much of their damage and take the inverse (50 = half damage dealt, double
+#                     damage taken). 100 leaves them as they are.
+#        Default:     50 (Deadmines), 40 (Hellfire Ramparts)
+Lan.Route.DeadminesStrength = 50
+Lan.Route.RampartsStrength = 40
+
 ###################################################################################################
 # BOTS (needs mod-playerbots)
 #

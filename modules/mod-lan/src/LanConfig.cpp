@@ -11,6 +11,7 @@
 #include "ScriptMgr.h"
 #include "World.h"
 
+#include <algorithm>
 #include <limits>
 
 namespace
@@ -81,6 +82,10 @@ void LoadLanConfig()
     cfg.RouteEnabled = sConfigMgr->GetOption<bool>("Lan.Route.Enable", true);
     cfg.RoutePassiveMobs = sConfigMgr->GetOption<bool>("Lan.Route.PassiveMobs", true);
     cfg.RouteKeeperDespawn = sConfigMgr->GetOption<uint32>("Lan.Route.KeeperDespawn", 3600);
+    uint32 deadmines = sConfigMgr->GetOption<uint32>("Lan.Route.DeadminesStrength", 50);
+    uint32 ramparts = sConfigMgr->GetOption<uint32>("Lan.Route.RampartsStrength", 40);
+    cfg.RouteDeadminesStrength = std::clamp(deadmines, 1u, 100u) / 100.0f;
+    cfg.RouteRampartsStrength = std::clamp(ramparts, 1u, 100u) / 100.0f;
 
     _config = cfg;
 }

@@ -7,9 +7,9 @@
  *    Gorefang, a beast Maren lures to the player (two heirloom trinkets). After that Maren sells the rest of the
  *    Tier 6 gear per class and spec.
  * 2. "Have you been here before?" - "Yes": level 20 and the Deadmines, where the mobs are half as strong and drop
- *    random level 70 gear.
- * 3. "Wasn't that too easy?" - "Yes": level 60 and straight into the Hellfire Ramparts. Afterwards Maren sells
- *    level 80 blue gear.
+ *    random level 70 gear (Lan.Route.DeadminesStrength).
+ * 3. "Wasn't that too easy?" - "Yes": level 60 and straight into the Hellfire Ramparts, whose mobs are weaker too
+ *    (Lan.Route.RampartsStrength). Afterwards Maren sells level 80 blue gear.
  * 4. Utgarde Keep, Azjol-Nerub and Drak'Tharon Keep (70 to 80), then off to Dalaran.
  *
  * - Accepting a dungeon quest teleports the player and the group into that dungeon; group members without
@@ -64,7 +64,7 @@ namespace
     constexpr uint8 LEVEL_TOO_EASY = 60;                // "Wasn't that a bit too easy?" - "Yes"
     constexpr uint8 LEVEL_DEATH_KNIGHT = 60;
     constexpr uint32 MAP_DEADMINES = 36;
-    constexpr float DEADMINES_STRENGTH = 0.5f;          // damage done by the Deadmines mobs; they take 1 / this
+    constexpr uint32 MAP_HELLFIRE_RAMPARTS = 543;
     constexpr uint32 BEAST_DESPAWN = 10 * MINUTE * IN_MILLISECONDS;
 
     // Krasus' Landing, in front of Pathfinder Maren
@@ -290,9 +290,18 @@ namespace
         RaiseLevel(player, LEVEL_DEATH_KNIGHT);
     }
 
-    bool InDeadmines(Unit const* unit)
+    // Damage factor of the mobs in a weakened route dungeon (Lan.Route.*Strength), 1 elsewhere
+    float MapStrength(Unit const* unit)
     {
-        return unit && unit->GetMapId() == MAP_DEADMINES;
+        if (!unit)
+            return 1.0f;
+
+        switch (unit->GetMapId())
+        {
+            case MAP_DEADMINES:         return GetLanConfig().RouteDeadminesStrength;
+            case MAP_HELLFIRE_RAMPARTS: return GetLanConfig().RouteRampartsStrength;
+            default:                    return 1.0f;
+        }
     }
 
     bool IsPlayerSide(Unit const* unit)
@@ -463,35 +472,36 @@ public:
             HandleStartAreaKill(creature, killer);
     }
 
-    // The Deadmines mobs (bosses too) are half as strong: they deal half damage and take double damage
+    // The Deadmines and Hellfire Ramparts mobs (bosses too) are weaker: they deal less damage and take more
     void ModifyMeleeDamage(Unit* target, Unit* attacker, uint32& damage) override
     {
-        damage = uint32(damage * DeadminesFactor(target, attacker));
+        damage = uint32(damage * DungeonFactor(target, attacker));
     }
 
     void ModifySpellDamageTaken(Unit* target, Unit* attacker, int32& damage, SpellInfo const* /*spellInfo*/) override
     {
-        damage = int32(damage * DeadminesFactor(target, attacker));
+        damage = int32(damage * DungeonFactor(target, attacker));
     }
 
     void ModifyPeriodicDamageAurasTick(Unit* target, Unit* attacker, uint32& damage,
         SpellInfo const* /*spellInfo*/) override
     {
-        damage = uint32(damage * DeadminesFactor(target, attacker));
+        damage = uint32(damage * DungeonFactor(target, attacker));
     }
 
 private:
-    static float DeadminesFactor(Unit* target, Unit* attacker)
+    static float DungeonFactor(Unit* target, Unit* attacker)
     {
-        if (!InDeadmines(target) || !attacker || !GetLanConfig().RouteEnabled)
+        float strength = MapStrength(target);
+        if (strength >= 1.0f || !attacker || !GetLanConfig().RouteEnabled)
             return 1.0f;
 
         bool playerTarget = IsPlayerSide(target);
         bool playerAttacker = IsPlayerSide(attacker);
         if (playerAttacker && !playerTarget)
-            return 1.0f / DEADMINES_STRENGTH;
+            return 1.0f / strength;
         if (!playerAttacker && playerTarget)
-            return DEADMINES_STRENGTH;
+            return strength;
         return 1.0f;
     }
 
