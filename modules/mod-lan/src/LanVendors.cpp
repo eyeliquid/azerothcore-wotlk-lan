@@ -54,6 +54,57 @@ namespace
         41164   // Mammoth Cutters
     };
 
+    // Level 80 thrown weapons (no PvP or faction ones)
+    constexpr std::array<uint32, 5> BestThrown =
+    {
+        47660,  // Blades of the Sable Cross
+        47659,  // Crimson Star
+        45296,  // Twirling Blades
+        45086,  // Rising Sun
+        40190   // Spinning Fate
+    };
+
+    // The best rogue poisons
+    constexpr std::array<uint32, 6> BestPoisons =
+    {
+        43231,  // Instant Poison IX
+        43233,  // Deadly Poison IX
+        43235,  // Wound Poison VII
+        43237,  // Anesthetic Poison II
+        3775,   // Crippling Poison
+        5237    // Mind-numbing Poison
+    };
+
+    // Spell reagents of every class, for every rank of the spells that need one
+    constexpr std::array<uint32, 25> Reagents =
+    {
+        21177,  // Symbol of Kings (paladin)
+        17033,  // Symbol of Divinity (paladin)
+        17028,  // Holy Candle (priest)
+        17029,  // Sacred Candle (priest)
+        44615,  // Devout Candle (priest)
+        17056,  // Light Feather (priest, mage)
+        17020,  // Arcane Powder (mage)
+        17031,  // Rune of Teleportation (mage)
+        17032,  // Rune of Portals (mage)
+        17030,  // Ankh (shaman)
+        6265,   // Soul Shard (warlock)
+        5565,   // Infernal Stone (warlock)
+        16583,  // Demonic Figurine (warlock)
+        5140,   // Flash Powder (rogue)
+        37201,  // Corpse Dust (death knight)
+        17021,  // Wild Berries (druid)
+        17026,  // Wild Thornroot (druid)
+        22148,  // Wild Quillvine (druid)
+        44605,  // Wild Spineleaf (druid)
+        17034,  // Maple Seed (druid)
+        17035,  // Stranglethorn Seed (druid)
+        17036,  // Ashwood Seed (druid)
+        17037,  // Hornbeam Seed (druid)
+        17038,  // Ironwood Seed (druid)
+        44614   // Starleaf Seed (druid)
+    };
+
     constexpr std::array<uint32, 11> BiggestBags =
     {
         51809,  // Portable Hole (24)
@@ -262,7 +313,9 @@ namespace
     constexpr uint32 CONSUMABLE_FOOD = 1;
     constexpr uint32 CONSUMABLE_ELIXIRS = 2;
     constexpr uint32 CONSUMABLE_FLASKS = 3;
-    constexpr uint32 CONSUMABLE_MAX = 4;
+    constexpr uint32 CONSUMABLE_POISONS = 4;
+    constexpr uint32 CONSUMABLE_REAGENTS = 5;
+    constexpr uint32 CONSUMABLE_MAX = 6;
 
     constexpr uint32 VENDOR_PAGE_SIZE = MAX_VENDOR_ITEMS;
     constexpr uint32 PROFESSION_PAGES_RECIPES = 0;
@@ -479,6 +532,26 @@ namespace
         addConsumables(CONSUMABLE_FOOD, BestFood);
         addConsumables(CONSUMABLE_ELIXIRS, BestElixirs);
         addConsumables(CONSUMABLE_FLASKS, BestFlasks);
+
+        // Poisons, reagents and thrown weapons: always free and usable at any level. Apothecary Brennick in the
+        // starting areas, Pack Merchant Dunstan (thrown, next to the ammo) and Chef Rosalind in Dalaran (all three).
+        auto addFree = [](uint32 vendor, auto const& items)
+        {
+            for (uint32 itemId : items)
+            {
+                if (!AddVendorItem(vendor, itemId, 0))
+                    continue;
+
+                ItemTemplate* proto = const_cast<ItemTemplate*>(sObjectMgr->GetItemTemplate(itemId));
+                proto->RequiredLevel = 0;
+            }
+        };
+        addFree(uint32(LAN_VENDOR_CONSUMABLES) + CONSUMABLE_POISONS, BestPoisons);
+        addFree(uint32(LAN_VENDOR_CONSUMABLES) + CONSUMABLE_REAGENTS, Reagents);
+        addFree(LAN_VENDOR_BAGS, BestThrown);
+        addFree(LAN_VENDOR_FOOD, BestThrown);
+        addFree(LAN_VENDOR_FOOD, BestPoisons);
+        addFree(LAN_VENDOR_FOOD, Reagents);
 
         // Starting areas: Burning Crusade gems, no level requirement
         for (LanGem const& gem : BestGems)
@@ -889,6 +962,10 @@ public:
             uint32(ACTION_PAGE) + CONSUMABLE_ELIXIRS);
         AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "Flasks", GOSSIP_SENDER_MAIN,
             uint32(ACTION_PAGE) + CONSUMABLE_FLASKS);
+        AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "Poisons", GOSSIP_SENDER_MAIN,
+            uint32(ACTION_PAGE) + CONSUMABLE_POISONS);
+        AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "Reagents", GOSSIP_SENDER_MAIN,
+            uint32(ACTION_PAGE) + CONSUMABLE_REAGENTS);
         SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
         return true;
     }
