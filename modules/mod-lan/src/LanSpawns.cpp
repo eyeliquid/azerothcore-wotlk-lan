@@ -184,8 +184,8 @@ static void LanBuildWildflowers(FactionTemplateEntry const* alliance, FactionTem
         for (uint32 i = 0; i < FLOWERS_PER_HERB; ++i)
         {
             float angle = 2.0f * float(M_PI) * float(i) / float(FLOWERS_PER_HERB);
-            AddWildflower(herb.MapId, herb.X + HERB_DISTANCE * std::cos(angle), herb.Y + HERB_DISTANCE * std::sin(angle),
-                herb.Z, angle);
+            AddWildflower(herb.MapId, herb.X + HERB_DISTANCE * std::cos(angle),
+                herb.Y + HERB_DISTANCE * std::sin(angle), herb.Z, angle);
             ++flowers;
         }
     }
@@ -193,8 +193,8 @@ static void LanBuildWildflowers(FactionTemplateEntry const* alliance, FactionTem
     for (Spot const& enemy : enemies)
     {
         float angle = frand(0.0f, 2.0f * float(M_PI));
-        AddWildflower(enemy.MapId, enemy.X + ENEMY_DISTANCE * std::cos(angle), enemy.Y + ENEMY_DISTANCE * std::sin(angle),
-            enemy.Z, angle);
+        AddWildflower(enemy.MapId, enemy.X + ENEMY_DISTANCE * std::cos(angle),
+            enemy.Y + ENEMY_DISTANCE * std::sin(angle), enemy.Z, angle);
         ++flowers;
     }
 
