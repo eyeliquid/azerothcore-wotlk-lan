@@ -69,7 +69,8 @@ Pathfinder Maren (every starting area, Ebon Hold and Krasus' Landing) leads a ne
    - *The Beast of the Wilds*: Gorefang, an elite beast, comes running when you accept (ask Maren to lure it back if it
      gets away). Two heirloom trinkets: Swift Hand of Justice and Discerning Eye of the Beast.
 
-   From then on Maren sells the rest of your Tier 6 gear per class and spec (head to feet, neck and back).
+   From then on Maren sells the rest of your Tier 6 gear per class and spec (head to feet, neck and back). One
+   more Maren stands right inside the Deadmines entrance, so you can buy it on the way in.
 2. **"Have you been here before?"** - "Yes, I have done this many times." You become level 20 and get the Deadmines
    quest. In the Deadmines every mob, the bosses too, deals half damage and takes double damage, and the loot is
    random level 70 gear without a level requirement (bosses drop two pieces, the other mobs one in three).

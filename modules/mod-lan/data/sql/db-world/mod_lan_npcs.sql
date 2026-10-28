@@ -294,7 +294,8 @@ INSERT INTO `creature_equip_template` (`CreatureID`, `ID`, `ItemID1`, `ItemID2`,
 (7340131, 1, 47078, 47078, 46995),
 (7340132, 1, 47506, 46964, 47660);
 
--- Pathfinder Maren (adventure route) took Gearwright Holloway's place in the starting areas and Ebon Hold
+-- Pathfinder Maren (adventure route) took Gearwright Holloway's place in the starting areas and Ebon Hold; one more
+-- stands at the Deadmines entrance, to buy the Tier 6 gear on the way in
 DELETE FROM `creature` WHERE `id` BETWEEN 7340001 AND 7340199 AND `guid` BETWEEN 7340001 AND 7340399;
 INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `equipment_id`) VALUES
 (7340001, 7340050, 0, 1, 1, -8944.950, -129.990, 84.530, 3.605, 300, 0),
@@ -499,7 +500,8 @@ INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `position
 (7340200, 7340009, 571, 1, 1, 8512.680, 716.982, 558.750, 6.282, 300, 0),
 (7340201, 7340009, 571, 1, 1, 5875.011, 2108.227, 636.510, 1.979, 300, 0),
 (7340202, 7340009, 571, 1, 1, 3602.997, 199.003, -113.260, 3.729, 300, 0),
-(7340203, 7340050, 571, 1, 1, 5822.000, 452.500, 659.500, 4.712, 300, 0);
+(7340203, 7340050, 571, 1, 1, 5822.000, 452.500, 659.500, 4.712, 300, 0),
+(7340204, 7340050, 36, 1, 1, -17.541, -379.236, 61.780, 5.002, 300, 0);
 
 -- Free riding training (the skills are also learned automatically on level-up)
 UPDATE `trainer_spell` SET `MoneyCost` = 0 WHERE `SpellId` IN (33388, 33391, 34090, 34091, 54197);
