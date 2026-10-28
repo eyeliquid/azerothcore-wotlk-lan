@@ -37,6 +37,7 @@ enum LanStatType : uint8
 
 #include "LanGearData.h"
 #include "LanTeleData.h"
+#include "LanRouteData.h"
 
 // Creature templates shipped in data/sql/db-world (keep in sync with the SQL).
 enum LanCreatures : uint32
@@ -54,6 +55,7 @@ enum LanCreatures : uint32
     NPC_LAN_PROFESSION_TRAINER  = 7340030,              // + profession index (14)
     NPC_LAN_GUIDE               = 7340050,              // adventure route quest giver (also summoned at dungeon bosses)
     NPC_LAN_KILL_CREDIT         = 7340051,              // kill credit of the starting-area quests (never spawned)
+    NPC_LAN_BEAST               = 7340052,              // Gorefang, the starting-area quest 4 miniboss (summoned)
     NPC_LAN_SPEC_VENDOR         = 7340100,              // + spec index (33)
     NPC_LAN_FIRST               = 7340001,
     NPC_LAN_LAST                = 7340199
@@ -69,41 +71,32 @@ enum LanVirtualVendors : uint32
     LAN_VENDOR_GEMS             = 9200120,              // + gem color (ITEM_SUBCLASS_GEM_*)
     LAN_VENDOR_MOUNTS           = 9200130,              // + 0 ground, 1 flying
     LAN_VENDOR_T9               = 9200200,              // + spec index * 2 + team
+    LAN_VENDOR_T6_ARMOR         = 9200300,              // + spec index: Tier 6 without weapons, rings, trinkets
+    LAN_VENDOR_LEVEL80          = 9200400,              // + LanLevel80Gear category
     LAN_VENDOR_PROFESSION       = 9201000               // + profession index * 100 + page
 };
 
-// Adventure route quests and token items shipped in data/sql/db-world/mod_lan_route.sql (keep in sync).
+// Adventure route quests and items shipped in data/sql/db-world/mod_lan_route.sql (keep in sync).
 enum LanRouteQuests : uint32
 {
-    QUEST_LAN_START_FIRST       = 7340001,              // 6 starting-area quests
-    QUEST_LAN_START_LAST        = 7340006,
-    QUEST_LAN_DUNGEON_FIRST     = 7340011,              // 7340011-7340020 classic and TBC, 7340031-7340035 WotLK
-    QUEST_LAN_DUNGEON_LAST      = 7340035,
-    QUEST_LAN_DEATH_KNIGHT      = 7340041               // death knights join the route at Stratholme
+    QUEST_LAN_START_FIRST       = 7340001,              // 4 starting-area quests
+    QUEST_LAN_START_WILDFLOWERS = 7340002,
+    QUEST_LAN_START_BEAST       = 7340004,
+    QUEST_LAN_START_LAST        = 7340004,
+    QUEST_LAN_DEADMINES         = 7340011,
+    QUEST_LAN_RAMPARTS          = 7340012,
+    QUEST_LAN_UTGARDE_KEEP      = 7340031,
+    QUEST_LAN_AZJOL_NERUB       = 7340032,
+    QUEST_LAN_DRAKTHARON_KEEP   = 7340033,
+    QUEST_LAN_DEATH_KNIGHT      = 7340041               // death knights join the route at the Hellfire Ramparts
 };
 
-enum LanTokens : uint8
+enum LanRouteObjects : uint32
 {
-    LAN_TOKEN_HEAD,
-    LAN_TOKEN_NECK,
-    LAN_TOKEN_SHOULDERS,
-    LAN_TOKEN_BACK,
-    LAN_TOKEN_CHEST,
-    LAN_TOKEN_WRISTS,
-    LAN_TOKEN_HANDS,
-    LAN_TOKEN_WAIST,
-    LAN_TOKEN_LEGS,
-    LAN_TOKEN_FEET,
-    LAN_TOKEN_RING,
-    LAN_TOKEN_TRINKET,
-    LAN_TOKEN_MAIN_HAND,
-    LAN_TOKEN_OFF_HAND,
-    LAN_TOKEN_RANGED,
-    LAN_TOKEN_FREE_CHOICE,
-    LAN_TOKEN_COUNT
+    GO_LAN_WILDFLOWER           = 7340001,              // placed next to the starting-zone herbs (LanSpawns.cpp)
+    NPC_TEXT_LAN_BEEN_HERE      = 7340001,
+    NPC_TEXT_LAN_TOO_EASY       = 7340002
 };
-
-constexpr uint32 ITEM_LAN_TOKEN_FIRST = 7340001;        // + LanTokens
 
 struct LanProfession
 {

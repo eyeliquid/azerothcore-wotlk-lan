@@ -150,14 +150,15 @@ Lan.Vendors.BlockSellBack = 1
 # ADVENTURE ROUTE
 #
 #    Lan.Route.Enable
-#        Description: Pathfinder Maren's quests: 10 starting-area quests, then one quest per dungeon from
-#                     the Deadmines to Utgarde Pinnacle (level 20 to 80). Accepting a dungeon quest
-#                     teleports the group inside, turning it in raises the level for the next dungeon.
+#        Description: Pathfinder Maren's adventure route: four starting-area quests with heirlooms, then the
+#                     Deadmines (level 20, mobs half as strong, level 70 loot), the Hellfire Ramparts (level
+#                     60, then a level 80 vendor), Utgarde Keep, Azjol-Nerub and Drak'Tharon Keep (to level 80).
+#                     Accepting a dungeon quest teleports the group inside.
 #        Default:     1
 Lan.Route.Enable = 1
 
 #    Lan.Route.PassiveMobs
-#        Description: Mobs in the 15 route dungeons don't attack on their own; they only fight back.
+#        Description: Mobs in the five route dungeons don't attack on their own; they only fight back.
 #        Default:     1
 Lan.Route.PassiveMobs = 1
 

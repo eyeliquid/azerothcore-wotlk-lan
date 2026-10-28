@@ -55,39 +55,46 @@ and belt tinkers are skipped.
 
 Pathfinder Maren (every starting area, Ebon Hold and Krasus' Landing) leads a new character from level 1 to 80.
 
-1. **Starting area (level 1-20):** 6 quests, each "defeat X enemies" (any kill counts, also for the group).
-   Quests 1-4 each reward a choice of six satchels, one per armor type: cloth, leather (agility or caster), mail
-   (agility or caster) or plate. A satchel holds two pieces (helm and shoulders, chest and gloves, leggings and
-   bracers, belt and boots: Dungeon Set 3 plus blue extras). Quest 5 gives a weapon, quest 6 an off-hand. All of it
-   is usable from level 1. The quests bring you to level 4, 7, 10, 14, 17 and 20.
-2. **Deadmines to the Shadow Labyrinth (level 20-72):** one quest per dungeon (Deadmines, Shadowfang Keep,
-   Scarlet Monastery Armory, Uldaman, Zul'Farrak, Blackrock Depths, Stratholme, Hellfire Ramparts, Underbog,
-   Shadow Labyrinth): kill the last boss. Each quest gives two Tier 6 tokens; Maren exchanges them for the items
-   of the spec you pick (the 17 slots of the Tier 6 lists in `LanGearData.h`, plus three free-choice tokens).
-   The Shadow Labyrinth quest ends with a teleport to Dalaran.
-3. **Utgarde Keep to Utgarde Pinnacle (level 72-80):** 5 WotLK dungeons (Utgarde Keep, Nexus, Azjol-Nerub,
-   Violet Hold, Utgarde Pinnacle), 120 Emblems of Heroism each (Naxxramas 10-player level gear at the Dalaran
-   emblem quartermasters). The last quest teleports you into Naxxramas.
+1. **Starting area:** four quests.
+   - *First Blood*: defeat 10 enemies. A heirloom weapon of choice (Bloodied Arcanite Reaper, Venerable Dal'Rend's
+     Sacred Charge, Balanced Heartseeker, Dignified Headmaster's Charge, Devout Aurastone Hammer, Charmed Ancient Bone
+     Bow): they scale with your level up to 80.
+   - *Flowers for the Road*: pick 10 Wildflowers. They grow a yard from every Peacebloom, Silverleaf, Earthroot and
+     Bloodthistle spot in the starting zones (`LanSpawns.cpp`) and need no Herbalism. An off-hand of choice: heirloom
+     Battleworn Thrash Blade, Sharpened Scarlet Kris or Venerable Mass of McGowan, or a level 70 tank shield, caster
+     shield or held item.
+   - *Proving Grounds*: defeat 15 enemies. A satchel with two Tier 6 rings for your role (caster, healer, agility,
+     strength or tank).
+   - *The Beast of the Wilds*: Gorefang, an elite beast, comes running when you accept (ask Maren to lure it back if it
+     gets away). Two heirloom trinkets: Swift Hand of Justice and Discerning Eye of the Beast.
+
+   From then on Maren sells the rest of your Tier 6 gear per class and spec (head to feet, neck and back).
+2. **"Have you been here before?"** - "Yes, I have done this many times." You become level 20 and get the Deadmines
+   quest. In the Deadmines every mob, the bosses too, deals half damage and takes double damage, and the loot is
+   random level 70 gear without a level requirement (bosses drop two pieces, the other mobs one in three).
+3. **"Wasn't that a bit too easy?"** - "Yes, far too easy." You become level 60 and go straight into the Hellfire
+   Ramparts. Afterwards (level 70) Maren sells level 80 blue gear for every armor type, plus necks, cloaks, rings,
+   trinkets, weapons, shields and off-hands, without a level requirement (`LanRouteData.h`).
+4. **Northrend:** Utgarde Keep (to level 74), Azjol-Nerub (77) and Drak'Tharon Keep (80), 120 Emblems of Heroism
+   each. The last quest ends with a teleport to Dalaran.
 
 - Accepting a dungeon quest teleports you and every group member on the same map inside the dungeon; group
   members who can take the quest get it too. Maren's "Take me and my group to ..." does the same later.
 - The boss kill counts for everyone in the instance, and Maren appears next to the boss for an hour
   (`Lan.Route.KeeperDespawn`). Quests can be turned in with any Maren.
-- Every mob in the Scarlet Monastery drops The Scarlet Key (for the Armory door) for players who don't have
-  it yet (`mod_lan_scarlet_key.sql`).
-- Every mob in Zul'Farrak drops an Executioner's Key (for the troll cages before Chief Ukorz Sandscalp) for players
-  who don't have one (`mod_lan_zulfarrak.sql`).
-- Every mob in Blackrock Depths drops the Shadowforge Key for players who don't have it, so the Dark Iron Legacy
-  quest isn't needed (`mod_lan_blackrock_depths.sql`).
-- Every mob in Uldaman drops the Staff of Prehistoria (Keystone door to Ironaya) and every mob in Stratholme the Key
-  to the City, again only for players who don't have it (`mod_lan_uldaman.sql`, `mod_lan_stratholme.sql`).
-- Scarlet Commander Mograine fights alone: he no longer pulls every mob in the Cathedral hall along
-  (`mod_lan_scarlet_key.sql`).
-- Turning a quest in raises your level to the next dungeon's level (no level is ever taken away).
-- Mobs in the 15 route dungeons don't attack on their own; they only fight back (`Lan.Route.PassiveMobs`).
+- Mobs in the five route dungeons don't attack on their own; they only fight back (`Lan.Route.PassiveMobs`).
 - The dungeons scale to the group size through mod-autobalance (5-player dungeons are enabled for it).
-- Death knights get "A New Road" in Ebon Hold: the gear and tokens of the starting area and the first six
-  dungeons, level 60, and the Stratholme quest next.
+- Death knights get "A New Road" in Ebon Hold: the Bloodied Arcanite Reaper, Swift Hand of Justice and a strength
+  or tank ring satchel, level 60, the Tier 6 vendor, and the Hellfire Ramparts next.
+
+### Dungeon keys
+
+Outside the route, every mob in these dungeons drops their key for players who don't have it, only inside the
+instance: The Scarlet Key in the Scarlet Monastery (`mod_lan_scarlet_key.sql`), the Executioner's Key in Zul'Farrak
+(`mod_lan_zulfarrak.sql`), the Shadowforge Key and the Grim Guzzler Key in Blackrock Depths
+(`mod_lan_blackrock_depths.sql`, `mod_lan_blackrock_depths_guzzler.sql`), the Staff of Prehistoria in Uldaman
+(`mod_lan_uldaman.sql`) and the Key to the City in Stratholme (`mod_lan_stratholme.sql`). Scarlet Commander Mograine
+no longer pulls every mob in the Cathedral hall along.
 
 ## Bots (mod-playerbots)
 

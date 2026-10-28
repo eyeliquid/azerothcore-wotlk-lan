@@ -371,6 +371,11 @@ namespace
                 proto->AllowableClass |= 1 << (spec.ClassId - 1);
             }
 
+            // Pathfinder Maren (adventure route): head to feet plus neck and back; the route quests give the
+            // weapons, rings and trinkets
+            for (uint8 slot = 0; slot <= 9; ++slot)
+                AddVendorItem(LAN_VENDOR_T6_ARMOR + specIndex, spec.T6[slot], cfg.GearPrice);
+
             // Tier 9 with its gems and enchant items, once per faction
             for (uint8 team = 0; team < 2; ++team)
             {
@@ -395,6 +400,20 @@ namespace
 
         for (uint32 bagId : BiggestBags)
             AddVendorItem(LAN_VENDOR_BAGS, bagId, cfg.GearPrice);
+
+        // Pathfinder Maren after the Hellfire Ramparts: level 80 blue gear, usable at any level
+        for (uint32 category = 0; category < LanLevel80Gear.size(); ++category)
+        {
+            LanLevel80Category const& gear = LanLevel80Gear[category];
+            for (std::size_t i = 0; i < gear.Count; ++i)
+            {
+                if (!AddVendorItem(LAN_VENDOR_LEVEL80 + category, gear.Items[i], cfg.GearPrice))
+                    continue;
+
+                ItemTemplate* proto = const_cast<ItemTemplate*>(sObjectMgr->GetItemTemplate(gear.Items[i]));
+                proto->RequiredLevel = 0;
+            }
+        }
 
         // The LAN party sword, free at the bag vendor
         if (ItemTemplate const* proto = sObjectMgr->GetItemTemplate(ITEM_NIGHTBLADE))

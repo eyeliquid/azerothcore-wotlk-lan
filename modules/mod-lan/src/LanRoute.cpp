@@ -2,34 +2,36 @@
  * mod-lan: LAN party features for AzerothCore + mod-playerbots.
  * Released under GNU AGPL v3 license: https://github.com/azerothcore/azerothcore-wotlk/blob/master/LICENSE-AGPL3
  *
- * The adventure route: Pathfinder Maren hands out 6 starting-area quests (satchels with Dungeon Set 3 and blue
- * extras, a weapon and an off-hand), then one quest per dungeon from the Deadmines to the Shadow Labyrinth (10
- * dungeons, level 20 to 72, two Tier 6 tokens each) and from Utgarde Keep to Utgarde Pinnacle (5 dungeons,
- * 72 to 80, Emblems of Heroism).
+ * The adventure route of Pathfinder Maren:
+ * 1. Four starting-area quests: 10 kills (heirloom weapon), 10 Wildflowers (off-hand), 15 kills (two rings) and
+ *    Gorefang, a beast Maren lures to the player (two heirloom trinkets). After that Maren sells the rest of the
+ *    Tier 6 gear per class and spec.
+ * 2. "Have you been here before?" - "Yes": level 20 and the Deadmines, where the mobs are half as strong and drop
+ *    random level 70 gear.
+ * 3. "Wasn't that too easy?" - "Yes": level 60 and straight into the Hellfire Ramparts. Afterwards Maren sells
+ *    level 80 blue gear.
+ * 4. Utgarde Keep, Azjol-Nerub and Drak'Tharon Keep (70 to 80), then off to Dalaran.
  *
  * - Accepting a dungeon quest teleports the player and the group into that dungeon; group members without
  *   the quest get it too.
  * - Killing the last boss credits everyone in the instance and summons Maren next to it.
- * - Turning a quest in raises the level to the next dungeon's level and opens the token exchange.
  * - Mobs in the route dungeons only fight back (Lan.Route.PassiveMobs).
  */
 
 #include "Chat.h"
-#include "CharacterDatabase.h"
 #include "Creature.h"
-#include "DBCStores.h"
 #include "Group.h"
-#include "Item.h"
 #include "LanCommon.h"
 #include "Log.h"
-#include "Mail.h"
 #include "Map.h"
 #include "ObjectMgr.h"
 #include "Player.h"
 #include "QuestDef.h"
 #include "ScriptMgr.h"
 #include "ScriptedGossip.h"
+#include "SpellInfo.h"
 #include "StringFormat.h"
+#include "TemporarySummon.h"
 #include "World.h"
 #include "WorldSession.h"
 
@@ -43,51 +45,27 @@ namespace
         char const* Name;
         uint32 MapId;
         uint32 EntranceTrigger;                         // areatrigger_teleport ID, the spot inside the entrance
-        uint8 LevelOut;                                 // level after turning the quest in
+        uint8 LevelOut;                                 // level after turning the quest in (0: unchanged)
         std::array<uint32, 2> Bosses;                   // [0] is the quest objective; the quest completes when the
                                                         // last of them dies (Ingvar changes entry, Vazruden and
                                                         // Nazan die separately)
     };
 
-    std::array<RouteDungeon, 15> const RouteDungeons =
+    std::array<RouteDungeon, 5> const RouteDungeons =
     {{
-        { 7340011, "The Deadmines",                     36,  78,   25, { 639, 0 } },
-        { 7340012, "Shadowfang Keep",                   33,  145,  35, { 4275, 0 } },
-        { 7340013, "the Scarlet Monastery Armory",      189, 612,  45, { 3975, 0 } },
-        { 7340014, "Uldaman",                           70,  286,  50, { 2748, 0 } },
-        { 7340015, "Zul'Farrak",                        209, 924,  55, { 7267, 7797 } },
-        { 7340016, "Blackrock Depths",                  230, 1466, 60, { 9019, 0 } },
-        { 7340017, "Stratholme",                        329, 2214, 64, { 10440, 0 } },
-        { 7340018, "the Hellfire Ramparts",             543, 4150, 68, { 17537, 17536 } },
-        { 7340019, "the Underbog",                      546, 4363, 70, { 17882, 0 } },
-        { 7340020, "the Shadow Labyrinth",              555, 4407, 72, { 18708, 0 } },
-        { 7340031, "Utgarde Keep",                      574, 4745, 74, { 23954, 23980 } },
-        { 7340032, "the Nexus",                         576, 4983, 75, { 26723, 0 } },
-        { 7340033, "Azjol-Nerub",                       601, 5117, 78, { 29120, 0 } },
-        { 7340034, "the Violet Hold",                   608, 5209, 79, { 31134, 0 } },
-        { 7340035, "Utgarde Pinnacle",                  575, 4747, 80, { 26861, 0 } }
+        { QUEST_LAN_DEADMINES,          "The Deadmines",            36,  78,   0,  { 639, 0 } },
+        { QUEST_LAN_RAMPARTS,           "the Hellfire Ramparts",    543, 4150, 70, { 17537, 17536 } },
+        { QUEST_LAN_UTGARDE_KEEP,       "Utgarde Keep",             574, 4745, 74, { 23954, 23980 } },
+        { QUEST_LAN_AZJOL_NERUB,        "Azjol-Nerub",              601, 5117, 77, { 29120, 0 } },
+        { QUEST_LAN_DRAKTHARON_KEEP,    "Drak'Tharon Keep",         600, 4998, 80, { 26632, 27696 } }
     }};
 
-    constexpr uint32 QUEST_STRATHOLME = 7340017;            // death knights start here
-    constexpr uint32 QUEST_LAST_TBC_DUNGEON = 7340020;      // Shadow Labyrinth: then off to Dalaran
-    constexpr uint32 QUEST_LAST_WOTLK_DUNGEON = 7340035;    // Utgarde Pinnacle: then off to Naxxramas
-    constexpr uint32 TRIGGER_NAXXRAMAS = 5191;
-    constexpr std::array<uint8, 6> StartQuestLevels = { 4, 7, 10, 14, 17, 20 };    // level after each start quest
-
-    // The armor in the starting-area satchels (item_loot_template 7340101-7340124): one column per armor profile
-    // (cloth, leather agility, leather caster, mail agility, mail caster, plate), one row per slot
-    constexpr std::array<uint32, 48> StartSatchelGear =
-    {
-        28278, 28224, 28348, 28275, 28349, 28350,   // helm
-        27738, 27797, 27737, 27801, 27802, 27803,   // shoulders
-        28229, 28264, 28202, 28228, 28231, 28205,   // chest
-        27508, 27531, 27468, 27474, 27510, 27475,   // gloves
-        27838, 27837, 27873, 27874, 27909, 27977,   // leggings
-        27462, 27712, 27483, 34698, 27522, 34789,   // bracers
-        27742, 27911, 28398, 27521, 27835, 28375,   // belt
-        27902, 27467, 28251, 27915, 27845, 28318    // boots
-    };
-    constexpr uint8 LEVEL_DEATH_KNIGHT = 60;    // Stratholme's level
+    constexpr uint8 LEVEL_BEEN_HERE = 20;               // "Have you been here before?" - "Yes"
+    constexpr uint8 LEVEL_TOO_EASY = 60;                // "Wasn't that a bit too easy?" - "Yes"
+    constexpr uint8 LEVEL_DEATH_KNIGHT = 60;
+    constexpr uint32 MAP_DEADMINES = 36;
+    constexpr float DEADMINES_STRENGTH = 0.5f;          // damage done by the Deadmines mobs; they take 1 / this
+    constexpr uint32 BEAST_DESPAWN = 10 * MINUTE * IN_MILLISECONDS;
 
     // Krasus' Landing, in front of Pathfinder Maren
     constexpr float DALARAN_X = 5822.0f;
@@ -95,36 +73,19 @@ namespace
     constexpr float DALARAN_Z = 660.0f;
     constexpr float DALARAN_O = 1.57f;
 
-    // What the starting-area quests and the dungeons before Stratholme would have given a death knight
-    constexpr std::array<uint32, 9> DeathKnightGear =
-    {
-        28350, 27803, 28205, 27475, 27977,  // Dungeon Set 3 plate: Warhelm, Shoulderguards, Breastplate,
-                                            // Gauntlets, Legplates of the Bold
-        34789, 28375, 28318,                // Bracers of Slaughter, Rubium War-Girdle, Obsidian Clodstompers
-        27524                               // Firemaul of Destruction
-    };
-    constexpr std::array<uint8, 12> DeathKnightTokens =
-    {
-        LAN_TOKEN_NECK, LAN_TOKEN_BACK, LAN_TOKEN_HANDS, LAN_TOKEN_RING, LAN_TOKEN_SHOULDERS, LAN_TOKEN_TRINKET,
-        LAN_TOKEN_WAIST, LAN_TOKEN_RING, LAN_TOKEN_MAIN_HAND, LAN_TOKEN_OFF_HAND, LAN_TOKEN_WRISTS, LAN_TOKEN_TRINKET
-    };
-
-    // LanSpecData::T6 slots (WoWSims order) each token can become; rings and trinkets have two
-    constexpr std::array<std::array<int8, 2>, LAN_TOKEN_COUNT> TokenSlots =
-    {{
-        { 0, -1 }, { 1, -1 }, { 2, -1 }, { 3, -1 }, { 4, -1 }, { 5, -1 }, { 6, -1 }, { 7, -1 }, { 8, -1 },
-        { 9, -1 }, { 10, 11 }, { 12, 13 }, { 14, -1 }, { 15, -1 }, { 16, -1 }, { -1, -1 }
-    }};
-
     enum GuideGossip : uint32
     {
         SENDER_MENU             = GOSSIP_SENDER_MAIN,
-        SENDER_PICK             = GOSSIP_SENDER_MAIN + 1,   // action = token * 10000 + spec * 100 + slot
-        SENDER_FREE_SPEC        = GOSSIP_SENDER_MAIN + 2,   // action = spec index
+        SENDER_T6_SPEC          = GOSSIP_SENDER_MAIN + 1,   // action = spec index
+        SENDER_LEVEL80          = GOSSIP_SENDER_MAIN + 2,   // action = LanLevel80Gear category
 
         ACTION_HELLO            = 1,
         ACTION_TELEPORT         = 2,
-        ACTION_TOKEN            = 100                       // + token
+        ACTION_BEAST            = 3,
+        ACTION_T6               = 4,
+        ACTION_LEVEL80          = 5,
+        ACTION_BEEN_HERE        = 6,
+        ACTION_TOO_EASY         = 7
     };
 
     std::bitset<1024> _routeMaps;
@@ -162,55 +123,25 @@ namespace
         return false;
     }
 
+    bool Rewarded(Player* player, uint32 questId)
+    {
+        return player->GetQuestRewardStatus(questId);
+    }
+
+    bool CanBuyTier6(Player* player)
+    {
+        return Rewarded(player, QUEST_LAN_START_BEAST) || Rewarded(player, QUEST_LAN_DEATH_KNIGHT);
+    }
+
     void RaiseLevel(Player* player, uint8 level)
     {
         level = std::min<uint8>(level, sWorld->getIntConfig(CONFIG_MAX_PLAYER_LEVEL));
-        if (player->GetLevel() >= level)
+        if (!level || player->GetLevel() >= level)
             return;
 
         player->GiveLevel(level);
         player->InitTalentForLevel();
         player->SetUInt32Value(PLAYER_XP, 0);
-    }
-
-    // Items go to the bags; what doesn't fit arrives by mail (12 items per mail)
-    void GiveItems(Player* player, std::vector<uint32> const& itemIds)
-    {
-        std::vector<uint32> mailed;
-        for (uint32 itemId : itemIds)
-        {
-            ItemPosCountVec dest;
-            if (player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, 1) == EQUIP_ERR_OK)
-            {
-                if (Item* item = player->StoreNewItem(dest, itemId, true))
-                {
-                    player->SendNewItem(item, 1, true, false);
-                    continue;
-                }
-            }
-
-            mailed.push_back(itemId);
-        }
-
-        for (std::size_t first = 0; first < mailed.size(); first += MAX_MAIL_ITEMS)
-        {
-            CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
-            MailDraft draft("LAN Adventure", "Your bags were full, so the rest of your items came by mail.");
-            for (std::size_t i = first; i < std::min(mailed.size(), first + MAX_MAIL_ITEMS); ++i)
-            {
-                if (Item* item = Item::CreateItem(mailed[i], 1, player))
-                {
-                    item->SaveToDB(trans);
-                    draft.AddItem(item);
-                }
-            }
-
-            draft.SendMailTo(trans, MailReceiver(player), MailSender(MAIL_NORMAL, 0, MAIL_STATIONERY_GM));
-            CharacterDatabase.CommitTransaction(trans);
-        }
-
-        if (!mailed.empty())
-            ChatHandler(player->GetSession()).SendNotification("Your bags are full: check your mailbox.");
     }
 
     // The player and every group member on the same map go into the dungeon. Real players without the
@@ -256,53 +187,45 @@ namespace
         }
     }
 
-    uint32 TokenItem(uint8 token)
+    // Gorefang comes running at the player from a little way off
+    void SummonBeast(Player* player)
     {
-        return ITEM_LAN_TOKEN_FIRST + token;
+        if (player->FindNearestCreature(NPC_LAN_BEAST, 80.0f))
+            return;
+
+        Position pos = player->GetNearPosition(20.0f, 0.0f);
+        TempSummon* beast = player->SummonCreature(NPC_LAN_BEAST, pos, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, BEAST_DESPAWN);
+        if (!beast)
+            return;
+
+        beast->SetFacingToObject(player);
+        beast->AI()->AttackStart(player);
+        ChatHandler(player->GetSession()).SendNotification("Gorefang is coming for you!");
     }
 
-    bool IsTokenItem(uint32 itemId)
+    void SendQuestion(Player* player, Creature* creature, uint32 textId, char const* answer, uint32 action)
     {
-        return itemId >= ITEM_LAN_TOKEN_FIRST && itemId < ITEM_LAN_TOKEN_FIRST + LAN_TOKEN_COUNT;
-    }
-
-    // The T6 slot a token becomes for this spec: for rings and trinkets the first one the player doesn't own yet
-    int8 TokenSlotFor(Player* player, LanSpecData const& spec, uint8 token)
-    {
-        int8 fallback = -1;
-        for (int8 slot : TokenSlots[token])
-        {
-            if (slot < 0 || !spec.T6[slot])
-                continue;
-
-            if (!player->HasItemCount(spec.T6[slot], 1, true))
-                return slot;
-
-            if (fallback < 0)
-                fallback = slot;
-        }
-        return fallback;
-    }
-
-    bool TokenAllowsSlot(uint8 token, uint8 slot)
-    {
-        if (token == LAN_TOKEN_FREE_CHOICE)
-            return true;
-
-        for (int8 tokenSlot : TokenSlots[token])
-            if (tokenSlot == int8(slot))
-                return true;
-        return false;
-    }
-
-    std::string ItemName(uint32 itemId)
-    {
-        ItemTemplate const* proto = sObjectMgr->GetItemTemplate(itemId);
-        return proto ? proto->Name1 : Acore::StringFormat("item {}", itemId);
+        ClearGossipMenuFor(player);
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, answer, SENDER_MENU, action);
+        SendGossipMenuFor(player, textId, creature->GetGUID());
     }
 
     void ShowHello(Player* player, Creature* creature)
     {
+        // After the beast: have you been here before? After the Deadmines: wasn't that too easy?
+        if (Rewarded(player, QUEST_LAN_START_BEAST) && player->GetQuestStatus(QUEST_LAN_DEADMINES) == QUEST_STATUS_NONE)
+        {
+            SendQuestion(player, creature, NPC_TEXT_LAN_BEEN_HERE, "Yes, I have done this many times.",
+                ACTION_BEEN_HERE);
+            return;
+        }
+
+        if (Rewarded(player, QUEST_LAN_DEADMINES) && player->GetQuestStatus(QUEST_LAN_RAMPARTS) == QUEST_STATUS_NONE)
+        {
+            SendQuestion(player, creature, NPC_TEXT_LAN_TOO_EASY, "Yes, far too easy.", ACTION_TOO_EASY);
+            return;
+        }
+
         ClearGossipMenuFor(player);
         player->PrepareQuestMenu(creature->GetGUID());
 
@@ -310,128 +233,66 @@ namespace
             AddGossipItemFor(player, GOSSIP_ICON_TAXI, Acore::StringFormat("Take me and my group to {}.",
                 dungeon->Name), SENDER_MENU, ACTION_TELEPORT);
 
-        for (uint8 token = 0; token < LAN_TOKEN_COUNT; ++token)
-            if (player->HasItemCount(TokenItem(token)))
-                AddGossipItemFor(player, GOSSIP_ICON_VENDOR, Acore::StringFormat("Exchange my {}.",
-                    ItemName(TokenItem(token))), SENDER_MENU, ACTION_TOKEN + token);
+        if (player->GetQuestStatus(QUEST_LAN_START_BEAST) == QUEST_STATUS_INCOMPLETE &&
+            !player->FindNearestCreature(NPC_LAN_BEAST, 80.0f))
+            AddGossipItemFor(player, GOSSIP_ICON_BATTLE, "Lure Gorefang back.", SENDER_MENU, ACTION_BEAST);
+
+        if (CanBuyTier6(player))
+            AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "Show me the Tier 6 gear for my class.", SENDER_MENU,
+                ACTION_T6);
+
+        if (Rewarded(player, QUEST_LAN_RAMPARTS))
+            AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "Show me your level 80 gear.", SENDER_MENU, ACTION_LEVEL80);
 
         SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
     }
 
-    void ShowTokenMenu(Player* player, Creature* creature, uint8 token)
+    void ShowTier6Specs(Player* player, Creature* creature)
     {
         ClearGossipMenuFor(player);
         for (uint8 specIndex = 0; specIndex < LanSpecs.size(); ++specIndex)
-        {
-            LanSpecData const& spec = LanSpecs[specIndex];
-            if (spec.ClassId != player->getClass())
-                continue;
-
-            if (token == LAN_TOKEN_FREE_CHOICE)
-            {
-                AddGossipItemFor(player, GOSSIP_ICON_VENDOR, Acore::StringFormat("{} {}", spec.SpecName,
-                    spec.ClassName), SENDER_FREE_SPEC, specIndex);
-                continue;
-            }
-
-            int8 slot = TokenSlotFor(player, spec, token);
-            if (slot < 0)
-                continue;
-
-            AddGossipItemFor(player, GOSSIP_ICON_VENDOR, Acore::StringFormat("{}: {}", spec.SpecName,
-                ItemName(spec.T6[slot])), SENDER_PICK, token * 10000 + specIndex * 100 + slot);
-        }
+            if (LanSpecs[specIndex].ClassId == player->getClass())
+                AddGossipItemFor(player, GOSSIP_ICON_VENDOR, Acore::StringFormat("{} {}", LanSpecs[specIndex].SpecName,
+                    LanSpecs[specIndex].ClassName), SENDER_T6_SPEC, specIndex);
 
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Back", SENDER_MENU, ACTION_HELLO);
         SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
     }
 
-    // Free choice token, second step: every slot of the spec the player doesn't own yet
-    void ShowFreeChoiceMenu(Player* player, Creature* creature, uint8 specIndex)
+    void ShowLevel80Categories(Player* player, Creature* creature)
     {
         ClearGossipMenuFor(player);
-        LanSpecData const& spec = LanSpecs[specIndex];
-        for (uint8 slot = 0; slot < LAN_GEAR_SLOTS; ++slot)
-        {
-            uint32 itemId = spec.T6[slot];
-            if (!itemId || player->HasItemCount(itemId, 1, true))
-                continue;
+        for (uint32 category = 0; category < LanLevel80Gear.size(); ++category)
+            AddGossipItemFor(player, GOSSIP_ICON_VENDOR, LanLevel80Gear[category].Name, SENDER_LEVEL80, category);
 
-            AddGossipItemFor(player, GOSSIP_ICON_VENDOR, ItemName(itemId), SENDER_PICK,
-                LAN_TOKEN_FREE_CHOICE * 10000 + specIndex * 100 + slot);
-        }
-
-        AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Back", SENDER_MENU,
-            uint32(ACTION_TOKEN) + LAN_TOKEN_FREE_CHOICE);
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Back", SENDER_MENU, ACTION_HELLO);
         SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
     }
 
-    // After an exchange: offer the next route quest right away, or go back to the main menu
-    void ShowNextStep(Player* player, Creature* creature)
+    void OpenVendor(Player* player, Creature* creature, uint32 vendorEntry)
     {
-        // Every dungeon gives two tokens: exchange the rest first
-        for (uint8 token = 0; token < LAN_TOKEN_COUNT; ++token)
-        {
-            if (player->HasItemCount(TokenItem(token)))
-            {
-                ShowTokenMenu(player, creature, token);
-                return;
-            }
-        }
-
-        for (uint32 questId = QUEST_LAN_START_FIRST; questId <= QUEST_LAN_DEATH_KNIGHT; ++questId)
-        {
-            Quest const* quest = sObjectMgr->GetQuestTemplate(questId);
-            if (quest && player->GetQuestStatus(questId) == QUEST_STATUS_NONE && player->CanTakeQuest(quest, false))
-            {
-                player->PlayerTalkClass->SendQuestGiverQuestDetails(quest, creature->GetGUID(), true);
-                return;
-            }
-        }
-
-        ShowHello(player, creature);
-    }
-
-    void ExchangeToken(Player* player, Creature* creature, uint32 action)
-    {
-        uint8 token = action / 10000;
-        uint8 specIndex = (action / 100) % 100;
-        uint8 slot = action % 100;
-        if (token >= LAN_TOKEN_COUNT || specIndex >= LanSpecs.size() || slot >= LAN_GEAR_SLOTS ||
-            !TokenAllowsSlot(token, slot))
-            return;
-
-        LanSpecData const& spec = LanSpecs[specIndex];
-        uint32 itemId = spec.T6[slot];
-        if (spec.ClassId != player->getClass() || !itemId || !player->HasItemCount(TokenItem(token)))
-        {
-            CloseGossipMenuFor(player);
-            return;
-        }
-
-        // Store first, so a full bag never costs the token
-        if (!player->AddItem(itemId, 1))
-        {
-            CloseGossipMenuFor(player);
-            return;
-        }
-
-        player->DestroyItemCount(TokenItem(token), 1, true);
-        ShowNextStep(player, creature);
+        CloseGossipMenuFor(player);
+        player->GetSession()->SendListInventory(creature->GetGUID(), vendorEntry);
     }
 
     void GiveDeathKnightStart(Player* player)
     {
-        // The starting-area quests and the dungeons before Stratholme count as done, so Stratholme is next
-        for (uint32 questId = QUEST_LAN_START_FIRST; questId < QUEST_STRATHOLME; ++questId)
+        // The starting-area quests and the Deadmines count as done: Tier 6 is for sale, the Ramparts are next
+        for (uint32 questId = QUEST_LAN_START_FIRST; questId <= QUEST_LAN_DEADMINES; ++questId)
             if (sObjectMgr->GetQuestTemplate(questId) && !player->GetQuestRewardStatus(questId))
                 player->SetRewardedQuest(questId);
 
-        std::vector<uint32> items(DeathKnightGear.begin(), DeathKnightGear.end());
-        for (uint8 token : DeathKnightTokens)
-            items.push_back(TokenItem(token));
-        GiveItems(player, items);
         RaiseLevel(player, LEVEL_DEATH_KNIGHT);
+    }
+
+    bool InDeadmines(Unit const* unit)
+    {
+        return unit && unit->GetMapId() == MAP_DEADMINES;
+    }
+
+    bool IsPlayerSide(Unit const* unit)
+    {
+        return unit && (unit->IsPlayer() || unit->IsControlledByPlayer() || unit->GetOwnerGUID().IsPlayer());
     }
 }
 
@@ -448,39 +309,76 @@ public:
 
     bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
     {
-        switch (sender)
+        if (sender == SENDER_T6_SPEC)
         {
-            case SENDER_PICK:
-                ExchangeToken(player, creature, action);
+            if (action < LanSpecs.size() && LanSpecs[action].ClassId == player->getClass() && CanBuyTier6(player))
+                OpenVendor(player, creature, LAN_VENDOR_T6_ARMOR + action);
+            else
+                CloseGossipMenuFor(player);
+            return true;
+        }
+
+        if (sender == SENDER_LEVEL80)
+        {
+            if (action < LanLevel80Gear.size() && Rewarded(player, QUEST_LAN_RAMPARTS))
+                OpenVendor(player, creature, LAN_VENDOR_LEVEL80 + action);
+            else
+                CloseGossipMenuFor(player);
+            return true;
+        }
+
+        switch (action)
+        {
+            case ACTION_TELEPORT:
+                CloseGossipMenuFor(player);
+                if (RouteDungeon const* dungeon = ActiveDungeon(player))
+                    TeleportGroupToDungeon(player, *dungeon);
                 return true;
-            case SENDER_FREE_SPEC:
-                if (action < LanSpecs.size() && LanSpecs[action].ClassId == player->getClass() &&
-                    player->HasItemCount(TokenItem(LAN_TOKEN_FREE_CHOICE)))
-                    ShowFreeChoiceMenu(player, creature, action);
+            case ACTION_BEAST:
+                CloseGossipMenuFor(player);
+                if (player->GetQuestStatus(QUEST_LAN_START_BEAST) == QUEST_STATUS_INCOMPLETE)
+                    SummonBeast(player);
+                return true;
+            case ACTION_T6:
+                if (CanBuyTier6(player))
+                    ShowTier6Specs(player, creature);
                 else
                     CloseGossipMenuFor(player);
                 return true;
+            case ACTION_LEVEL80:
+                if (Rewarded(player, QUEST_LAN_RAMPARTS))
+                    ShowLevel80Categories(player, creature);
+                else
+                    CloseGossipMenuFor(player);
+                return true;
+            case ACTION_BEEN_HERE:
+                if (Rewarded(player, QUEST_LAN_START_BEAST) &&
+                    player->GetQuestStatus(QUEST_LAN_DEADMINES) == QUEST_STATUS_NONE)
+                {
+                    RaiseLevel(player, LEVEL_BEEN_HERE);
+                    if (Quest const* deadmines = sObjectMgr->GetQuestTemplate(QUEST_LAN_DEADMINES))
+                    {
+                        player->PlayerTalkClass->SendQuestGiverQuestDetails(deadmines, creature->GetGUID(), true);
+                        return true;
+                    }
+                }
+                CloseGossipMenuFor(player);
+                return true;
+            case ACTION_TOO_EASY:
+                CloseGossipMenuFor(player);
+                if (Rewarded(player, QUEST_LAN_DEADMINES) &&
+                    player->GetQuestStatus(QUEST_LAN_RAMPARTS) == QUEST_STATUS_NONE)
+                {
+                    RaiseLevel(player, LEVEL_TOO_EASY);
+                    Quest const* ramparts = sObjectMgr->GetQuestTemplate(QUEST_LAN_RAMPARTS);
+                    if (ramparts && player->CanAddQuest(ramparts, true))
+                        player->AddQuestAndCheckCompletion(ramparts, creature);     // teleports, see OnQuestAccept
+                }
+                return true;
             default:
-                break;
+                ShowHello(player, creature);
+                return true;
         }
-
-        if (action == ACTION_TELEPORT)
-        {
-            CloseGossipMenuFor(player);
-            if (RouteDungeon const* dungeon = ActiveDungeon(player))
-                TeleportGroupToDungeon(player, *dungeon);
-            return true;
-        }
-
-        if (action >= ACTION_TOKEN && action < uint32(ACTION_TOKEN) + LAN_TOKEN_COUNT &&
-            player->HasItemCount(TokenItem(action - ACTION_TOKEN)))
-        {
-            ShowTokenMenu(player, creature, action - ACTION_TOKEN);
-            return true;
-        }
-
-        ShowHello(player, creature);
-        return true;
     }
 
     bool OnQuestAccept(Player* player, Creature* /*creature*/, Quest const* quest) override
@@ -488,70 +386,61 @@ public:
         if (!GetLanConfig().RouteEnabled)
             return false;
 
-        if (RouteDungeon const* dungeon = FindDungeonByQuest(quest->GetQuestId()))
+        if (quest->GetQuestId() == QUEST_LAN_START_BEAST)
+            SummonBeast(player);
+        else if (RouteDungeon const* dungeon = FindDungeonByQuest(quest->GetQuestId()))
             TeleportGroupToDungeon(player, *dungeon);
         return false;
     }
 
     bool OnQuestReward(Player* player, Creature* creature, Quest const* quest, uint32 /*opt*/) override
     {
-        uint32 questId = quest->GetQuestId();
-        if (questId == QUEST_LAN_DEATH_KNIGHT)
+        switch (quest->GetQuestId())
         {
-            GiveDeathKnightStart(player);
-            return false;                               // the core offers the Stratholme quest next
+            case QUEST_LAN_DEATH_KNIGHT:
+                GiveDeathKnightStart(player);
+                return false;                           // the core offers the Ramparts quest next
+            case QUEST_LAN_START_BEAST:                 // "Have you been here before?"
+            case QUEST_LAN_DEADMINES:                   // "Wasn't that a bit too easy?"
+                ShowHello(player, creature);
+                return true;
+            default:
+                break;
         }
 
-        if (questId >= QUEST_LAN_START_FIRST && questId <= QUEST_LAN_START_LAST)
-        {
-            RaiseLevel(player, StartQuestLevels[questId - QUEST_LAN_START_FIRST]);
-            return false;                               // the core offers the next quest (after 6: the Deadmines)
-        }
-
-        RouteDungeon const* dungeon = FindDungeonByQuest(questId);
+        RouteDungeon const* dungeon = FindDungeonByQuest(quest->GetQuestId());
         if (!dungeon)
             return false;
 
         RaiseLevel(player, dungeon->LevelOut);
 
-        if (questId == QUEST_LAST_TBC_DUNGEON)
+        if (quest->GetQuestId() == QUEST_LAN_RAMPARTS)
+        {
+            ShowLevel80Categories(player, creature);
+            return true;
+        }
+
+        if (quest->GetQuestId() == QUEST_LAN_DRAKTHARON_KEEP)
         {
             CloseGossipMenuFor(player);
-            ChatHandler(player->GetSession()).SendSysMessage("Welcome to Dalaran! Exchange your token with "
-                "Pathfinder Maren at Krasus' Landing, then your Northrend adventure begins.");
+            ChatHandler(player->GetSession()).SendSysMessage("Your adventure is complete. Welcome to Dalaran!");
             player->TeleportTo(MAP_NORTHREND, DALARAN_X, DALARAN_Y, DALARAN_Z, DALARAN_O);
             return true;
         }
 
-        if (questId == QUEST_LAST_WOTLK_DUNGEON)
-        {
-            CloseGossipMenuFor(player);
-            if (AreaTriggerTeleport const* naxxramas = sObjectMgr->GetAreaTriggerTeleport(TRIGGER_NAXXRAMAS))
-            {
-                ChatHandler(player->GetSession()).SendSysMessage("You made it to level 80. Naxxramas awaits!");
-                player->TeleportTo(naxxramas->target_mapId, naxxramas->target_X, naxxramas->target_Y,
-                    naxxramas->target_Z, naxxramas->target_Orientation);
-            }
-            return true;
-        }
-
-        for (uint32 itemId : quest->RewardItemId)
-        {
-            if (IsTokenItem(itemId) && player->HasItemCount(itemId))
-            {
-                ShowTokenMenu(player, creature, itemId - ITEM_LAN_TOKEN_FIRST);
-                return true;                            // the next quest follows the exchange
-            }
-        }
-
-        return false;
+        return false;                                   // the core offers the next quest
     }
 };
 
 class LanRouteUnitScript : public UnitScript
 {
 public:
-    LanRouteUnitScript() : UnitScript("LanRouteUnitScript", true, { UNITHOOK_ON_UNIT_DEATH }) { }
+    LanRouteUnitScript() : UnitScript("LanRouteUnitScript", true, {
+        UNITHOOK_ON_UNIT_DEATH,
+        UNITHOOK_MODIFY_MELEE_DAMAGE,
+        UNITHOOK_MODIFY_SPELL_DAMAGE_TAKEN,
+        UNITHOOK_MODIFY_PERIODIC_DAMAGE_AURAS_TICK
+    }) { }
 
     void OnUnitDeath(Unit* unit, Unit* killer) override
     {
@@ -569,7 +458,38 @@ public:
             HandleStartAreaKill(creature, killer);
     }
 
+    // The Deadmines mobs (bosses too) are half as strong: they deal half damage and take double damage
+    void ModifyMeleeDamage(Unit* target, Unit* attacker, uint32& damage) override
+    {
+        damage = uint32(damage * DeadminesFactor(target, attacker));
+    }
+
+    void ModifySpellDamageTaken(Unit* target, Unit* attacker, int32& damage, SpellInfo const* /*spellInfo*/) override
+    {
+        damage = int32(damage * DeadminesFactor(target, attacker));
+    }
+
+    void ModifyPeriodicDamageAurasTick(Unit* target, Unit* attacker, uint32& damage,
+        SpellInfo const* /*spellInfo*/) override
+    {
+        damage = uint32(damage * DeadminesFactor(target, attacker));
+    }
+
 private:
+    static float DeadminesFactor(Unit* target, Unit* attacker)
+    {
+        if (!InDeadmines(target) || !attacker || !GetLanConfig().RouteEnabled)
+            return 1.0f;
+
+        bool playerTarget = IsPlayerSide(target);
+        bool playerAttacker = IsPlayerSide(attacker);
+        if (playerAttacker && !playerTarget)
+            return 1.0f / DEADMINES_STRENGTH;
+        if (!playerAttacker && playerTarget)
+            return DEADMINES_STRENGTH;
+        return 1.0f;
+    }
+
     // Any kill counts for the starting-area quests, for the killer and the group members nearby
     static void HandleStartAreaKill(Creature* creature, Unit* killer)
     {
@@ -669,7 +589,8 @@ void LanBuildRoute()
         for (RouteDungeon const& dungeon : RouteDungeons)
             _routeMaps.set(dungeon.MapId);
 
-    // Quest rewards (Dungeon Set 3, the blue extras, weapons) and the death knight start can be used at any level
+    // Quest rewards and the Deadmines loot can be used at any level (the Tier 6 rings in the ring satchels and the
+    // level 80 vendor items lose theirs in LanVendors.cpp)
     auto noLevelRequirement = [](uint32 itemId)
     {
         if (!itemId)
@@ -678,17 +599,14 @@ void LanBuildRoute()
         if (ItemTemplate const* proto = sObjectMgr->GetItemTemplate(itemId))
             const_cast<ItemTemplate*>(proto)->RequiredLevel = 0;
         else
-            LOG_ERROR("module", "mod-lan: route reward item {} does not exist", itemId);
+            LOG_ERROR("module", "mod-lan: route item {} does not exist", itemId);
     };
 
     for (uint32 questId = QUEST_LAN_START_FIRST; questId <= QUEST_LAN_DEATH_KNIGHT; ++questId)
     {
         Quest const* quest = sObjectMgr->GetQuestTemplate(questId);
         if (!quest)
-        {
-            LOG_ERROR("module", "mod-lan: route quest {} is missing (mod_lan_route.sql not applied?)", questId);
             continue;
-        }
 
         for (uint32 itemId : quest->RewardChoiceItemId)
             noLevelRequirement(itemId);
@@ -696,10 +614,10 @@ void LanBuildRoute()
             noLevelRequirement(itemId);
     }
 
-    for (uint32 itemId : DeathKnightGear)
-        noLevelRequirement(itemId);
+    if (!sObjectMgr->GetQuestTemplate(QUEST_LAN_START_FIRST))
+        LOG_ERROR("module", "mod-lan: the route quests are missing (mod_lan_route.sql not applied?)");
 
-    for (uint32 itemId : StartSatchelGear)
+    for (uint32 itemId : LanDeadminesLoot)
         noLevelRequirement(itemId);
 
     // Group members of any level can be taken along

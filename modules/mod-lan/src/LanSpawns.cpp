@@ -8,6 +8,7 @@
  */
 
 #include "Creature.h"
+#include "GameObject.h"
 #include "DBCStores.h"
 #include "LanCommon.h"
 #include "Log.h"
@@ -33,7 +34,7 @@ namespace
 
     std::unordered_set<ObjectGuid::LowType> _copies;
 
-    bool IsInStartZone(CreatureData const& data)
+    bool IsInStartZone(SpawnData const& data)
     {
         if (data.mapid != MAP_EASTERN_KINGDOMS && data.mapid != MAP_KALIMDOR && data.mapid != MAP_OUTLAND)
             return false;
@@ -134,8 +135,30 @@ namespace
     }
 }
 
+// Wildflowers for the adventure route's quest 2, a yard from every Peacebloom, Silverleaf, Earthroot and
+// Bloodthistle spawn point in the starting zones (also the pooled ones that are not up right now)
+static void LanBuildWildflowers()
+{
+    constexpr std::array<uint32, 7> Herbs = { 1617, 1618, 1619, 3724, 3725, 3726, 181166 };
+    constexpr uint32 WILDFLOWER_RESPAWN = 60;       // seconds
+
+    std::vector<GameObjectData> herbs;
+    for (auto const& [spawnId, data] : sObjectMgr->GetAllGOData())
+        if (std::find(Herbs.begin(), Herbs.end(), data.id) != Herbs.end() && IsInStartZone(data))
+            herbs.push_back(data);
+
+    for (GameObjectData const& herb : herbs)
+        sObjectMgr->AddGOData(GO_LAN_WILDFLOWER, herb.mapid, herb.posX + 1.0f, herb.posY, herb.posZ, herb.orientation,
+            WILDFLOWER_RESPAWN, herb.rotation.x, herb.rotation.y, herb.rotation.z, herb.rotation.w);
+
+    LOG_INFO("module", "mod-lan: {} Wildflowers in the starting zones", herbs.size());
+}
+
 void LanBuildStartZoneSpawns()
 {
+    if (GetLanConfig().RouteEnabled)
+        LanBuildWildflowers();
+
     uint32 multiplier = GetLanConfig().StartZoneSpawnMultiplier;
     if (multiplier <= 1)
         return;
