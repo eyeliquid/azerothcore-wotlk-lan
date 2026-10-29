@@ -73,6 +73,7 @@ void LoadLanConfig()
 
     cfg.LfgFillEnabled = sConfigMgr->GetOption<bool>("Lan.LfgFill.Enable", true);
     cfg.LfgFillDelay = sConfigMgr->GetOption<uint32>("Lan.LfgFill.Delay", 10);
+    cfg.LfgFillBestGear = sConfigMgr->GetOption<bool>("Lan.LfgFill.BestGear", true);
     cfg.HelperBotsBuff = sConfigMgr->GetOption<bool>("Lan.HelperBots.Buff", true);
     cfg.HelperDamageDone = 1.0f + sConfigMgr->GetOption<float>("Lan.HelperBots.DamageDone", 25.0f) / 100.0f;
     cfg.HelperHealingDone = 1.0f + sConfigMgr->GetOption<float>("Lan.HelperBots.HealingDone", 25.0f) / 100.0f;

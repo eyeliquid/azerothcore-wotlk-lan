@@ -860,6 +860,106 @@ uint32 LanFindEnchantItem(uint32 enchantId)
     return itr != _enchantItems.end() ? itr->second : 0;
 }
 
+// Dungeon finder bots at level 80: the spec's Tier 9 best-in-slot set (the bot's faction version), every
+// socket filled with the spec's gems and every slot enchanted like the Dalaran quartermasters do it
+bool LanEquipBestGear(Player* bot, uint8 specIndex)
+{
+    if (!bot || specIndex >= LanSpecs.size())
+        return false;
+
+    LanSpecData const& spec = LanSpecs[specIndex];
+    uint8 team = bot->GetTeamId(true) == TEAM_HORDE ? 1 : 0;
+
+    // Gems of the spec: the meta gem for meta sockets, a gem of the socket's color for the others, else the
+    // spec's first regular gem
+    std::vector<std::pair<uint32, uint32>> gems;                // enchant id, gem color mask
+    for (uint32 gemId : spec.T9Gems[team])
+    {
+        ItemTemplate const* gem = gemId ? sObjectMgr->GetItemTemplate(gemId) : nullptr;
+        GemPropertiesEntry const* properties = gem ? sGemPropertiesStore.LookupEntry(gem->GemProperties) : nullptr;
+        if (properties && properties->spellitemenchantement)
+            gems.emplace_back(properties->spellitemenchantement, properties->color);
+    }
+
+    auto gemFor = [&gems](uint32 socketColor) -> uint32
+    {
+        for (auto const& [enchant, color] : gems)
+            if (color & socketColor)
+                return enchant;
+        if (socketColor == SOCKET_COLOR_META)
+            return 0;
+        for (auto const& [enchant, color] : gems)
+            if (color != SOCKET_COLOR_META)
+                return enchant;
+        return 0;
+    };
+
+    // Empty every slot first, so e.g. a two-hander isn't blocked by an old off-hand
+    for (uint8 equipSlot : GearSlotToEquipSlot)
+        bot->DestroyItem(INVENTORY_SLOT_BAG_0, equipSlot, true);
+
+    uint32 equipped = 0;
+    for (uint8 gearSlot = 0; gearSlot < LAN_GEAR_SLOTS; ++gearSlot)
+    {
+        uint32 itemId = spec.T9[team][gearSlot];
+        uint8 equipSlot = GearSlotToEquipSlot[gearSlot];
+        if (!itemId)
+            continue;
+
+        uint16 dest = 0;
+        if (bot->CanEquipNewItem(equipSlot, dest, itemId, false) != EQUIP_ERR_OK)
+            continue;
+
+        Item* item = bot->EquipNewItem(dest, itemId, true);
+        if (!item)
+            continue;
+
+        ++equipped;
+        ItemTemplate const* proto = item->GetTemplate();
+        for (uint8 socket = 0; socket < MAX_GEM_SOCKETS; ++socket)
+        {
+            uint32 gem = proto->Socket[socket].Color ? gemFor(proto->Socket[socket].Color) : 0;
+            if (!gem)
+                continue;
+
+            EnchantmentSlot slot = EnchantmentSlot(SOCK_ENCHANTMENT_SLOT + socket);
+            bot->ApplyEnchantment(item, slot, false);
+            item->SetEnchantment(slot, gem, 0, 0, bot->GetGUID());
+            bot->ApplyEnchantment(item, slot, true);
+        }
+
+        uint32 enchant = spec.T9Enchant[team][gearSlot];
+        SpellItemEnchantmentEntry const* entry = enchant ? sSpellItemEnchantmentStore.LookupEntry(enchant) : nullptr;
+        if (entry && !PlayerHasEnchantSkill(bot, entry))
+        {
+            enchant = gearSlot == GEAR_WAIST ? 0 : FallbackEnchant(gearSlot, enchant, spec.Stat);
+            entry = enchant ? sSpellItemEnchantmentStore.LookupEntry(enchant) : nullptr;
+            if (entry && !PlayerHasEnchantSkill(bot, entry))
+                entry = nullptr;
+        }
+
+        if (entry)
+        {
+            if (auto itr = _enchantSpells.find(enchant); itr != _enchantSpells.end())
+                if (SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(itr->second);
+                    spellInfo && !item->IsFitToSpellRequirements(spellInfo))
+                    entry = nullptr;
+        }
+
+        if (entry)
+        {
+            bot->ApplyEnchantment(item, PERM_ENCHANTMENT_SLOT, false);
+            item->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchant, 0, 0, bot->GetGUID());
+            bot->ApplyEnchantment(item, PERM_ENCHANTMENT_SLOT, true);
+        }
+
+        item->SetState(ITEM_CHANGED, bot);
+    }
+
+    bot->SaveToDB(false, false);
+    return equipped > 0;
+}
+
 // Starting areas: pick a class and spec, then buy its Tier 6 set
 class npc_lan_outfitter : public CreatureScript
 {

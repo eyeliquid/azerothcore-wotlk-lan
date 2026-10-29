@@ -155,6 +155,7 @@ struct LanConfig
 
     bool LfgFillEnabled = true;
     uint32 LfgFillDelay = 10;                           // seconds in queue before bots fill
+    bool LfgFillBestGear = true;                        // level 80 fill bots wear Tier 9 BiS, gemmed and enchanted
     bool HelperBotsBuff = true;
     float HelperDamageDone = 1.25f;
     float HelperHealingDone = 1.25f;
@@ -186,6 +187,7 @@ void LanBuildVendors();
 bool LanIsVendorItem(uint32 itemId);
 uint32 LanFindEnchantSpell(uint32 enchantId);
 uint32 LanFindEnchantItem(uint32 enchantId);
+bool LanEquipBestGear(Player* bot, uint8 specIndex);   // level 80 Tier 9 BiS with gems and enchants
 
 // Adventure route
 void LanBuildRoute();

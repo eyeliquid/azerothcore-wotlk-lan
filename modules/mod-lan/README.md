@@ -107,7 +107,9 @@ no longer pulls every mob in the Cathedral hall along.
 
 - `Lan.RandomBots = 100` random bots; `-1` keeps the playerbots.conf values.
 - Dungeon finder: after 10 seconds in the queue (`Lan.LfgFill.Delay`), one per second, random bots fill the missing tank,
-  healer and damage slots, set to the right level, spec and gear.
+  healer and damage slots, set to the right level, spec and gear. At level 80 they wear their spec's Tier 9
+  best-in-slot gear, gemmed and enchanted: a roster of 10 tanks, 10 healers and 20 damage dealers at a time
+  (`Lan.LfgFill.BestGear`).
 - Commander Valeria uses the addclass characters (`Playerbots.AddClassAccountPoolSize`), which get the role's
   spec and gear for your level.
 - Bots grouped with a real player deal 25% more damage and healing, take 20% less damage, and the group uses

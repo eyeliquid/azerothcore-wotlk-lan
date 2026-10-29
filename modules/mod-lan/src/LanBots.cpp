@@ -56,6 +56,34 @@ namespace
     };
     std::unordered_map<ObjectGuid, LfgFillEntry> _lfgFill;
 
+    // Level 80 dungeon finder bots in Tier 9 BiS (Lan.LfgFill.BestGear): at most 10 tanks, 10 healers and
+    // 20 damage dealers at a time; the others get the usual random gear
+    constexpr uint8 BEST_GEAR_LEVEL = 80;
+    constexpr std::array<uint32, LAN_ROLE_MAX> BestGearRoster = { 10, 10, 20 };
+    std::unordered_map<ObjectGuid, LanRole> _bestGearBots;
+
+    // Roster places in use: bots that are still queued, in a group or in a dungeon
+    uint32 BestGearBotsInUse(LanRole role)
+    {
+        uint32 count = 0;
+        for (auto itr = _bestGearBots.begin(); itr != _bestGearBots.end();)
+        {
+            Player* bot = ObjectAccessor::FindConnectedPlayer(itr->first);
+            bool inUse = bot && (bot->GetGroup() || bot->GetMap()->Instanceable() ||
+                sLFGMgr->GetState(itr->first) != lfg::LFG_STATE_NONE);
+            if (!inUse)
+            {
+                itr = _bestGearBots.erase(itr);
+                continue;
+            }
+
+            if (itr->second == role)
+                ++count;
+            ++itr;
+        }
+        return count;
+    }
+
     uint8 RoleToLfgMask(LanRole role)
     {
         switch (role)
@@ -297,6 +325,11 @@ namespace
         PlayerbotFactory factory(bot, level, ITEM_QUALITY_EPIC);
         factory.Randomize(false);
         ApplySpec(bot, specIndex);
+
+        // Level 80: the spec's Tier 9 BiS with gems and enchants, as long as the roster has room
+        if (GetLanConfig().LfgFillBestGear && level >= BEST_GEAR_LEVEL &&
+            BestGearBotsInUse(role) < BestGearRoster[role] && LanEquipBestGear(bot, specIndex))
+            _bestGearBots[bot->GetGUID()] = role;
 
         sLFGMgr->JoinLfg(bot, RoleToLfgMask(role), dungeons, "");
         if (sLFGMgr->GetState(bot->GetGUID()) != lfg::LFG_STATE_QUEUED)

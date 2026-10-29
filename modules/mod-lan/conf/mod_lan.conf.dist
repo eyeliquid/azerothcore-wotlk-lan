@@ -198,6 +198,13 @@ Lan.LfgFill.Enable = 1
 #        Default:     10
 Lan.LfgFill.Delay = 10
 
+#    Lan.LfgFill.BestGear
+#        Description: Bots that fill a level 80 dungeon finder queue wear their spec's Tier 9 best-in-slot gear
+#                     (the Dalaran quartermaster lists), every socket gemmed and every slot enchanted. At most
+#                     10 tanks, 10 healers and 20 damage dealers at a time; the rest get random epic gear.
+#        Default:     1
+Lan.LfgFill.BestGear = 1
+
 #    Lan.HelperBots.Buff
 #        Description: Bots in a group with a real player (helper bots) are stronger.
 #        Default:     1
