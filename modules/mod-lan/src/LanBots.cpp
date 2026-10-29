@@ -28,8 +28,8 @@
 namespace
 {
     constexpr uint32 BOT_UPDATE_INTERVAL = 1000;
-    constexpr uint32 LFG_FILL_INTERVAL = 2000;
-    constexpr time_t LFG_FILL_ADD_COOLDOWN = 5;          // one bot is prepared at a time
+    constexpr uint32 LFG_FILL_INTERVAL = 1000;
+    constexpr time_t LFG_FILL_ADD_COOLDOWN = 1;          // one bot is prepared at a time, one per second
     constexpr time_t HELPER_LOGIN_TIMEOUT = 60;
     constexpr uint32 MAX_RAID_SIZE = 40;
     constexpr uint8 DEATH_KNIGHT_MIN_LEVEL = 55;

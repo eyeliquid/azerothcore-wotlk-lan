@@ -106,7 +106,7 @@ no longer pulls every mob in the Cathedral hall along.
 ## Bots (mod-playerbots)
 
 - `Lan.RandomBots = 100` random bots; `-1` keeps the playerbots.conf values.
-- Dungeon finder: after 2 minutes in the queue (`Lan.LfgFill.Delay`) random bots fill the missing tank,
+- Dungeon finder: after 10 seconds in the queue (`Lan.LfgFill.Delay`), one per second, random bots fill the missing tank,
   healer and damage slots, set to the right level, spec and gear.
 - Commander Valeria uses the addclass characters (`Playerbots.AddClassAccountPoolSize`), which get the role's
   spec and gear for your level.

@@ -154,7 +154,7 @@ struct LanConfig
     bool BlockSellBack = true;
 
     bool LfgFillEnabled = true;
-    uint32 LfgFillDelay = 120;                          // seconds in queue before bots fill
+    uint32 LfgFillDelay = 10;                           // seconds in queue before bots fill
     bool HelperBotsBuff = true;
     float HelperDamageDone = 1.25f;
     float HelperHealingDone = 1.25f;

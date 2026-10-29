@@ -193,9 +193,10 @@ Lan.RandomBots = 100
 Lan.LfgFill.Enable = 1
 
 #    Lan.LfgFill.Delay
-#        Description: Seconds in the queue before bots start to fill.
-#        Default:     120
-Lan.LfgFill.Delay = 120
+#        Description: Seconds in the queue before bots start to fill (then one bot joins per second).
+#                     0 fills right away, before other real players can be matched.
+#        Default:     10
+Lan.LfgFill.Delay = 10
 
 #    Lan.HelperBots.Buff
 #        Description: Bots in a group with a real player (helper bots) are stronger.
