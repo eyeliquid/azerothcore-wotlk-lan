@@ -110,6 +110,8 @@ no longer pulls every mob in the Cathedral hall along.
   healer and damage slots, set to the right level, spec and gear. At level 80 they wear their spec's Tier 9
   best-in-slot gear, gemmed and enchanted: a roster of 10 tanks, 10 healers and 20 damage dealers at a time
   (`Lan.LfgFill.BestGear`).
+- Bots never decline a dungeon finder proposal: mod-playerbots declines when a bot is in combat or dead, so mod-lan
+  takes it out of combat (or resurrects it) and accepts instead.
 - Commander Valeria uses the addclass characters (`Playerbots.AddClassAccountPoolSize`), which get the role's
   spec and gear for your level.
 - Bots grouped with a real player deal 25% more damage and healing, take 20% less damage, and the group uses

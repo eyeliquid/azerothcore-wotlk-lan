@@ -21,6 +21,9 @@
 #include "ScriptMgr.h"
 #include "SpellAuras.h"
 #include "StringFormat.h"
+#include "WorldSession.h"
+#include "WorldPacket.h"
+#include "Opcodes.h"
 
 #include <bit>
 #include <unordered_map>
@@ -674,8 +677,48 @@ public:
     }
 };
 
+// Bots decline a dungeon finder proposal when they are in combat or dead at that moment (mod-playerbots'
+// LfgAcceptAction), which happens a lot to random bots that roam the world. A bot's "no" is turned into a "yes":
+// it leaves combat (or comes back to life) and accepts, so the group still forms.
+class LanLfgAcceptScript : public ServerScript
+{
+public:
+    LanLfgAcceptScript() : ServerScript("LanLfgAcceptScript", { SERVERHOOK_CAN_PACKET_RECEIVE }) { }
+
+    bool CanPacketReceive(WorldSession* session, WorldPacket const& packet) override
+    {
+        if (packet.GetOpcode() != CMSG_LFG_PROPOSAL_RESULT || !session)
+            return true;
+
+        Player* bot = session->GetPlayer();
+        if (!bot || !LanIsBot(bot) || !GetLanConfig().Enabled || !GetLanConfig().LfgFillEnabled ||
+            packet.size() < sizeof(uint32) + sizeof(uint8))
+            return true;
+
+        WorldPacket copy(packet);
+        uint32 proposalId;
+        bool accept;
+        copy >> proposalId >> accept;
+        if (accept)
+            return true;
+
+        if (bot->isDead())
+        {
+            bot->ResurrectPlayer(1.0f);
+            bot->SpawnCorpseBones();
+        }
+        bot->CombatStopWithPets(true);
+
+        sLFGMgr->UpdateProposal(proposalId, bot->GetGUID(), true);
+        LOG_DEBUG("module", "mod-lan: {} accepted dungeon finder proposal {} instead of declining", bot->GetName(),
+            proposalId);
+        return false;
+    }
+};
+
 void AddSC_lan_bots()
 {
     new LanBotsWorldScript();
     new LanHelperUnitScript();
+    new LanLfgAcceptScript();
 }
