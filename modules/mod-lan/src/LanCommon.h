@@ -128,6 +128,7 @@ struct LanConfig
     uint32 StartGold = 150;
     uint32 SkillGain = 4;                               // skill points per skill-up
     float TalentRate = 3.0f;                            // talent points per level
+    float ReputationRate = 50.0f;                       // reputation gain multiplier
     bool NoResurrectionSickness = true;
     bool AlwaysRested = true;                           // rested XP is topped up to the maximum all the time
     uint32 StartZoneSpawnMultiplier = 3;                // enemy spawns in the starting zones (1 = unchanged)

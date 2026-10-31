@@ -46,6 +46,7 @@ void LoadLanConfig()
     cfg.StartGold = sConfigMgr->GetOption<uint32>("Lan.StartGold", 150);
     cfg.SkillGain = sConfigMgr->GetOption<uint32>("Lan.SkillGain", 4);
     cfg.TalentRate = sConfigMgr->GetOption<float>("Lan.TalentRate", 3.0f);
+    cfg.ReputationRate = sConfigMgr->GetOption<float>("Lan.ReputationRate", 50.0f);
     cfg.NoResurrectionSickness = sConfigMgr->GetOption<bool>("Lan.NoResurrectionSickness", true);
     cfg.AlwaysRested = sConfigMgr->GetOption<bool>("Lan.AlwaysRested", true);
     cfg.StartZoneSpawnMultiplier = sConfigMgr->GetOption<uint32>("Lan.StartZones.SpawnMultiplier", 3);
@@ -120,6 +121,9 @@ public:
 
         if (cfg.TalentRate > 0.0f)
             sWorld->setRate(RATE_TALENT, cfg.TalentRate);
+
+        if (cfg.ReputationRate > 0.0f)
+            sWorld->setRate(RATE_REPUTATION_GAIN, cfg.ReputationRate);
 
         // Resurrection sickness starts at this level, so no character ever gets it
         if (cfg.NoResurrectionSickness)

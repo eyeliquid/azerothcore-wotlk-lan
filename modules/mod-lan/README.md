@@ -8,6 +8,7 @@ database updater applies on the next worldserver start.
 
 - Professions, weapon skills and defense level 4 times as fast: 4 points per skill-up (`Lan.SkillGain`).
 - 3 talent points per level instead of 1 (`Lan.TalentRate`).
+- Reputation 50 times as fast (`Lan.ReputationRate`).
 - No resurrection sickness (`Lan.NoResurrectionSickness`).
 - Always fully rested: kills give double experience, the rested bonus is topped up all the time (`Lan.AlwaysRested`).
 - Three times as many enemies in the eight starting zones (`Lan.StartZones.SpawnMultiplier`): every normal
@@ -38,7 +39,7 @@ gets 10% more experience.
 | Every starting area | Apothecary Brennick | Pick potions, food, elixirs or flasks: the best of each for free, usable from level 1. Also the best rogue poisons and the spell reagents of every class (every rank), always free |
 | The 8 capitals and Krasus' Landing | Archmage Telvaris | Everything Portal Keeper Ilsa offers, plus every zone |
 | Krasus' Landing | Chef Rosalind | The best arrows and bullets, level 80 thrown weapons, rogue poisons and the reagents of every class, and the best food and drink, all for free: feasts, every level 80 Well Fed food, the best food of every pet diet, the best drinks |
-| Krasus' Landing | Commander Valeria | Fills your group to a 10 or 25 player raid, adds a tank, healer or damage dealer bot, dismisses bots |
+| Krasus' Landing and every raid entrance | Commander Valeria | Fills your group to a 10 or 25 player raid, adds a tank, healer or damage dealer bot, dismisses bots |
 | Krasus' Landing | 33 Quartermasters | One per class and spec: Tier 9 (ToC 25H) best-in-slot from the WoWSims Phase 3 presets in your faction's version, with its gems and enchant items, and they enchant your equipped gear. Each one wears its spec's Tier 9 set (your faction's version) and weapons |
 | Antonidas Memorial | 14 Suppliers | One per profession: every recipe, reagent and tool for free; recipe reputation requirements are removed |
 | Antonidas Memorial | 14 Grand Masters | One per profession: every rank from Apprentice to Grand Master and every trainer recipe, at the normal price |
