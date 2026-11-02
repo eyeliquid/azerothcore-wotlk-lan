@@ -651,10 +651,35 @@ public:
         return player && LanIsHelperBot(player->GetGUID());
     }
 
+    // A real player, or a pet, totem or guardian of one
+    static bool IsRealPlayerSide(Unit const* unit)
+    {
+        if (!unit)
+            return false;
+        Player const* player = unit->GetCharmerOrOwnerPlayerOrPlayerItself();
+        return player && LanIsRealPlayer(player);
+    }
+
     uint32 DealDamage(Unit* attacker, Unit* victim, uint32 damage, DamageEffectType /*damageType*/) override
     {
         LanConfig const& cfg = GetLanConfig();
-        if (!cfg.Enabled || !cfg.HelperBotsBuff || !damage || _helperBots.empty())
+        if (!cfg.Enabled || !damage)
+            return damage;
+
+        // Real players deal more and take less damage, against NPCs only (not in PvP)
+        if (attacker && attacker != victim && victim)
+        {
+            bool playerAttacker = IsRealPlayerSide(attacker);
+            bool playerVictim = IsRealPlayerSide(victim);
+            bool npcAttacker = !attacker->GetCharmerOrOwnerPlayerOrPlayerItself();
+            bool npcVictim = !victim->GetCharmerOrOwnerPlayerOrPlayerItself();
+            if (playerAttacker && npcVictim)
+                damage = uint32(damage * cfg.PlayerDamageDone);
+            else if (npcAttacker && playerVictim)
+                damage = uint32(damage * cfg.PlayerDamageTaken);
+        }
+
+        if (!cfg.HelperBotsBuff || _helperBots.empty())
             return damage;
 
         if (attacker && attacker != victim && IsHelper(attacker))

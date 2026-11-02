@@ -29,6 +29,13 @@ Lan.TalentRate = 3
 #        Default:     50 (50 times as fast)
 Lan.ReputationRate = 50
 
+#    Lan.Players.DamageDone / Lan.Players.DamageTakenReduction
+#        Description: Real (non-bot) players and their pets deal this percentage of their damage to NPCs, and
+#                     take this much less damage from NPCs. Player against player damage stays as it is.
+#        Default:     150 (one and a half times the damage), 20 (20% less damage taken)
+Lan.Players.DamageDone = 150
+Lan.Players.DamageTakenReduction = 20
+
 #    Lan.NoResurrectionSickness
 #        Description: Nobody gets resurrection sickness (sets Death.SicknessLevel out of reach).
 #        Default:     1

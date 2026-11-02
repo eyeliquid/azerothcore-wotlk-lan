@@ -9,6 +9,8 @@ database updater applies on the next worldserver start.
 - Professions, weapon skills and defense level 4 times as fast: 4 points per skill-up (`Lan.SkillGain`).
 - 3 talent points per level instead of 1 (`Lan.TalentRate`).
 - Reputation 50 times as fast (`Lan.ReputationRate`).
+- Real players (and their pets) deal 150% damage to NPCs and take 20% less damage from them
+  (`Lan.Players.DamageDone`, `Lan.Players.DamageTakenReduction`); PvP damage is unchanged.
 - No resurrection sickness (`Lan.NoResurrectionSickness`).
 - Always fully rested: kills give double experience, the rested bonus is topped up all the time (`Lan.AlwaysRested`).
 - Three times as many enemies in the eight starting zones (`Lan.StartZones.SpawnMultiplier`): every normal

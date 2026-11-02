@@ -47,6 +47,8 @@ void LoadLanConfig()
     cfg.SkillGain = sConfigMgr->GetOption<uint32>("Lan.SkillGain", 4);
     cfg.TalentRate = sConfigMgr->GetOption<float>("Lan.TalentRate", 3.0f);
     cfg.ReputationRate = sConfigMgr->GetOption<float>("Lan.ReputationRate", 50.0f);
+    cfg.PlayerDamageDone = sConfigMgr->GetOption<float>("Lan.Players.DamageDone", 150.0f) / 100.0f;
+    cfg.PlayerDamageTaken = 1.0f - sConfigMgr->GetOption<float>("Lan.Players.DamageTakenReduction", 20.0f) / 100.0f;
     cfg.NoResurrectionSickness = sConfigMgr->GetOption<bool>("Lan.NoResurrectionSickness", true);
     cfg.AlwaysRested = sConfigMgr->GetOption<bool>("Lan.AlwaysRested", true);
     cfg.StartZoneSpawnMultiplier = sConfigMgr->GetOption<uint32>("Lan.StartZones.SpawnMultiplier", 3);
