@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Installs the LAN server on Debian 12+ for the user debwow, server address 192.168.2.34.
+# Installs the LAN server on Debian 12+ for the user debwow, server address 192.168.50.14.
 # Run it from the cloned repository as debwow (it asks for sudo):
 #
 #   bash apps/lan/install-debian.sh

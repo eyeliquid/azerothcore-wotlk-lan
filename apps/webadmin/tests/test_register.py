@@ -17,7 +17,7 @@ def reg(app, monkeypatch):
         if "FROM acore_auth.account WHERE username" in sql:
             return lookups["existing"]
         if "realmlist" in sql:
-            return {"address": "192.168.2.35"}
+            return {"address": "192.168.50.14"}
         raise AssertionError(f"unexpected query: {sql}")
 
     def fake_execute(sql, args=()):
@@ -44,7 +44,7 @@ def test_register_creates_player_account(client, reg):
     _, inserts, _ = reg
     resp = _post(client, username="Thrall", password="lokt4r", confirm="lokt4r")
     assert resp.status_code == 200
-    assert b"set realmlist 192.168.2.35" in resp.data
+    assert b"set realmlist 192.168.50.14" in resp.data
     assert len(inserts) == 1
     sql, args = inserts[0]
     assert "INSERT INTO acore_auth.account" in sql

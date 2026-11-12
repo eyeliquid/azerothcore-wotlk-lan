@@ -6,7 +6,7 @@
 #
 #   bash apps/lan/install-webadmin.sh
 #
-# The panel is served over plain HTTP on port 80 of every address of the server (http://192.168.2.35),
+# The panel is served over plain HTTP on port 80 of every address of the server (http://192.168.50.14),
 # with a page where players create their own game account (/register). It is meant for the LAN: don't
 # forward port 80 on the router, the panel has a GM console behind its login.
 # Running it again updates the panel and keeps every password. It also removes the Cloudflare tunnel an
